@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="canonicalization test" default="help" basedir=".">
+
+  <property name="src.dir" location="src"/>
+  <property name="test.dir" location="../testdata"/>
+  <property name="temp.dir" location=".tmp"/>
+
+  <property file="webpki.properties"/>
+
+  <path id="lib.classpath">
+    <fileset dir="${webpki.dist}">
+       <include name="*.jar"/>
+    </fileset>
+  </path>
+
+  <target name="help">
+    <echo message="Targets: help test [-Dfile=filename]"/>
+  </target>
+	
+  <target name="_compile">
+  	<!-- Create temp directory -->
+    <delete dir="${temp.dir}"/>
+    <mkdir dir="${temp.dir}"/>
+
+  	<!-- Compile -->
+    <javac debug="on"
+           srcdir="${src.dir}"
+           destdir="${temp.dir}" 
+           classpathref="lib.classpath"
+           includeAntRuntime="false">
+       <compilerarg value="-Xlint:all,-path"/>
+    </javac>
+
+  </target>
+
+  <target name="test" depends="_compile">
+    <property name="file" value=""/>
+    <java fork="yes"
+          classname="CanonicalizerTest"
+    	    dir="${temp.dir}"
+          failonerror="true">
+    	<classpath>
+            <pathelement path="${temp.dir}"/>
+       	    <path refid="lib.classpath"/>
+    	</classpath>
+        <arg value="${test.dir}"/>
+        <arg value="${file}"/>
+        <jvmarg value="-Dfile.encoding=UTF8"/>
+    </java>
+  </target>
+
+</project>
