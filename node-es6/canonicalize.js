@@ -1,7 +1,8 @@
 // ES6 JSON Canonicalizer
 'use strict';
-var CanonicalizedJSON = {
-    stringify: function (object) {
+const CanonicalizedJSON = {
+
+    stringify: function(object) {
 
         var result = '';
         serialize(object);
@@ -11,7 +12,7 @@ var CanonicalizedJSON = {
             if (object !== null && typeof object === 'object') {
                 if (Array.isArray(object)) {
                     result += '[';
-                    var next = false;
+                    let next = false;
                     object.forEach((element) => {
                         if (next) {
                             result += ',';
@@ -22,7 +23,7 @@ var CanonicalizedJSON = {
                     result += ']';
                 } else {
                     result += '{';
-                    var next = false;
+                    let next = false;
                     Object.keys(object).sort().forEach((property) => {
                         if (next) {
                             result += ',';
