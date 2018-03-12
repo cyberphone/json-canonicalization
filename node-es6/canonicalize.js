@@ -41,3 +41,5 @@ const CanonicalizedJSON = {
         }
     }
 };
+
+module.exports = CanonicalizedJSON;
