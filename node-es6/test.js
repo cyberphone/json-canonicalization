@@ -13,6 +13,23 @@ function readFile(path) {
 Fs.readdirSync(inputData).forEach((fileName) => {
     var expected = readFile(outputData + '/' + fileName);
     var actual = new Buffer(JWC.stringify(JSON.parse(readFile(inputData + '/' + fileName))));
-    var result = expected.compare(actual) == 0 ? "SUCCESS" : "FAIL";
-    console.log("File: " + fileName + '=' + result);
+    if (expected.compare(actual) == 0) {
+        var next = false;
+        var byteCount = 0;
+        var utf8 = '\n\nFile: ' + fileName + '\n';
+        for (let i = 0; i < actual.length; i++) {
+            if (byteCount++ % 32 == 0) {
+                utf8 += '\n';
+                next = false;
+            }
+            if (next) {
+                utf8 += ' ';
+            }
+            next = true;
+            utf8 += actual[i].toString(16);
+        }
+        console.log(utf8);
+    } else {
+        throw new Error(fileName);
+    }
 });
