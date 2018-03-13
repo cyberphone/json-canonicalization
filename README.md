@@ -18,7 +18,8 @@ This JSON canonicalization concept works by building on:
 {"escaping":"€$\u000f\nA'B\"\\\\\"/","numbers":[1e+30,4.5,6,0.002,1e-27],"other":[null,true,false]}
 ```
 
-Note: for platform interoperable canonicalization, the output **must** be converted to UTF-8 as well:
+Note: for platform interoperable canonicalization, the output **must** be converted to UTF-8
+as well, here shown in hexadecimal notation:
 
 ```code
 7b 22 65 73 63 61 70 69 6e 67 22 3a 22 e2 82 ac 24 5c 75 30 30 30 66 5c 6e 41 27 42 5c 22 5c 5c
