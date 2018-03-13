@@ -4,39 +4,39 @@ const CanonicalizedJSON = {
 
     stringify: function(object) {
 
-        var result = '';
+        var buffer = '';
         serialize(object);
-        return result;
+        return buffer;
 
         function serialize(object) {
             if (object !== null && typeof object === 'object') {
                 if (Array.isArray(object)) {
-                    result += '[';
+                    buffer += '[';
                     let next = false;
                     object.forEach((element) => {
                         if (next) {
-                            result += ',';
+                            buffer += ',';
                         }
                         next = true;
                         serialize(element);
                     });
-                    result += ']';
+                    buffer += ']';
                 } else {
-                    result += '{';
+                    buffer += '{';
                     let next = false;
                     Object.keys(object).sort().forEach((property) => {
                         if (next) {
-                            result += ',';
+                            buffer += ',';
                         }
                         next = true;
-                        result += JSON.stringify(property);
-                        result += ":";
+                        buffer += JSON.stringify(property);
+                        buffer += ':';
                         serialize(object[property]);
                     });
-                    result += '}';
+                    buffer += '}';
                 }
             } else {
-                result += JSON.stringify(object);
+                buffer += JSON.stringify(object);
             }
         }
     }
