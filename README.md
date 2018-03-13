@@ -2,8 +2,8 @@
 
 This JSON canonicalization concept works by building on:
 - ECMAScript V6 serialization of primitive JSON data types
-- Lexical sorting of properties in a recursive process
-- Array data is also included in the process but element order remains untouched
+- Lexical sorting of properties in a *recursive* process
+- Array data is also included in the process *but element order remains untouched*
 
 ### Sample Input:
 ```code
