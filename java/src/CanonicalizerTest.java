@@ -19,7 +19,7 @@ public class CanonicalizerTest {
             StringBuilder utf8 = new StringBuilder("\nFile: ");
             utf8.append(fileName).append("\n");
             int byteCount = 0;
-			boolean next = false;
+            boolean next = false;
             for (byte b : actual) {
                 if (byteCount++ % 32 == 0) {
                     utf8.append('\n');
@@ -31,7 +31,7 @@ public class CanonicalizerTest {
                 next = true;
                 utf8.append(DebugFormatter.getHexString(new byte[]{b}));
             }
-			System.out.println(utf8.append("\n").toString());
+            System.out.println(utf8.append("\n").toString());
         } else {
             throw new RuntimeException("Failed for file: " + fileName);
         }
