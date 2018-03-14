@@ -5,6 +5,14 @@ This JSON canonicalization concept works by building on:
 - Lexical sorting of properties in a *recursive* process
 - Array data is also included in the process *but element order remains untouched*
 
+Note: The sorting algorithm depends on that strings are represented as arrays of 16-bit unsigned integers where each integer holds a *single* UCS2/UTF-16 code unit.  The sorting is based on pure value comparisons, independent from locale settings.
+
+### Lexical Ordering
+
+If two strings are different, then either they have different characters at some index that is a valid index for both strings, or their lengths are different, or both. If they have different characters at one or more index positions, let k be the smallest such index; then the string whose character at position k has the smaller value, as determined by using the < operator, lexicographically precedes the other string.
+
+A zero length string is considered having the lowest possible value.
+
 ### Sample Input:
 ```code
 {
