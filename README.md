@@ -5,7 +5,7 @@ This JSON canonicalization concept works by building on:
 - Lexical sorting of properties in a *recursive* process
 - Array data is also included in the process *but element order remains untouched*
 
-Note: The sorting algorithm depends on that strings are represented as arrays of 16-bit unsigned integers where each integer holds a *single* UCS2/UTF-16 code unit.  The sorting is based on pure value comparisons, independent from locale settings.
+Note: The sorting algorithm depends on that strings are represented as arrays of 16-bit unsigned integers where each integer holds a *single* UCS2/UTF-16 code unit.  The sorting is based on pure value comparisons, independent of locale settings.
 
 ### Lexical Ordering
 
