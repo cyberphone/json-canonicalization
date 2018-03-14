@@ -46,6 +46,9 @@
         <arg value="${test.dir}"/>
         <arg value="${file}"/>
         <jvmarg value="-Dfile.encoding=UTF8"/>
+        <!-- Forcing a locale that could screw up sorting -->
+        <jvmarg value="-Duser.language=fr"/>
+        <jvmarg value="-Duser.country=fr"/>
     </java>
   </target>
 
