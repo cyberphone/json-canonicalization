@@ -11,7 +11,7 @@ Note: The sorting algorithm depends on that strings are represented as arrays of
 
 If two strings are different, then either they have different characters at some index that is a valid index for both strings, or their lengths are different, or both. If they have different characters at one or more index positions, let k be the smallest such index; then the string whose character at position k has the smaller value, as determined by using the < operator, lexicographically precedes the other string.
 
-A zero length string is considered having the lowest possible value.
+If there is no index position at which they differ, then the shorter string lexicographically precedes the longer string.
 
 ### Sample Input:
 ```code
