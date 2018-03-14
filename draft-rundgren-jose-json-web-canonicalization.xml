@@ -1,0 +1,542 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd">
+
+<?rfc strict="yes" ?>
+<?rfc toc="yes"?>
+<?rfc tocdepth="4"?>
+<?rfc symrefs="yes"?>
+<?rfc sortrefs="yes" ?>
+<?rfc compact="yes" ?>
+<?rfc subcompact="no" ?>
+
+<rfc category="info" docName="draft-rundgren-jose-json-web-canonicalization-00" ipr="trust200902">
+  <front>
+    <title abbrev="draft-rundgren-jose-json-web-canonicalization">
+      JSON Web Canonicalization (JWC)
+    </title>
+
+    <author fullname="Anders Rundgren" initials="A." surname="Rundgren">
+      <organization>Independent</organization>
+      <address>
+        <postal>
+          <street></street>
+          <code></code>
+          <city>Montpellier</city>
+          <country>France</country>
+        </postal>
+        <email>anders.rundgren.net@gmail.com</email>
+      </address>
+    </author>
+
+    <date year="2018" />
+
+    <area>Security</area>
+
+    <workgroup>JSON Object Signing and Encryption (JOSE)</workgroup>
+
+    <keyword>
+      JOSE, JSON, ECMAScript, Signatures, Cryptography, Canonicalization
+    </keyword>
+
+    <abstract>
+      <t>
+        Cryptographic operations like hashing and signing depend on that the
+        target data does not change during serialization, transport, or parsing.
+        By applying the JWC (JSON Web Canonicalization) scheme, data provided in the
+        JSON <xref target="RFC8259"/> format can be exchanged "as is",
+        while still being subject to secure cryptographic operations.
+        JWC achieves this by exploiting the strict operation of the
+        <spanx style="verb">JSON.stringify()</spanx> method defined in
+        ECMAScript beginning with version 6 <xref target="ES6"/>.
+      </t>
+      <t>
+        The intended audience of this document is JSON tool vendors who
+        may need updating their products in order to support the
+        ECMAScript <xref target="ES6"/> JSON serialization rules.
+      </t>
+    </abstract>
+  </front>
+
+  <middle>
+    <section anchor="Introduction" title="Introduction">
+      <t>
+        Cryptographic operations like hashing and signing depend on that the
+        target data does not change during serialization, transport, or parsing.
+        A straightforward way of accomplishing this is converting the data into
+        a format which has a simple and fixed representation like Base64Url <xref target="RFC4648"/>
+        which for example have been used in JWS <xref target="RFC7515"/>.
+        Another solution is creating a canonicalized version of the target data
+        with XML Signature <xref target="XMLDSIG"/> as a prime example.
+      </t>
+      <t>
+        Since the desire here was keeping the data "as is", the canonicalization
+        method was selected.  For reasons outlined in this document, JWS also
+        depends on JSON tools compatible with ECMAScript (aka JavaScript) version 6,
+        from now on simply referred to as "ES6".
+      </t>
+      <t>
+        Seasoned XML developers recalling numerous difficulties getting
+        signatures to validate (due to different interpretations of the quite
+        intricate XML canonicalization rules as well as of the equally extensive
+        Web Services security standards), may rightfully wonder why this
+        particular effort would succeed. The answer is twofold:
+        <list style="symbols">
+          <t>JSON is a considereably simpler format than XML, including lacking
+          support for the powerful (but complex) namespace concept.</t>
+          <t>
+            ES6 compatible JSON serialization is already supported by most Web browsers,
+            Node.js <xref target="NODEJS"/>,
+            as well as by third party libraries like Open&nbsp;Keystore <xref target="OPENKEY"/>
+            giving the proposed canonicalization scheme a head start.
+          </t>
+        </list>
+      </t>
+      <t>
+        The JWC specification describes how JSON serializing rules compliant
+        with ES6, can be used for supporting &quot;Crypto&nbsp;Safe&quot; JSON.
+      </t>
+    </section>
+
+    <section anchor="Terminology" title="Terminology">
+      <t>
+        The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
+        NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED",
+        "MAY", and "OPTIONAL" in this document are to be interpreted as
+        described in BCP 14 <xref target="RFC2119"/> <xref target="RFC8174"/>
+        when, and only when, they appear in all capitals, as shown here.
+      </t>
+    </section>
+
+    <section anchor="Operation" title="Detailed Operation">
+      <t>
+        This section elaborates on the different issues related to JWC and how they are addressed by ES6.
+      </t>
+      <section anchor="json.datacreation" title="Creation of JSON Data">
+        <t>
+          In order to canonicalize JSON data, you need to create an internal representation
+          of the data.  This can be done by:
+          <list style="symbols">
+            <t>
+              Parsing externally supplied JSON data which MUST conform to <xref target="RFC8259"/>.
+            </t>
+            <t>
+              Creating JSON data programmatically.
+            </t>
+          </list>
+          Irrespective of method used, the internal representation of the JSON data MUST be compatible
+          with ES6 which means that:
+          <list style="symbols">
+            <t>
+              Data of the type <spanx style="verb">String</spanx> MUST be expressible
+              as UNICODE <xref target="UNICODE"/> strings.
+            </t>
+            <t>
+              Data of the type <spanx style="verb">Number</spanx> MUST be expressible
+              as IEEE-754 <xref target="IEEE754"/> double precision values.
+            </t>
+          </list>
+        </t>
+
+      </section>
+      <section anchor="json.canonicalization" title="JSON Canonicalization">
+        <section anchor="json.serialization.data" title="Serialization of Data">
+          <t>
+            Assume that you parse a JSON object like the following:
+          </t>
+          <t>
+            <figure align="center">
+              <artwork><![CDATA[  {
+    "escaping": "\u20ac$\u000F\u000aA'\u0042\u0022\u005c\\\"\/",
+    "other":  [null, true, false],
+    "numbers": [1E30,4.50,6,2e-3,0.000000000000000000000000001]
+  }]]></artwork>
+            </figure>
+          </t>
+          <t>
+            If you subsequently serialize the object created by the operation above,
+            using an ES6 compliant serializer,
+            the result would (with a line wrap added for display purposes only),
+            be rather divergent with respect to data representation:
+          </t>
+          <t>
+            <figure align="center">
+              <artwork><![CDATA[  {"escaping":"\u20ac$\u000f\nA'B\"\\\\\"/","other":[null,true,
+  false],"numbers":[1e+30,4.5,6,0.002,1e-27]}]]></artwork>
+            </figure>
+          </t>
+          <t>Note: \u20ac denotes the Euro character, which not being ASCII, is currently not displayable in RFCs.</t>
+          <t>
+            The reason for the huge difference between the parsed data and its
+            serialized counterpart, is due to a wider tolerance on input data (as defined
+            by <xref target="RFC8259"/>) than on output data (as defined ES6).
+            <vspace blankLines="1"/>
+            For serializing JSON data according to ES6 the following rules apply:
+            <list style="symbols">
+              <t>
+                Whitespace between elements MUST not be emitted when JWC is targeted.
+              </t>
+              <t>
+                The literals <spanx style="verb">null</spanx>, <spanx style="verb">true</spanx>,
+                and <spanx style="verb">false</spanx> present no challenge since they already have a
+                fixed definition in JSON <xref target="RFC8259"/>.
+              </t>
+              <t>
+                For data of the type <spanx style="verb">String</spanx> (which includes
+                property names as well), each character MUST be serialized as
+                described in Section <xref target="ES6" format="none">24.3.2.2</xref> of ES6.
+                <vspace blankLines="1"/>
+                If the Unicode value falls within the traditional ASCII control
+                character range (0x0000-0x001f), it MUST
+                be serialized using lowercase hexadecimal Unicode notation (\uhhhh) unless it is in the
+                set of predefined JSON control characters 0x0008, 0x0009, 0x000a, 0x000c or 0x000d
+                which MUST be serialized as \b, \t, \n, \f and \r respectively.
+                <vspace blankLines="1"/>
+                If the Unicode value is outside of the ASCII control character range, it MUST
+                be serialized &quot;as&nbsp;is&quot; unless it is equivalent to
+                0x005c&nbsp;(\) or 0x0022&nbsp;(") which MUST be serialized as \\ and \" respectively.
+              </t>
+              <t>
+                Data of the type <spanx style="verb">Number</spanx>, MUST be serialized according to
+                Section <xref target="ES6" format="none">7.1.12.1</xref> of ES6; for
+                maximum interoperability preferably including the "Note 2" enhancement as well.
+                The latter is implemented by for example Google's V8 <xref target="V8"/>.
+                <vspace blankLines="1"/>
+                Due to the relative complexity of this part, it is not included in this specification.
+                <vspace blankLines="1"/>
+                Note that ES6 builds on the IEEE-754 <xref target="IEEE754"/> double precision
+                standard for storing <spanx style="verb">Number</spanx> data.  If the target
+                JSON system uses another format it may be difficult achieving full
+                interoperability with respect to numeric data.
+                <vspace blankLines="1"/>
+                <xref target="ieee754.test"/> holds a set of test values.
+              </t>
+            </list>
+          </t>
+        </section>
+        <section anchor="json.sorting.properties" title="Sorting Properties">
+          <t>
+            Although the previous step indeed normalized the representation of
+            the primitive data types, the result is still not qualifying as
+            canonicalized since the properties are not in lexical order.  That is,
+            a proper canononicalized version of the sample data is:
+          </t>
+          <t>
+            <figure align="center">
+              <artwork><![CDATA[  {"escaping":"\u20ac$\u000f\nA'B\"\\\\\"/","numbers":[1e+30,
+  4.5,6,0.002,1e-27],"other":[null,true,false]}]]></artwork>
+            </figure>
+          </t>
+          <t>
+          The rules for lexical sorting of JSON data are as follows:
+            <list style="symbols">
+              <t>
+                Properties are sorted in a recursive manner which means that a found JSON
+                <spanx style="verb">Object</spanx> type MUST be sorted as well.
+              </t>
+              <t>
+                JSON <spanx style="verb">Array</spanx> data MUST also be checked for
+                the presence of sortable JSON <spanx style="verb">Object</spanx> elements,
+                but element order MUST NOT be changed.
+              </t>
+            </list>
+            Sorting properties according to JWC requires the following measures:
+            <list style="symbols">
+              <t>
+                Property strings to be sorted depend on that strings are represented
+                as arrays of 16-bit unsigned integers where each integer holds a
+                single UCS2/UTF-16 code unit.  The sorting is based on pure value
+                comparisons, independent of locale settings.
+              </t>
+              <t>
+                If two strings are different, then either they have different characters
+                at some index that is a valid index for both strings, or their lengths are
+                different, or both. If they have different characters at one or more index
+                positions, let k be the smallest such index; then the string whose
+                character at position k has the smaller value, as determined by using 
+                the &lt; operator, lexicographically precedes the other string.
+                <vspace blankLines="1"/>
+                If there is no index position at which they differ, then the shorter string 
+                lexicographically precedes the longer string.
+              </t>
+            </list>
+            If you subsequently serialize the object created by the operation above,
+            using an ES6 compliant serializer,
+            the result would (with a line wrap added for display purposes only),
+            be rather divergent with respect to data representation:
+          </t>
+          <t>
+            <figure align="center">
+              <artwork><![CDATA[  {"escaping":"\u20ac$\u000f\nA'B\"\\\\\"/","other":[null,true,
+  false],"numbers":[1e+30,4.5,6,0.002,1e-27]}]]>
+              </artwork>
+            </figure>
+          </t>
+          <t>Note: \u20ac denotes the Euro character, which not being ASCII, is currently not displayable in RFCs.</t>
+          <t>
+            The reason for the huge difference between the parsed data and its
+            serialized counterpart, is due to a wider tolerance on input data (as defined
+            by <xref target="RFC8259"/>) than on output data (as defined ES6).
+            <vspace blankLines="1"/>
+            For serializing JSON data according to ES6 the following rules apply:
+            <list style="symbols">
+              <t>
+                Whitespace between elements MUST not be emitted when JWC is targeted.
+              </t>
+              <t>
+                The literals <spanx style="verb">null</spanx>, <spanx style="verb">true</spanx>,
+                and <spanx style="verb">false</spanx> present no challenge since they already have a
+                fixed definition in JSON <xref target="RFC8259"/>.
+              </t>
+              <t>
+                For data of the type <spanx style="verb">String</spanx> (which includes
+                property names as well), each character MUST be serialized as
+                described in Section <xref target="ES6" format="none">24.3.2.2</xref> of ES6.
+                <vspace blankLines="1"/>
+                If the Unicode value falls within the traditional ASCII control
+                character range (0x0000-0x001f), it MUST
+                be serialized using lowercase hexadecimal Unicode notation (\uhhhh) unless it is in the
+                set of predefined JSON control characters 0x0008, 0x0009, 0x000a, 0x000c or 0x000d
+                which MUST be serialized as \b, \t, \n, \f and \r respectively.
+                <vspace blankLines="1"/>
+                If the Unicode value is outside of the ASCII control character range, it MUST
+                be serialized &quot;as&nbsp;is&quot; unless it is equivalent to
+                0x005c&nbsp;(\) or 0x0022&nbsp;(") which MUST be serialized as \\ and \" respectively.
+              </t>
+              <t>
+                Data of the type <spanx style="verb">Number</spanx>, MUST be serialized according to
+                Section <xref target="ES6" format="none">7.1.12.1</xref> of ES6; for
+                maximum interoperability preferably including the "Note 2" enhancement as well.
+                The latter is implemented by for example Google's V8 <xref target="V8"/>.
+                <vspace blankLines="1"/>
+                Due to the relative complexity of this part, it is not included in this specification.
+                <vspace blankLines="1"/>
+                Note that ES6 builds on the IEEE-754 <xref target="IEEE754"/> double precision
+                standard for storing <spanx style="verb">Number</spanx> data.  If the target
+                JSON system uses another format it may be difficult achieving full
+                interoperability with respect to numeric data.
+                <vspace blankLines="1"/>
+                <xref target="ieee754.test"/> holds a set of test values.
+              </t>
+            </list>
+          </t>
+        </section>
+        <section anchor="json.utf8" title="UTF-8 Generation">
+          <t>
+            The final step is converting the textual output into an UTF-8 formatted array.
+            Applied to the sample in <xref target="json.serialization.data"/> this should yield the following bytes here shown in hexadecimal notation:
+          </t>
+          <t>
+            <figure align="center">
+              <artwork><![CDATA[  7b 22 65 73 63 61 70 69 6e 67 22 3a 22 e2 82 ac 24 5c 75 30
+  30 30 66 5c 6e 41 27 42 5c 22 5c 5c 5c 5c 5c 22 2f 22 2c 22
+  6e 75 6d 62 65 72 73 22 3a 5b 31 65 2b 33 30 2c 34 2e 35 2c
+  36 2c 30 2e 30 30 32 2c 31 65 2d 32 37 5d 7d]]></artwork>
+            </figure>
+          </t>
+          <t>
+            This data is intended to be usable as 
+            interoperable input to cryptographic functions.
+          </t>
+        </section>
+      </section>
+    </section>
+
+    <section anchor="IANA" title="IANA Considerations">
+      <t>
+        This document has no IANA actions.
+      </t>
+    </section>
+
+    <section anchor="Security" title="Security Considerations">
+      <t>
+        JSON parsers MUST check that input data conforms to the JSON <xref target="RFC8259"/>
+        specification.
+      </t>
+    </section>
+
+    <section anchor="Acknowledgements" title="Acknowledgements">
+      <t>
+        Building on ES6 number normalization was originally
+        proposed by James Manger. This ultimately led to
+        the adoption of the entire ES6 JSON processing model.
+      </t>
+    </section>
+  </middle>
+
+  <back>
+    <references title="Normative References">
+      <?rfc include='reference.RFC.2119'?>
+      <?rfc include='reference.RFC.8259'?>
+      <?rfc include='reference.RFC.8174'?>
+
+      <reference anchor="ES6" target="https://www.ecma-international.org/ecma-262/6.0/index.html">
+        <front>
+          <title>ECMAScript 2015 Language Specification</title>
+          <author>
+            <organization>Ecma International</organization>
+          </author>
+          <date/>
+        </front>
+      </reference>
+      <reference anchor="IEEE754" target="http://grouper.ieee.org/groups/754/">
+        <front>
+          <title>IEEE Standard for Floating-Point Arithmetic</title>
+          <author>
+            <organization>IEEE</organization>
+          </author>
+          <date month="August" year="2008"/>
+        </front>
+      </reference>
+      <reference anchor="UNICODE" target="https://www.unicode.org/versions/Unicode10.0.0/">
+        <front>
+          <title>The Unicode Standard, Version 10.0.0</title>
+          <author>
+            <organization>The Unicode Consortium</organization>
+          </author>
+          <date/>
+        </front>
+      </reference>
+    </references>
+    <references title="Informal References">
+      <?rfc include='reference.RFC.4648'?>
+      <?rfc include='reference.RFC.7515'?>
+      <reference anchor="V8" target="https://developers.google.com/v8/">
+        <front>
+          <title>Chrome V8 Open Source JavaScript Engine</title>
+          <author>
+            <organization>Google LLC</organization>
+          </author>
+          <date/>
+        </front>
+      </reference>
+      <reference anchor="NODEJS" target="https://nodejs.org">
+        <front>
+          <title>Node.js</title>
+          <author/>
+          <date/>
+        </front>
+      </reference>
+      <reference anchor="OPENKEY" target="https://github.com/cyberphone/openkeystore">
+        <front>
+          <title>Open Keystore</title>
+          <author/>
+          <date/>
+        </front>
+      </reference>
+      <reference anchor="XMLDSIG" target="https://www.w3.org/TR/xmldsig-core1/">
+        <front>
+          <title>XML Signature Syntax and Processing Version 1.1</title>
+          <author>
+            <organization>W3C</organization>
+          </author>
+          <date/>
+        </front>
+      </reference>
+    </references>
+    <section anchor="canonicalize.js" title="ES6 Canonicalizer">
+      <t>
+        Below is a complete example of a JWS compliant canonicalizer
+        to be used in ES6 based systems.
+      </t>
+      <t>
+        <figure align="center">
+          <artwork><![CDATA[var canonicalize = function(object) {
+
+    var buffer = '';
+    serialize(object);
+    return buffer;
+
+    function serialize(object) {
+        if (object !== null && typeof object === 'object') {
+            if (Array.isArray(object)) {
+                buffer += '[';
+                let next = false;
+                object.forEach((element) => {
+                    if (next) {
+                        buffer += ',';
+                    }
+                    next = true;
+                    serialize(element);
+                });
+                buffer += ']';
+            } else {
+                buffer += '{';
+                let next = false;
+                Object.keys(object).sort().forEach((property) => {
+                    if (next) {
+                        buffer += ',';
+                    }
+                    next = true;
+                    buffer += JSON.stringify(property);
+                    buffer += ':';
+                    serialize(object[property]);
+                });
+                buffer += '}';
+            }
+        } else {
+            buffer += JSON.stringify(object);
+        }
+    }
+};]]></artwork>
+        </figure>
+      </t>
+    </section>
+    <section anchor="ieee754.test" title="Sample Number Serializations">
+      <t>
+        The following table holds a set of ES6 <spanx style="verb">Number</spanx> serializations including
+        some edge cases.  The field  &quot;ES6&nbsp;Internal&quot; refers to the internal
+        ES6 representation of the <spanx style="verb">Number</spanx> data type which is based on the
+        IEEE-754 <xref target="IEEE754"/> standard using 64-bit (double precision) values,
+        here expressed in hexadecimal.
+      </t>
+      <t>
+        <figure align="center">
+          <artwork><![CDATA[|=================================================================|
+|   ES6 Internal   |   JSON Representation    |      Comment      |
+|=================================================================|
+| 0000000000000000 | 0                        | Zero              |
+|-----------------------------------------------------------------|
+| 8000000000000000 | 0                        | Minus zero        |
+|-----------------------------------------------------------------|
+| 0000000000000001 | 5e-324                   | Smallest positive |
+|-----------------------------------------------------------------|
+| 8000000000000001 | -5e-324                  | Smallest negative |
+|-----------------------------------------------------------------|
+| 7fefffffffffffff | 1.7976931348623157e+308  | Largest positive  |
+|-----------------------------------------------------------------|
+| ffefffffffffffff | -1.7976931348623157e+308 | Largest negative  |
+|-----------------------------------------------------------------|
+| 7fffffffffffffff |                          | Error (NaN)       |
+|-----------------------------------------------------------------|
+| 7ff0000000000000 |                          | Error (Infinity)  |
+|-----------------------------------------------------------------|
+| 44b52d02c7e14af5 | 9.999999999999997e+22    |                   |
+|-----------------------------------------------------------------|
+| 44b52d02c7e14af6 | 1e+23                    |                   |
+|-----------------------------------------------------------------|
+| 44b52d02c7e14af7 | 1.0000000000000001e+23   |                   |
+|-----------------------------------------------------------------|
+| 444b1ae4d6e2ef4e | 999999999999999700000    |                   |
+|-----------------------------------------------------------------|
+| 444b1ae4d6e2ef4f | 999999999999999900000    |                   |
+|-----------------------------------------------------------------|
+| 444b1ae4d6e2ef50 | 1e+21                    |                   |
+|-----------------------------------------------------------------|
+| 444b1ae4d6e2ef51 | 1.0000000000000001e+21   |                   |
+|-----------------------------------------------------------------|
+| 41b3de4355555553 | 333333333.3333332        |                   |
+|-----------------------------------------------------------------|
+| 41b3de4355555554 | 333333333.33333325       |                   |
+|-----------------------------------------------------------------|
+| 41b3de4355555555 | 333333333.3333333        |                   |
+|-----------------------------------------------------------------|
+| 41b3de4355555556 | 333333333.3333334        |                   |
+|-----------------------------------------------------------------|
+| 41b3de4355555557 | 333333333.33333343       |                   |
+|-----------------------------------------------------------------|]]></artwork>
+        </figure>
+      </t>
+     </section>
+  </back>
+</rfc>

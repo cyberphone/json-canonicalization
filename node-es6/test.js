@@ -1,7 +1,7 @@
 // JavaScript source code
 'use strict';
 const Fs = require('fs');
-const JWC = require('./canonicalize.js');
+const canonicalize = require('./canonicalize.js');
 
 const inputData = '../testdata/input';
 const outputData = '../testdata/output';
@@ -12,7 +12,7 @@ function readFile(path) {
 
 Fs.readdirSync(inputData).forEach((fileName) => {
     var expected = readFile(outputData + '/' + fileName);
-    var actual = new Buffer(JWC.stringify(JSON.parse(readFile(inputData + '/' + fileName))));
+    var actual = new Buffer(canonicalize(JSON.parse(readFile(inputData + '/' + fileName))));
     if (expected.compare(actual) == 0) {
         var next = false;
         var byteCount = 0;
