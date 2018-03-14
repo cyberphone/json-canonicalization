@@ -5,7 +5,7 @@ This JSON canonicalization concept works by building on:
 - Lexical sorting of properties in a *recursive* process
 - Array data is also included in the process *but element order remains untouched*
 
-Note: The sorting algorithm depends on that strings are represented as arrays of 16-bit unsigned integers where each integer holds a *single* UCS2/UTF-16 code unit.  The sorting is based on pure value comparisons, independent of locale settings.
+Note: The sorting algorithm depends on that strings are represented as arrays of 16-bit unsigned integers where each integer holds a *single* UCS2/UTF-16 code unit.  The sorting is based on pure value comparisons, *independent of locale settings*.
 
 ### Lexical Ordering
 
@@ -26,7 +26,7 @@ If there is no index position at which they differ, then the shorter string lexi
 {"escaping":"€$\u000f\nA'B\"\\\\\"/","numbers":[1e+30,4.5,6,0.002,1e-27],"other":[null,true,false]}
 ```
 
-Note: for platform interoperable canonicalization, the output **must** be converted to UTF-8
+Note: for platform interoperable canonicalization, the output must be converted to UTF-8
 as well, here shown in hexadecimal notation:
 
 ```code
