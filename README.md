@@ -1,5 +1,7 @@
 # JSON Canonicalization
 
+Also see: https://cyberphone.github.io/doc/security/draft-rundgren-jose-json-web-canonicalization.html
+
 This JSON canonicalization concept works by building on:
 - ECMAScript V6 serialization of primitive JSON data types using `JSON.stringify()`
 - Lexical sorting of properties in a *recursive* process
