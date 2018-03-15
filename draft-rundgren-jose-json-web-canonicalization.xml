@@ -71,22 +71,22 @@
       </t>
       <t>
         Since the desire here was keeping the data "as is", the canonicalization
-        method was selected.  For reasons outlined in this document, JWS also
+        method was selected.  For reasons outlined in this document, JWC also
         depends on JSON tools compatible with ECMAScript (aka JavaScript) version 6,
         from now on simply referred to as "ES6".
       </t>
       <t>
-        Seasoned XML developers recalling numerous difficulties getting
-        signatures to validate (due to different interpretations of the quite
-        intricate XML canonicalization rules as well as of the equally extensive
+        Seasoned XML developers recalling difficulties getting signatures
+        to validate (due to different interpretations of the quite intricate
+        XML canonicalization rules as well as of the equally extensive
         Web Services security standards), may rightfully wonder why this
-        particular effort would succeed. The answer is twofold:
-        <list style="symbols">
-          <t>JSON is a considereably simpler format than XML, including lacking
+        particular effort would succeed. The reasons are twofold:
+        <list style="numbers">
+          <t>JSON is a considerably simpler format than XML, including lack of
           support for the powerful (but complex) namespace concept.</t>
           <t>
-            ES6 compatible JSON serialization is already supported by most Web browsers,
-            Node.js <xref target="NODEJS"/>,
+            ES6 compatible JSON serialization is already supported by most
+            Web browsers, Node.js <xref target="NODEJS"/>,
             as well as by third party libraries like Open&nbsp;Keystore <xref target="OPENKEY"/>
             giving the proposed canonicalization scheme a head start.
           </t>
@@ -110,12 +110,13 @@
 
     <section anchor="Operation" title="Detailed Operation">
       <t>
-        This section elaborates on the different issues related to JWC and how they are addressed by ES6.
+        This section describes the different issues related to JSON canonicalization,
+        and how they are addressed by JWC.
       </t>
       <section anchor="json.datacreation" title="Creation of JSON Data">
         <t>
-          In order to canonicalize JSON data, you need to create an internal representation
-          of the data.  This can be done by:
+          In order to canonicalize JSON data, an internal representation
+          of the JSON data is needed.  This can be performed by:
           <list style="symbols">
             <t>
               Parsing externally supplied JSON data which MUST conform to <xref target="RFC8259"/>.
@@ -124,9 +125,12 @@
               Creating JSON data programmatically.
             </t>
           </list>
-          Irrespective of method used, the internal representation of the JSON data MUST be compatible
+          Irrespective of method used, the internal representation of JSON data MUST be compatible
           with ES6 which means that:
           <list style="symbols">
+            <t>
+              There MUST NOT be any duplicate property names within an <spanx style="verb">Object</spanx>. 
+            </t>
             <t>
               Data of the type <spanx style="verb">String</spanx> MUST be expressible
               as UNICODE <xref target="UNICODE"/> strings.
@@ -134,13 +138,25 @@
             <t>
               Data of the type <spanx style="verb">Number</spanx> MUST be expressible
               as IEEE-754 <xref target="IEEE754"/> double precision values.
+              <vspace blankLines="1"/>
+              Note: If the target system offers higher precision, this MUST NOT be utilized
+              when serializing the <spanx style="verb">Number</spanx> type.
             </t>
           </list>
         </t>
 
       </section>
       <section anchor="json.canonicalization" title="JSON Canonicalization">
-        <section anchor="json.serialization.data" title="Serialization of Data">
+        <t>
+          The following sub sections describe all the steps needed in order to create a canonicalized
+          version of internal JSON data elaborated on in the previous section.
+        </t>
+        <section anchor="json.whitespace" title="Whitespace Handling">
+          <t>
+            Whitespace between elements MUST NOT be emitted when JWC is targeted.
+          </t>
+        </section>
+        <section anchor="json.serialization.data" title="Serialization of Primitive Data Types">
           <t>
             Assume that you parse a JSON object like the following:
           </t>
@@ -154,9 +170,9 @@
             </figure>
           </t>
           <t>
-            If you subsequently serialize the object created by the operation above,
-            using an ES6 compliant serializer,
-            the result would (with a line wrap added for display purposes only),
+            If you subsequently serialize the object created by the operation above
+            using an ES6 compliant serializer the result would
+            (with a line wrap added for display purposes only),
             be rather divergent with respect to data representation:
           </t>
           <t>
@@ -165,17 +181,23 @@
   false],"numbers":[1e+30,4.5,6,0.002,1e-27]}]]></artwork>
             </figure>
           </t>
-          <t>Note: \u20ac denotes the Euro character, which not being ASCII, is currently not displayable in RFCs.</t>
+          <t>
+            <list style="empty">
+              <t>
+                Note: \u20ac denotes the Euro character, which not
+                <vspace blankLines="0"/>
+                being ASCII, is currently not displayable in RFCs.
+              </t>
+            </list> 
+          </t>
           <t>
             The reason for the huge difference between the parsed data and its
             serialized counterpart, is due to a wider tolerance on input data (as defined
-            by <xref target="RFC8259"/>) than on output data (as defined ES6).
+            by <xref target="RFC8259"/>) than on output data (as defined by ES6).
             <vspace blankLines="1"/>
-            For serializing JSON data according to ES6 the following rules apply:
+            For serializing primitive JSON data types according to JWC (which fully
+            relies on the ES6 scheme), the following rules apply:
             <list style="symbols">
-              <t>
-                Whitespace between elements MUST not be emitted when JWC is targeted.
-              </t>
               <t>
                 The literals <spanx style="verb">null</spanx>, <spanx style="verb">true</spanx>,
                 and <spanx style="verb">false</spanx> present no challenge since they already have a
@@ -214,12 +236,15 @@
             </list>
           </t>
         </section>
-        <section anchor="json.sorting.properties" title="Sorting Properties">
+        <section anchor="json.sorting.properties" title="Sorting of Object Properties">
           <t>
-            Although the previous step indeed normalized the representation of
-            the primitive data types, the result is still not qualifying as
-            canonicalized since the properties are not in lexical order.  That is,
-            a proper canononicalized version of the sample data is:
+            Although the previous step indeed normalizes the representation of
+            primitive data types, the result would not qualify as "canonicalized"
+            since the properties are not in lexical (alphabetical) order.
+            <vspace blankLines="1"/>
+            Applied to the sample in <xref target="json.serialization.data"/>,
+            a properly canonicalized version should (with a
+            line wrap added for display purposes only), read as:
           </t>
           <t>
             <figure align="center">
@@ -228,11 +253,20 @@
             </figure>
           </t>
           <t>
-          The rules for lexical sorting of JSON data are as follows:
+            <list style="empty">
+              <t>
+                Note: \u20ac denotes the Euro character, which not
+                <vspace blankLines="0"/>
+                being ASCII, is currently not displayable in RFCs.
+              </t>
+            </list>
+              </t>
+          <t>
+            The rules for lexical sorting of JSON properties according to JWC are as follows:
             <list style="symbols">
               <t>
                 Properties are sorted in a recursive manner which means that a found JSON
-                <spanx style="verb">Object</spanx> type MUST be sorted as well.
+                <spanx style="verb">Object</spanx> type MUST be subject to sorting as well.
               </t>
               <t>
                 JSON <spanx style="verb">Array</spanx> data MUST also be checked for
@@ -240,98 +274,50 @@
                 but element order MUST NOT be changed.
               </t>
             </list>
-            Sorting properties according to JWC requires the following measures:
+          </t>
+          <t>
+            When a JSON <spanx style="verb">Object</spanx> is about to have its properties
+            sorted, the following measures MUST be performed:
             <list style="symbols">
               <t>
                 Property strings to be sorted depend on that strings are represented
                 as arrays of 16-bit unsigned integers where each integer holds a
-                single UCS2/UTF-16 code unit.  The sorting is based on pure value
-                comparisons, independent of locale settings.
+                single UCS2/UTF-16 <xref target="UNICODE"/> code unit.  The sorting is
+                based on pure value comparisons, independent of locale settings.
               </t>
               <t>
-                If two strings are different, then either they have different characters
-                at some index that is a valid index for both strings, or their lengths are
-                different, or both. If they have different characters at one or more index
+                Property strings either have different characters at some index that is
+                a valid index for both strings, or their lengths are different, or both.
+                If they have different characters at one or more index
                 positions, let k be the smallest such index; then the string whose
-                character at position k has the smaller value, as determined by using 
-                the &lt; operator, lexicographically precedes the other string.
+                character at position k has the smaller value, as determined by using
+                the &lt; operator, lexically precedes the other string.
                 <vspace blankLines="1"/>
-                If there is no index position at which they differ, then the shorter string 
-                lexicographically precedes the longer string.
+                If there is no index position at which they differ,
+                then the shorter string lexically precedes the longer string.
               </t>
             </list>
-            If you subsequently serialize the object created by the operation above,
-            using an ES6 compliant serializer,
-            the result would (with a line wrap added for display purposes only),
-            be rather divergent with respect to data representation:
           </t>
           <t>
-            <figure align="center">
-              <artwork><![CDATA[  {"escaping":"\u20ac$\u000f\nA'B\"\\\\\"/","other":[null,true,
-  false],"numbers":[1e+30,4.5,6,0.002,1e-27]}]]>
-              </artwork>
-            </figure>
-          </t>
-          <t>Note: \u20ac denotes the Euro character, which not being ASCII, is currently not displayable in RFCs.</t>
-          <t>
-            The reason for the huge difference between the parsed data and its
-            serialized counterpart, is due to a wider tolerance on input data (as defined
-            by <xref target="RFC8259"/>) than on output data (as defined ES6).
-            <vspace blankLines="1"/>
-            For serializing JSON data according to ES6 the following rules apply:
-            <list style="symbols">
-              <t>
-                Whitespace between elements MUST not be emitted when JWC is targeted.
-              </t>
-              <t>
-                The literals <spanx style="verb">null</spanx>, <spanx style="verb">true</spanx>,
-                and <spanx style="verb">false</spanx> present no challenge since they already have a
-                fixed definition in JSON <xref target="RFC8259"/>.
-              </t>
-              <t>
-                For data of the type <spanx style="verb">String</spanx> (which includes
-                property names as well), each character MUST be serialized as
-                described in Section <xref target="ES6" format="none">24.3.2.2</xref> of ES6.
-                <vspace blankLines="1"/>
-                If the Unicode value falls within the traditional ASCII control
-                character range (0x0000-0x001f), it MUST
-                be serialized using lowercase hexadecimal Unicode notation (\uhhhh) unless it is in the
-                set of predefined JSON control characters 0x0008, 0x0009, 0x000a, 0x000c or 0x000d
-                which MUST be serialized as \b, \t, \n, \f and \r respectively.
-                <vspace blankLines="1"/>
-                If the Unicode value is outside of the ASCII control character range, it MUST
-                be serialized &quot;as&nbsp;is&quot; unless it is equivalent to
-                0x005c&nbsp;(\) or 0x0022&nbsp;(") which MUST be serialized as \\ and \" respectively.
-              </t>
-              <t>
-                Data of the type <spanx style="verb">Number</spanx>, MUST be serialized according to
-                Section <xref target="ES6" format="none">7.1.12.1</xref> of ES6; for
-                maximum interoperability preferably including the "Note 2" enhancement as well.
-                The latter is implemented by for example Google's V8 <xref target="V8"/>.
-                <vspace blankLines="1"/>
-                Due to the relative complexity of this part, it is not included in this specification.
-                <vspace blankLines="1"/>
-                Note that ES6 builds on the IEEE-754 <xref target="IEEE754"/> double precision
-                standard for storing <spanx style="verb">Number</spanx> data.  If the target
-                JSON system uses another format it may be difficult achieving full
-                interoperability with respect to numeric data.
-                <vspace blankLines="1"/>
-                <xref target="ieee754.test"/> holds a set of test values.
-              </t>
-            </list>
+            <xref target="canonicalize.js"/> shows the code for an ES6 based canonicalizer,
+            compatible with this specification.
           </t>
         </section>
         <section anchor="json.utf8" title="UTF-8 Generation">
           <t>
-            The final step is converting the textual output into an UTF-8 formatted array.
-            Applied to the sample in <xref target="json.serialization.data"/> this should yield the following bytes here shown in hexadecimal notation:
+            Finally, the resulting string data MUST be converted into an UTF-8 formatted array.
+            <vspace blankLines="1"/>
+            Applied to the sample in <xref target="json.sorting.properties"/> this
+            should yield the following bytes here shown in hexadecimal notation:
           </t>
           <t>
             <figure align="center">
               <artwork><![CDATA[  7b 22 65 73 63 61 70 69 6e 67 22 3a 22 e2 82 ac 24 5c 75 30
   30 30 66 5c 6e 41 27 42 5c 22 5c 5c 5c 5c 5c 22 2f 22 2c 22
   6e 75 6d 62 65 72 73 22 3a 5b 31 65 2b 33 30 2c 34 2e 35 2c
-  36 2c 30 2e 30 30 32 2c 31 65 2d 32 37 5d 7d]]></artwork>
+  36 2c 30 2e 30 30 32 2c 31 65 2d 32 37 5d 2c 22 6f 74 68 65
+  72 22 3a 5b 6e 75 6c 6c 2c 74 72 75 65 2c 66 61 6c 73 65 5d
+  7d]]></artwork>
             </figure>
           </t>
           <t>
@@ -436,8 +422,8 @@
     </references>
     <section anchor="canonicalize.js" title="ES6 Canonicalizer">
       <t>
-        Below is a complete example of a JWS compliant canonicalizer
-        to be used in ES6 based systems.
+        Below is a functionally complete example of a JWC compliant canonicalizer
+        for usage with ES6 based systems.
       </t>
       <t>
         <figure align="center">
@@ -452,29 +438,35 @@
             if (Array.isArray(object)) {
                 buffer += '[';
                 let next = false;
+                // Array - Maintain element order
                 object.forEach((element) => {
                     if (next) {
                         buffer += ',';
                     }
                     next = true;
+                    // Recursive call
                     serialize(element);
                 });
                 buffer += ']';
             } else {
                 buffer += '{';
                 let next = false;
+                // Object - Sort properties before serializing
                 Object.keys(object).sort().forEach((property) => {
                     if (next) {
                         buffer += ',';
                     }
                     next = true;
+                    // Properties are just strings - Use ES6
                     buffer += JSON.stringify(property);
                     buffer += ':';
+                    // Recursive call
                     serialize(object[property]);
                 });
                 buffer += '}';
             }
         } else {
+            // Primitive data type - Use ES6
             buffer += JSON.stringify(object);
         }
     }
