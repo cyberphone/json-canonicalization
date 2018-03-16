@@ -14,7 +14,7 @@
   </path>
 
   <target name="help">
-    <echo message="Targets: help test [-Dfile=filename]"/>
+    <echo message="Targets: help test [-Dfile=filename] browser"/>
   </target>
 	
   <target name="_compile">
@@ -49,6 +49,21 @@
         <!-- Forcing a locale that could screw up sorting -->
         <jvmarg value="-Duser.language=fr"/>
         <jvmarg value="-Duser.country=fr"/>
+    </java>
+  </target>
+
+  <target name="browser" depends="_compile">
+    <java fork="yes"
+          classname="BrowserCodeGenerator"
+    	    dir="${temp.dir}"
+          failonerror="true">
+      <classpath>
+        <pathelement path="${temp.dir}"/>
+        <path refid="lib.classpath"/>
+      </classpath>
+      <arg value="${test.dir}"/>
+      <arg value="${browser.file}"/>
+      <jvmarg value="-Dfile.encoding=UTF8"/>
     </java>
   </target>
 
