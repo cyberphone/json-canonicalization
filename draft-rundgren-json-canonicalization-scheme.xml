@@ -10,10 +10,10 @@
 <?rfc compact="yes" ?>
 <?rfc subcompact="no" ?>
 
-<rfc category="info" docName="draft-rundgren-jose-json-web-canonicalization-00" ipr="trust200902">
+<rfc category="std" docName="draft-rundgren-json-canonicalization-scheme-00" ipr="trust200902">
   <front>
-    <title abbrev="draft-rundgren-jose-json-web-canonicalization">
-      JSON Web Canonicalization (JWC)
+    <title abbrev="draft-rundgren-json-canonicalization-scheme">
+      JSON Canonicalization Scheme (JCS)
     </title>
 
     <author fullname="Anders Rundgren" initials="A." surname="Rundgren">
@@ -33,27 +33,25 @@
 
     <area>Security</area>
 
-    <workgroup>JSON Object Signing and Encryption (JOSE)</workgroup>
+    <workgroup></workgroup>
 
     <keyword>
-      JOSE, JSON, ECMAScript, Signatures, Cryptography, Canonicalization
+      JSON, ECMAScript, Signatures, Cryptography, Canonicalization
     </keyword>
 
     <abstract>
       <t>
         Cryptographic operations like hashing and signing depend on that the
         target data does not change during serialization, transport, or parsing.
-        By applying the JWC (JSON Web Canonicalization) scheme, data provided in the
-        JSON <xref target="RFC8259"/> format can be exchanged "as is",
+        By applying the rules defined by JCS (JSON Canonicalization Scheme),
+        data provided in the JSON <xref target="RFC8259"/> format can be exchanged "as is",
         while still being subject to secure cryptographic operations.
-        JWC achieves this by exploiting the strict operation of the
-        <spanx style="verb">JSON.stringify()</spanx> method defined in
-        ECMAScript beginning with version 6 <xref target="ES6"/>.
+        JCS achieves this by exploiting the strict operation of the JSON serialization
+        method defined in ECMAScript beginning with version 6 <xref target="ES6"/>.
       </t>
       <t>
-        The intended audience of this document is JSON tool vendors who
-        may need updating their products in order to support the
-        ECMAScript <xref target="ES6"/> JSON serialization rules.
+        The intended audiences of this document are JSON tool vendors, as
+        well as designers of JSON based cryptographic solutions.
       </t>
     </abstract>
   </front>
@@ -71,8 +69,9 @@
       </t>
       <t>
         Since the desire here was keeping the data "as is", the canonicalization
-        method was selected.  For reasons outlined in this document, JWC also
-        depends on JSON tools compatible with ECMAScript (aka JavaScript) version 6,
+        method was selected.  For reasons outlined in this document, JCS also
+        depends on JSON serialization compatible with
+        ECMAScript (aka JavaScript) version 6 <xref target="ES6"/>,
         from now on simply referred to as "ES6".
       </t>
       <t>
@@ -82,7 +81,7 @@
         Web Services security standards), may rightfully wonder why this
         particular effort would succeed. The reasons are twofold:
         <list style="numbers">
-          <t>JSON is a considerably simpler format than XML, including lack of
+          <t>JSON is a considerably simpler format than XML, as well as lacking
           support for the powerful (but complex) namespace concept.</t>
           <t>
             ES6 compatible JSON serialization is already supported by most
@@ -93,7 +92,7 @@
         </list>
       </t>
       <t>
-        The JWC specification describes how JSON serializing rules compliant
+        The JCS specification describes how JSON serializing rules compliant
         with ES6, can be used for supporting &quot;Crypto&nbsp;Safe&quot; JSON.
       </t>
     </section>
@@ -111,7 +110,7 @@
     <section anchor="Operation" title="Detailed Operation">
       <t>
         This section describes the different issues related to JSON canonicalization,
-        and how they are addressed by JWC.
+        and how they are addressed by JCS.
       </t>
       <section anchor="json.datacreation" title="Creation of JSON Data">
         <t>
@@ -153,7 +152,7 @@
         </t>
         <section anchor="json.whitespace" title="Whitespace Handling">
           <t>
-            Whitespace between elements MUST NOT be emitted when JWC is targeted.
+            Whitespace between elements MUST NOT be emitted when JCS is targeted.
           </t>
         </section>
         <section anchor="json.serialization.data" title="Serialization of Primitive Data Types">
@@ -171,8 +170,8 @@
           </t>
           <t>
             If you subsequently serialize the object created by the operation above
-            using an ES6 compliant serializer the result would
-            (with a line wrap added for display purposes only),
+            using an serializer compliant with ES6's <spanx style="verb">JSON.stringify()</spanx>,
+            the result would (with a line wrap added for display purposes only),
             be rather divergent with respect to data representation:
           </t>
           <t>
@@ -195,7 +194,7 @@
             serialized counterpart, is due to a wider tolerance on input data (as defined
             by <xref target="RFC8259"/>) than on output data (as defined by ES6).
             <vspace blankLines="1"/>
-            For serializing primitive JSON data types according to JWC (which fully
+            For serializing primitive JSON data types according to JCS (which fully
             relies on the ES6 scheme), the following rules apply:
             <list style="symbols">
               <t>
@@ -262,7 +261,7 @@
             </list>
               </t>
           <t>
-            The rules for lexical sorting of JSON properties according to JWC are as follows:
+            The rules for lexical sorting of JSON properties according to JCS are as follows:
             <list style="symbols">
               <t>
                 Properties are sorted in a recursive manner which means that a found JSON
@@ -271,7 +270,7 @@
               <t>
                 JSON <spanx style="verb">Array</spanx> data MUST also be checked for
                 the presence of sortable JSON <spanx style="verb">Object</spanx> elements,
-                but element order MUST NOT be changed.
+                but array element order MUST NOT be changed.
               </t>
             </list>
           </t>
@@ -422,7 +421,7 @@
     </references>
     <section anchor="canonicalize.js" title="ES6 Canonicalizer">
       <t>
-        Below is a functionally complete example of a JWC compliant canonicalizer
+        Below is a functionally complete example of a JCS compliant canonicalizer
         for usage with ES6 based systems.
       </t>
       <t>
