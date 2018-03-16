@@ -237,7 +237,7 @@
         </section>
         <section anchor="json.sorting.properties" title="Sorting of Object Properties">
           <t>
-            Although the previous step indeed normalizes the representation of
+            Although the previous step indeed normalized the representation of
             primitive data types, the result would not qualify as "canonicalized"
             since the properties are not in lexical (alphabetical) order.
             <vspace blankLines="1"/>
@@ -265,7 +265,7 @@
             <list style="symbols">
               <t>
                 Properties are sorted in a recursive manner which means that a found JSON
-                <spanx style="verb">Object</spanx> type MUST be subject to sorting as well.
+                child <spanx style="verb">Object</spanx> type MUST be subject to sorting as well.
               </t>
               <t>
                 JSON <spanx style="verb">Array</spanx> data MUST also be checked for
