@@ -78,19 +78,34 @@ public class BrowserCodeGenerator {
 
 	static boolean nextTest = false;
 
+	static StringBuilder table = new StringBuilder(
+		"<table class=\"tftable\"><tr><th>Test File</th><th>JSON Input</th><th>Expected Result / UTF-8</th></tr>");
+
+	static String sanitize(String input) {
+		return input.trim()
+			.replace("&", "&amp;")
+			.replace("\"", "&quot;")
+			.replace("<", "&lt;")
+			.replace(">", "&gt;")
+			.replace("\n","<br>")
+			.replace(" ","&nbsp;")
+			.replace("\u0080","\u25a1");
+	}
+
     static void createOneTest(String fileName) throws Exception {
         String rawInput = new String(ArrayUtil.readFile(inputDirectory + File.separator + fileName), "utf-8");
-		String expected = "";
+		String expectedInHex = "";
 		String visualExpected = "";
+		byte[] rawExpected = ArrayUtil.readFile(outputDirectory + File.separator + fileName);
 		boolean next = false;
-		for (byte b : ArrayUtil.readFile(outputDirectory + File.separator + fileName)) {
+		for (byte b : rawExpected) {
 			if (next) {
-				expected += ',';
+				expectedInHex += ',';
 				visualExpected += ' ';
 			}
 			next = true;
 			String hex = DebugFormatter.getHexString(new byte[]{b});
-			expected += "0x" + hex;
+			expectedInHex += "0x" + hex;
 			visualExpected += hex;
 		}
 		if (nextTest) {
@@ -100,10 +115,20 @@ public class BrowserCodeGenerator {
 		html.append("{\n  fileName: '")
 		    .append(fileName)
 		    .append("',\n  inputData: ")
-			.append(rawInput)
+			.append(rawInput.replace("<","\\u003c").replace(">","\\u003e"))
 			.append(",\n  expectedData: new Uint8Array([")
-			.append(expected)
+			.append(expectedInHex)
 		    .append("])\n}");
+
+		table.append("<tr><td rowspan=\"2\" style=\"text-align:center\">")
+		     .append(fileName)
+			 .append("</td><td rowspan=\"2\" style=\"white-space:nowrap\">")
+			 .append(sanitize(rawInput))
+			 .append("</td><td style=\"word-break:break-all\">")
+			 .append(sanitize(new String(rawExpected, "utf-8")))
+			 .append("</td></tr><tr><td><code>")
+			 .append(visualExpected)
+			 .append("</code></td></tr>");
     }
 
     public static void main(String[] args) throws Exception {
@@ -117,33 +142,44 @@ public class BrowserCodeGenerator {
 		html.append("];\n\n");
 		html.append(
 		    "function failed(element) {\n" +
-			"    document.getElementById('message\').innerHTML = 'Failed for file: ' + element.fileName;\n" +
+			"    document.getElementById('message\').innerHTML = '<span style=\"color:red\">Failed for file: ' + element.fileName + '</span>';\n" +
 			"    throw new Error(element.fileName);\n" +
+			"}\n\n" +
+			"var testNumber = 0;\n" +
+			"function oneFile() {\n" +
+			"  if (testNumber < tests.length) {\n" +
+			"    var element = tests[testNumber++];\n" +
+			"    document.getElementById('message\').innerHTML = 'Processing: ' + element.fileName;\n" +
+			"    setTimeout(function() {\n" +
+			"      var actual = new TextEncoder().encode(canonicalize(element.inputData));\n" +
+//			"      console.debug(element.expectedData);\n" +
+//			"      console.debug(actual);\n" +
+			"      if (actual.length != element.expectedData.length) {\n" +
+			"        failed(element);\n" +
+			"      }\n" +
+			"      for (let i = 0; i < actual.length; i++) {\n" +
+			"        if (actual[i] != element.expectedData[i]) {\n" +
+			"          failed(element);\n" +
+			"        }\n" +
+			"      }\n" +
+			"      oneFile();\n" +
+			"    }, 2000);\n" +
+			"  } else {\n" +
+			"    document.getElementById('message\').innerHTML = '<span style=\"color:green\">All Tests Passed</span>';\n" +
+			"  }\n" +
 			"}\n\n" +
 		    "function testing() {\n" +
 			"  if (typeof TextEncoder !== 'function') {\n" +
 			"    document.getElementById('message\').innerHTML = 'Your browser does not support TextEncoder &#9785;';\n" +
+			"    return;\n" +
 			"  }\n" +
-			"  tests.forEach((element) => {\n" +
-			"    console.debug(element.fileName);\n" +
-			"    var actual = new TextEncoder().encode(canonicalize(element.inputData));\n" +
-			"    console.debug(element.expectedData);\n" +
-			"    console.debug(actual);\n" +
-			"    if (actual.length != element.expectedData.length) {\n" +
-			"      failed(element);\n" +
-			"    }\n" +
-			"    for (let i = 0; i < actual.length; i++) {\n" +
-			"      if (actual[i] != element.expectedData[i]) {\n" +
-			"        failed(element);\n" +
-			"      }\n" +
-			"    }\n" +
-			"  });\n" +
-			"  document.getElementById('message\').innerHTML = 'All tests passed';\n" +
+			"  oneFile();\n" +
 			"}\n" +
 			"</script>\n" +
 			"<div style=\"font-size:14pt;padding-bottom:10pt\">JSON Canonicalization Test</div>\n" +
-			"<div style=\"font-weight:bold\" id=\"message\"></div>\n" +
-			"</body></html>");
+			"<div style=\"font-weight:bold;padding-bottom:10pt\" id=\"message\"></div>\n")
+		.append(table)
+		.append("</table></body></html>");
 		ArrayUtil.writeFile(args[1], html.toString().getBytes("utf-8"));
     }
 }

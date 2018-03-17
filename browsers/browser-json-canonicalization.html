@@ -1,0 +1,151 @@
+<!DOCTYPE html><html><head><title>JSON Canonicalization</title>
+<meta http-equiv=Content-Type content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="../webpkiorg.png" sizes="192x192"><style type="text/css">
+.tftable {border-collapse: collapse}
+.tftable th {font-size:10pt;background: linear-gradient(to bottom, #eaeaea 14%,#fcfcfc 52%,#e5e5e5 89%);border-width:1px;padding:4pt 10pt 4pt 10pt;border-style:solid;border-color: #a9a9a9;text-align:center;font-family:arial,verdana,helvetica}
+.tftable tr {background-color:#FFFFE0}
+.tftable td {font-size:10pt;border-width:1px;padding:4pt 8pt 4pt 8pt;border-style:solid;border-color:#a9a9a9;font-family:arial,verdana,helvetica}
+body {font-size:10pt;font-family:arial,verdana,helvetica}
+a {color:blue;font-family:verdana,helvetica;text-decoration:none}
+</style></head><body onload="testing()">
+<script>
+'use strict';
+
+var canonicalize = function(object) {
+
+    var buffer = '';
+    serialize(object);
+    return buffer;
+
+    function serialize(object) {
+        if (object !== null && typeof object === 'object') {
+            if (Array.isArray(object)) {
+                buffer += '[';
+                let next = false;
+                // Array - Maintain element order
+                object.forEach((element) => {
+                    if (next) {
+                        buffer += ',';
+                    }
+                    next = true;
+                    // Recursive call
+                    serialize(element);
+                });
+                buffer += ']';
+            } else {
+                buffer += '{';
+                let next = false;
+                // Object - Sort properties before serializing
+                Object.keys(object).sort().forEach((property) => {
+                    if (next) {
+                        buffer += ',';
+                    }
+                    next = true;
+                    // Properties are just strings - Use ES6
+                    buffer += JSON.stringify(property);
+                    buffer += ':';
+                    // Recursive call
+                    serialize(object[property]);
+                });
+                buffer += '}';
+            }
+        } else {
+            // Primitive data type - Use ES6
+            buffer += JSON.stringify(object);
+        }
+    }
+};
+
+const tests = [{
+  fileName: 'arrays.json',
+  inputData: [
+  56,
+  {
+    "d": true,
+    "10": null,
+    "1": [ ]
+  }
+],
+  expectedData: new Uint8Array([0x5b,0x35,0x36,0x2c,0x7b,0x22,0x31,0x22,0x3a,0x5b,0x5d,0x2c,0x22,0x31,0x30,0x22,0x3a,0x6e,0x75,0x6c,0x6c,0x2c,0x22,0x64,0x22,0x3a,0x74,0x72,0x75,0x65,0x7d,0x5d])
+},{
+  fileName: 'french.json',
+  inputData: {
+  "peach": "This sorting order",
+  "péché": "is wrong according to French",
+  "pêche": "but canonicalization MUST",
+  "sin":   "ignore locale"
+}
+,
+  expectedData: new Uint8Array([0x7b,0x22,0x70,0x65,0x61,0x63,0x68,0x22,0x3a,0x22,0x54,0x68,0x69,0x73,0x20,0x73,0x6f,0x72,0x74,0x69,0x6e,0x67,0x20,0x6f,0x72,0x64,0x65,0x72,0x22,0x2c,0x22,0x70,0xc3,0xa9,0x63,0x68,0xc3,0xa9,0x22,0x3a,0x22,0x69,0x73,0x20,0x77,0x72,0x6f,0x6e,0x67,0x20,0x61,0x63,0x63,0x6f,0x72,0x64,0x69,0x6e,0x67,0x20,0x74,0x6f,0x20,0x46,0x72,0x65,0x6e,0x63,0x68,0x22,0x2c,0x22,0x70,0xc3,0xaa,0x63,0x68,0x65,0x22,0x3a,0x22,0x62,0x75,0x74,0x20,0x63,0x61,0x6e,0x6f,0x6e,0x69,0x63,0x61,0x6c,0x69,0x7a,0x61,0x74,0x69,0x6f,0x6e,0x20,0x4d,0x55,0x53,0x54,0x22,0x2c,0x22,0x73,0x69,0x6e,0x22,0x3a,0x22,0x69,0x67,0x6e,0x6f,0x72,0x65,0x20,0x6c,0x6f,0x63,0x61,0x6c,0x65,0x22,0x7d])
+},{
+  fileName: 'structures.json',
+  inputData: {
+  "1": {"f": {"f": "hi","F": 5} ,"\n": 56.0},
+  "10": { },
+  "": "empty",
+  "a": { },
+  "111": [ {"e": "yes","E": "no" } ],
+  "A": { }
+},
+  expectedData: new Uint8Array([0x7b,0x22,0x22,0x3a,0x22,0x65,0x6d,0x70,0x74,0x79,0x22,0x2c,0x22,0x31,0x22,0x3a,0x7b,0x22,0x5c,0x6e,0x22,0x3a,0x35,0x36,0x2c,0x22,0x66,0x22,0x3a,0x7b,0x22,0x46,0x22,0x3a,0x35,0x2c,0x22,0x66,0x22,0x3a,0x22,0x68,0x69,0x22,0x7d,0x7d,0x2c,0x22,0x31,0x30,0x22,0x3a,0x7b,0x7d,0x2c,0x22,0x31,0x31,0x31,0x22,0x3a,0x5b,0x7b,0x22,0x45,0x22,0x3a,0x22,0x6e,0x6f,0x22,0x2c,0x22,0x65,0x22,0x3a,0x22,0x79,0x65,0x73,0x22,0x7d,0x5d,0x2c,0x22,0x41,0x22,0x3a,0x7b,0x7d,0x2c,0x22,0x61,0x22,0x3a,0x7b,0x7d,0x7d])
+},{
+  fileName: 'values.json',
+  inputData: {
+  "numbers": [1E30, 4.50, 6, 2e-3, 0.000000000000000000000000001],
+  "escaping": "\u20ac$\u000F\u000aA'\u0042\u0022\u005c\\\"\/",
+  "other":  [null, true, false]
+},
+  expectedData: new Uint8Array([0x7b,0x22,0x65,0x73,0x63,0x61,0x70,0x69,0x6e,0x67,0x22,0x3a,0x22,0xe2,0x82,0xac,0x24,0x5c,0x75,0x30,0x30,0x30,0x66,0x5c,0x6e,0x41,0x27,0x42,0x5c,0x22,0x5c,0x5c,0x5c,0x5c,0x5c,0x22,0x2f,0x22,0x2c,0x22,0x6e,0x75,0x6d,0x62,0x65,0x72,0x73,0x22,0x3a,0x5b,0x31,0x65,0x2b,0x33,0x30,0x2c,0x34,0x2e,0x35,0x2c,0x36,0x2c,0x30,0x2e,0x30,0x30,0x32,0x2c,0x31,0x65,0x2d,0x32,0x37,0x5d,0x2c,0x22,0x6f,0x74,0x68,0x65,0x72,0x22,0x3a,0x5b,0x6e,0x75,0x6c,0x6c,0x2c,0x74,0x72,0x75,0x65,0x2c,0x66,0x61,0x6c,0x73,0x65,0x5d,0x7d])
+},{
+  fileName: 'weird.json',
+  inputData: {
+  "€": "Euro Sign",
+  "1": "One",
+  "\u0080": "Control",
+  "\ud83d\ude02": "Smiley",
+  "ö": "Latin Small Letter O With Diaeresis",
+  "\u003c/script\u003e": "Browser Challenge"
+}
+,
+  expectedData: new Uint8Array([0x7b,0x22,0x31,0x22,0x3a,0x22,0x4f,0x6e,0x65,0x22,0x2c,0x22,0x3c,0x2f,0x73,0x63,0x72,0x69,0x70,0x74,0x3e,0x22,0x3a,0x22,0x42,0x72,0x6f,0x77,0x73,0x65,0x72,0x20,0x43,0x68,0x61,0x6c,0x6c,0x65,0x6e,0x67,0x65,0x22,0x2c,0x22,0xc2,0x80,0x22,0x3a,0x22,0x43,0x6f,0x6e,0x74,0x72,0x6f,0x6c,0x22,0x2c,0x22,0xc3,0xb6,0x22,0x3a,0x22,0x4c,0x61,0x74,0x69,0x6e,0x20,0x53,0x6d,0x61,0x6c,0x6c,0x20,0x4c,0x65,0x74,0x74,0x65,0x72,0x20,0x4f,0x20,0x57,0x69,0x74,0x68,0x20,0x44,0x69,0x61,0x65,0x72,0x65,0x73,0x69,0x73,0x22,0x2c,0x22,0xe2,0x82,0xac,0x22,0x3a,0x22,0x45,0x75,0x72,0x6f,0x20,0x53,0x69,0x67,0x6e,0x22,0x2c,0x22,0xf0,0x9f,0x98,0x82,0x22,0x3a,0x22,0x53,0x6d,0x69,0x6c,0x65,0x79,0x22,0x7d])
+}];
+
+function failed(element) {
+    document.getElementById('message').innerHTML = '<span style="color:red">Failed for file: ' + element.fileName + '</span>';
+    throw new Error(element.fileName);
+}
+
+var testNumber = 0;
+function oneFile() {
+  if (testNumber < tests.length) {
+    var element = tests[testNumber++];
+    document.getElementById('message').innerHTML = 'Processing: ' + element.fileName;
+    setTimeout(function() {
+      var actual = new TextEncoder().encode(canonicalize(element.inputData));
+      if (actual.length != element.expectedData.length) {
+        failed(element);
+      }
+      for (let i = 0; i < actual.length; i++) {
+        if (actual[i] != element.expectedData[i]) {
+          failed(element);
+        }
+      }
+      oneFile();
+    }, 2000);
+  } else {
+    document.getElementById('message').innerHTML = '<span style="color:green">All Tests Passed</span>';
+  }
+}
+
+function testing() {
+  if (typeof TextEncoder !== 'function') {
+    document.getElementById('message').innerHTML = 'Your browser does not support TextEncoder &#9785;';
+    return;
+  }
+  oneFile();
+}
+</script>
+<div style="font-size:14pt;padding-bottom:10pt">JSON Canonicalization Test</div>
+<div style="font-weight:bold;padding-bottom:10pt" id="message"></div>
+<table class="tftable"><tr><th>Test File</th><th>JSON Input</th><th>Expected Result / UTF-8</th></tr><tr><td rowspan="2" style="text-align:center">arrays.json</td><td rowspan="2" style="white-space:nowrap">[<br>&nbsp;&nbsp;56,<br>&nbsp;&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&quot;d&quot;:&nbsp;true,<br>&nbsp;&nbsp;&nbsp;&nbsp;&quot;10&quot;:&nbsp;null,<br>&nbsp;&nbsp;&nbsp;&nbsp;&quot;1&quot;:&nbsp;[&nbsp;]<br>&nbsp;&nbsp;}<br>]</td><td style="word-break:break-all">[56,{&quot;1&quot;:[],&quot;10&quot;:null,&quot;d&quot;:true}]</td></tr><tr><td><code>5b 35 36 2c 7b 22 31 22 3a 5b 5d 2c 22 31 30 22 3a 6e 75 6c 6c 2c 22 64 22 3a 74 72 75 65 7d 5d</code></td></tr><tr><td rowspan="2" style="text-align:center">french.json</td><td rowspan="2" style="white-space:nowrap">{<br>&nbsp;&nbsp;&quot;peach&quot;:&nbsp;&quot;This&nbsp;sorting&nbsp;order&quot;,<br>&nbsp;&nbsp;&quot;péché&quot;:&nbsp;&quot;is&nbsp;wrong&nbsp;according&nbsp;to&nbsp;French&quot;,<br>&nbsp;&nbsp;&quot;pêche&quot;:&nbsp;&quot;but&nbsp;canonicalization&nbsp;MUST&quot;,<br>&nbsp;&nbsp;&quot;sin&quot;:&nbsp;&nbsp;&nbsp;&quot;ignore&nbsp;locale&quot;<br>}</td><td style="word-break:break-all">{&quot;peach&quot;:&quot;This&nbsp;sorting&nbsp;order&quot;,&quot;péché&quot;:&quot;is&nbsp;wrong&nbsp;according&nbsp;to&nbsp;French&quot;,&quot;pêche&quot;:&quot;but&nbsp;canonicalization&nbsp;MUST&quot;,&quot;sin&quot;:&quot;ignore&nbsp;locale&quot;}</td></tr><tr><td><code>7b 22 70 65 61 63 68 22 3a 22 54 68 69 73 20 73 6f 72 74 69 6e 67 20 6f 72 64 65 72 22 2c 22 70 c3 a9 63 68 c3 a9 22 3a 22 69 73 20 77 72 6f 6e 67 20 61 63 63 6f 72 64 69 6e 67 20 74 6f 20 46 72 65 6e 63 68 22 2c 22 70 c3 aa 63 68 65 22 3a 22 62 75 74 20 63 61 6e 6f 6e 69 63 61 6c 69 7a 61 74 69 6f 6e 20 4d 55 53 54 22 2c 22 73 69 6e 22 3a 22 69 67 6e 6f 72 65 20 6c 6f 63 61 6c 65 22 7d</code></td></tr><tr><td rowspan="2" style="text-align:center">structures.json</td><td rowspan="2" style="white-space:nowrap">{<br>&nbsp;&nbsp;&quot;1&quot;:&nbsp;{&quot;f&quot;:&nbsp;{&quot;f&quot;:&nbsp;&quot;hi&quot;,&quot;F&quot;:&nbsp;5}&nbsp;,&quot;\n&quot;:&nbsp;56.0},<br>&nbsp;&nbsp;&quot;10&quot;:&nbsp;{&nbsp;},<br>&nbsp;&nbsp;&quot;&quot;:&nbsp;&quot;empty&quot;,<br>&nbsp;&nbsp;&quot;a&quot;:&nbsp;{&nbsp;},<br>&nbsp;&nbsp;&quot;111&quot;:&nbsp;[&nbsp;{&quot;e&quot;:&nbsp;&quot;yes&quot;,&quot;E&quot;:&nbsp;&quot;no&quot;&nbsp;}&nbsp;],<br>&nbsp;&nbsp;&quot;A&quot;:&nbsp;{&nbsp;}<br>}</td><td style="word-break:break-all">{&quot;&quot;:&quot;empty&quot;,&quot;1&quot;:{&quot;\n&quot;:56,&quot;f&quot;:{&quot;F&quot;:5,&quot;f&quot;:&quot;hi&quot;}},&quot;10&quot;:{},&quot;111&quot;:[{&quot;E&quot;:&quot;no&quot;,&quot;e&quot;:&quot;yes&quot;}],&quot;A&quot;:{},&quot;a&quot;:{}}</td></tr><tr><td><code>7b 22 22 3a 22 65 6d 70 74 79 22 2c 22 31 22 3a 7b 22 5c 6e 22 3a 35 36 2c 22 66 22 3a 7b 22 46 22 3a 35 2c 22 66 22 3a 22 68 69 22 7d 7d 2c 22 31 30 22 3a 7b 7d 2c 22 31 31 31 22 3a 5b 7b 22 45 22 3a 22 6e 6f 22 2c 22 65 22 3a 22 79 65 73 22 7d 5d 2c 22 41 22 3a 7b 7d 2c 22 61 22 3a 7b 7d 7d</code></td></tr><tr><td rowspan="2" style="text-align:center">values.json</td><td rowspan="2" style="white-space:nowrap">{<br>&nbsp;&nbsp;&quot;numbers&quot;:&nbsp;[1E30,&nbsp;4.50,&nbsp;6,&nbsp;2e-3,&nbsp;0.000000000000000000000000001],<br>&nbsp;&nbsp;&quot;escaping&quot;:&nbsp;&quot;\u20ac$\u000F\u000aA'\u0042\u0022\u005c\\\&quot;\/&quot;,<br>&nbsp;&nbsp;&quot;other&quot;:&nbsp;&nbsp;[null,&nbsp;true,&nbsp;false]<br>}</td><td style="word-break:break-all">{&quot;escaping&quot;:&quot;€$\u000f\nA'B\&quot;\\\\\&quot;/&quot;,&quot;numbers&quot;:[1e+30,4.5,6,0.002,1e-27],&quot;other&quot;:[null,true,false]}</td></tr><tr><td><code>7b 22 65 73 63 61 70 69 6e 67 22 3a 22 e2 82 ac 24 5c 75 30 30 30 66 5c 6e 41 27 42 5c 22 5c 5c 5c 5c 5c 22 2f 22 2c 22 6e 75 6d 62 65 72 73 22 3a 5b 31 65 2b 33 30 2c 34 2e 35 2c 36 2c 30 2e 30 30 32 2c 31 65 2d 32 37 5d 2c 22 6f 74 68 65 72 22 3a 5b 6e 75 6c 6c 2c 74 72 75 65 2c 66 61 6c 73 65 5d 7d</code></td></tr><tr><td rowspan="2" style="text-align:center">weird.json</td><td rowspan="2" style="white-space:nowrap">{<br>&nbsp;&nbsp;&quot;€&quot;:&nbsp;&quot;Euro&nbsp;Sign&quot;,<br>&nbsp;&nbsp;&quot;1&quot;:&nbsp;&quot;One&quot;,<br>&nbsp;&nbsp;&quot;\u0080&quot;:&nbsp;&quot;Control&quot;,<br>&nbsp;&nbsp;&quot;\ud83d\ude02&quot;:&nbsp;&quot;Smiley&quot;,<br>&nbsp;&nbsp;&quot;ö&quot;:&nbsp;&quot;Latin&nbsp;Small&nbsp;Letter&nbsp;O&nbsp;With&nbsp;Diaeresis&quot;,<br>&nbsp;&nbsp;&quot;&lt;/script&gt;&quot;:&nbsp;&quot;Browser&nbsp;Challenge&quot;<br>}</td><td style="word-break:break-all">{&quot;1&quot;:&quot;One&quot;,&quot;&lt;/script&gt;&quot;:&quot;Browser&nbsp;Challenge&quot;,&quot;□&quot;:&quot;Control&quot;,&quot;ö&quot;:&quot;Latin&nbsp;Small&nbsp;Letter&nbsp;O&nbsp;With&nbsp;Diaeresis&quot;,&quot;€&quot;:&quot;Euro&nbsp;Sign&quot;,&quot;😂&quot;:&quot;Smiley&quot;}</td></tr><tr><td><code>7b 22 31 22 3a 22 4f 6e 65 22 2c 22 3c 2f 73 63 72 69 70 74 3e 22 3a 22 42 72 6f 77 73 65 72 20 43 68 61 6c 6c 65 6e 67 65 22 2c 22 c2 80 22 3a 22 43 6f 6e 74 72 6f 6c 22 2c 22 c3 b6 22 3a 22 4c 61 74 69 6e 20 53 6d 61 6c 6c 20 4c 65 74 74 65 72 20 4f 20 57 69 74 68 20 44 69 61 65 72 65 73 69 73 22 2c 22 e2 82 ac 22 3a 22 45 75 72 6f 20 53 69 67 6e 22 2c 22 f0 9f 98 82 22 3a 22 53 6d 69 6c 65 79 22 7d</code></td></tr></table></body></html>
