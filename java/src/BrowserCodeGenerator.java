@@ -97,7 +97,9 @@ public class BrowserCodeGenerator {
 			html.append(',');
 		}
 		nextTest = true;
-		html.append("{\n  inputData: ")
+		html.append("{\n  fileName: '")
+		    .append(fileName)
+		    .append("',\n  inputData: ")
 			.append(rawInput)
 			.append(",\n  expectedData: new Uint8Array([")
 			.append(expected)
@@ -114,18 +116,33 @@ public class BrowserCodeGenerator {
         }
 		html.append("];\n\n");
 		html.append(
+		    "function failed(element) {\n" +
+			"    document.getElementById('message\').innerHTML = 'Failed for file: ' + element.fileName;\n" +
+			"    throw new Error(element.fileName);\n" +
+			"}\n\n" +
 		    "function testing() {\n" +
-			"  if (typeof TextDecoder !== 'function') {\n" +
-			"    document.getElementById('message\').innerHTML = '<b>Your browser does not support TextDecoder &#9785;</b>';\n" +
-			"    return;\n" +
+			"  if (typeof TextEncoder !== 'function') {\n" +
+			"    document.getElementById('message\').innerHTML = 'Your browser does not support TextEncoder &#9785;';\n" +
 			"  }\n" +
 			"  tests.forEach((element) => {\n" +
+			"    console.debug(element.fileName);\n" +
+			"    var actual = new TextEncoder().encode(canonicalize(element.inputData));\n" +
 			"    console.debug(element.expectedData);\n" +
+			"    console.debug(actual);\n" +
+			"    if (actual.length != element.expectedData.length) {\n" +
+			"      failed(element);\n" +
+			"    }\n" +
+			"    for (let i = 0; i < actual.length; i++) {\n" +
+			"      if (actual[i] != element.expectedData[i]) {\n" +
+			"        failed(element);\n" +
+			"      }\n" +
+			"    }\n" +
 			"  });\n" +
+			"  document.getElementById('message\').innerHTML = 'All tests passed';\n" +
 			"}\n" +
 			"</script>\n" +
-			"<div id=\"message\"></div>\n" +
-			"<div>HI</div>" +
+			"<div style=\"font-size:14pt;padding-bottom:10pt\">JSON Canonicalization Test</div>\n" +
+			"<div style=\"font-weight:bold\" id=\"message\"></div>\n" +
 			"</body></html>");
 		ArrayUtil.writeFile(args[1], html.toString().getBytes("utf-8"));
     }
