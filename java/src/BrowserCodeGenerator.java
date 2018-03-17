@@ -10,8 +10,8 @@ public class BrowserCodeGenerator {
 
     static StringBuilder html = new StringBuilder(
 		"<!DOCTYPE html><html><head><title>JSON Canonicalization</title>\n" +
-		"<meta http-equiv=Content-Type content=\"text/html; charset=utf-8\">\n" +
-		"<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n" +
+		"<meta http-equiv=Content-Type content=\"3ext/html; charset=utf-8\">\n" +
+		"<meta name=\"viewport\" content=\"width=400, initial-scale=1\">\n" +
 		"<link rel=\"icon\" href=\"../webpkiorg.png\" sizes=\"192x192\"><style type=\"text/css\">\n" +
 		".tftable {border-collapse: collapse}\n" +
 		".tftable th {font-size:10pt;background: linear-gradient(to bottom, #eaeaea 14%," +
@@ -79,10 +79,10 @@ public class BrowserCodeGenerator {
 	static boolean nextTest = false;
 
 	static StringBuilder table = new StringBuilder(
-		"<table class=\"tftable\"><tr><th>Test File</th><th>JSON Input</th><th>Expected Result / UTF-8</th></tr>");
+		"<table class=\"tftable\"><tr><th>Test File</th><th>JSON Input</th><th style=\"min-width:50%\">Expected Result / UTF-8</th></tr>");
 
-	static String sanitize(String input) {
-		return input.trim()
+	static String sanitize(byte[] rawUtf8) throws Exception {
+		return new String(rawUtf8, "utf-8").trim()
 			.replace("&", "&amp;")
 			.replace("\"", "&quot;")
 			.replace("<", "&lt;")
@@ -92,32 +92,36 @@ public class BrowserCodeGenerator {
 			.replace("\u0080","\u25a1");
 	}
 
-    static void createOneTest(String fileName) throws Exception {
-        String rawInput = new String(ArrayUtil.readFile(inputDirectory + File.separator + fileName), "utf-8");
-		String expectedInHex = "";
-		String visualExpected = "";
-		byte[] rawExpected = ArrayUtil.readFile(outputDirectory + File.separator + fileName);
+	static StringBuilder createHex(byte[] values, boolean jsMode) {
+	    StringBuilder hex = new StringBuilder();
 		boolean next = false;
-		for (byte b : rawExpected) {
-			if (next) {
-				expectedInHex += ',';
-				visualExpected += ' ';
+		int byteCount = 0;
+		for (byte b : values) {
+			if (byteCount++ % 20 == 0 && next) {
+				hex.append(jsMode ? ",\n" : "\n");
+			} else if (next) {
+				hex.append(jsMode ? ',' : ' ');
 			}
 			next = true;
-			String hex = DebugFormatter.getHexString(new byte[]{b});
-			expectedInHex += "0x" + hex;
-			visualExpected += hex;
+			hex.append(jsMode ? "0x" : "")
+			   .append(DebugFormatter.getHexString(new byte[]{b}));
 		}
+		return hex;
+	}
+
+    static void createOneTest(String fileName) throws Exception {
+        byte[] rawInput = ArrayUtil.readFile(inputDirectory + File.separator + fileName);
+		byte[] rawExpected = ArrayUtil.readFile(outputDirectory + File.separator + fileName);
 		if (nextTest) {
 			html.append(',');
 		}
 		nextTest = true;
 		html.append("{\n  fileName: '")
 		    .append(fileName)
-		    .append("',\n  inputData: ")
-			.append(rawInput.replace("<","\\u003c").replace(">","\\u003e"))
-			.append(",\n  expectedData: new Uint8Array([")
-			.append(expectedInHex)
+		    .append("',\n  inputData: new Uint8Array([")
+			.append(createHex(rawInput, true))
+			.append("]),\n  expectedData: new Uint8Array([")
+			.append(createHex(rawExpected, true))
 		    .append("])\n}");
 
 		table.append("<tr><td rowspan=\"2\" style=\"text-align:center\">")
@@ -125,9 +129,9 @@ public class BrowserCodeGenerator {
 			 .append("</td><td rowspan=\"2\" style=\"white-space:nowrap\">")
 			 .append(sanitize(rawInput))
 			 .append("</td><td style=\"word-break:break-all\">")
-			 .append(sanitize(new String(rawExpected, "utf-8")))
-			 .append("</td></tr><tr><td><code>")
-			 .append(visualExpected)
+			 .append(sanitize(rawExpected))
+			 .append("</td></tr>\n<tr><td><code>")
+			 .append(createHex(rawExpected, false))
 			 .append("</code></td></tr>");
     }
 
@@ -151,14 +155,15 @@ public class BrowserCodeGenerator {
 			"    var element = tests[testNumber++];\n" +
 			"    document.getElementById('message\').innerHTML = 'Processing: ' + element.fileName;\n" +
 			"    setTimeout(function() {\n" +
-			"      var actual = new TextEncoder().encode(canonicalize(element.inputData));\n" +
+			"      var jsonData = JSON.parse(new TextDecoder().decode(element.inputData));\n" +
+			"      var canonicalizedJson = new TextEncoder().encode(canonicalize(jsonData));\n" +
 //			"      console.debug(element.expectedData);\n" +
-//			"      console.debug(actual);\n" +
-			"      if (actual.length != element.expectedData.length) {\n" +
+//			"      console.debug(canonicalizedJson);\n" +
+			"      if (canonicalizedJson.length != element.expectedData.length) {\n" +
 			"        failed(element);\n" +
 			"      }\n" +
-			"      for (let i = 0; i < actual.length; i++) {\n" +
-			"        if (actual[i] != element.expectedData[i]) {\n" +
+			"      for (let i = 0; i < canonicalizedJson.length; i++) {\n" +
+			"        if (canonicalizedJson[i] != element.expectedData[i]) {\n" +
 			"          failed(element);\n" +
 			"        }\n" +
 			"      }\n" +
