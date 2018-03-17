@@ -164,7 +164,7 @@
               <artwork><![CDATA[  {
     "escaping": "\u20ac$\u000F\u000aA'\u0042\u0022\u005c\\\"\/",
     "other":  [null, true, false],
-    "numbers": [1E30,4.50,6,2e-3,0.000000000000000000000000001]
+    "numbers": [1E30, 4.50, 6, 2e-3, 0.000000000000000000000000001]
   }]]></artwork>
             </figure>
           </t>
@@ -227,8 +227,11 @@
                 <vspace blankLines="1"/>
                 Note that ES6 builds on the IEEE-754 <xref target="IEEE754"/> double precision
                 standard for storing <spanx style="verb">Number</spanx> data.  If the target
-                JSON system uses another format it may be difficult achieving full
-                interoperability with respect to numeric data.
+                JSON system uses internal another format, it MUST (when targeting the 
+                JSON <spanx style="verb">Number</spanx> type), always convert the internal
+                representation of a value to its closest IEEE-754 double precision counterpart.
+                Higher precision can be supported by using proprietary data schemes, where the
+                JSON <spanx style="verb">String</spanx> type is used as a holder.
                 <vspace blankLines="1"/>
                 <xref target="ieee754.test"/> holds a set of test values.
               </t>
