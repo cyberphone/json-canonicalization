@@ -116,6 +116,7 @@
         <t>
           In order to canonicalize JSON data, an internal representation
           of the JSON data is needed.  This can be performed by:
+        </t><t>
           <list style="symbols">
             <t>
               Parsing externally supplied JSON data which MUST conform to <xref target="RFC8259"/>.
@@ -124,8 +125,12 @@
               Creating JSON data programmatically.
             </t>
           </list>
+        </t>
+        <t>
           Irrespective of method used, the internal representation of JSON data MUST be compatible
-          with ES6 which means that:
+          both with ES6 and <xref target="RFC8259"/> which implies the following:
+        </t>
+        <t>
           <list style="symbols">
             <t>
               There MUST NOT be any duplicate property names within an <spanx style="verb">Object</spanx>. 
@@ -137,13 +142,9 @@
             <t>
               Data of the type <spanx style="verb">Number</spanx> MUST be expressible
               as IEEE-754 <xref target="IEEE754"/> double precision values.
-              <vspace blankLines="1"/>
-              Note: If the target system offers higher precision, this MUST NOT be utilized
-              when serializing the <spanx style="verb">Number</spanx> type.
             </t>
           </list>
         </t>
-
       </section>
       <section anchor="json.canonicalization" title="JSON Canonicalization">
         <t>
