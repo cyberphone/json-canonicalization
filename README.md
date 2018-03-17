@@ -44,3 +44,6 @@ as well, here shown in hexadecimal notation:
 30 30 32 2c 31 65 2d 32 37 5d 2c 22 6f 74 68 65 72 22 3a 5b 6e 75 6c 6c 2c 74 72 75 65 2c 66 61
 6c 73 65 5d 7d
 ```
+
+### On-line Browser Sample
+https://cyberphone.github.io/doc/security/browser-json-canonicalization.html
