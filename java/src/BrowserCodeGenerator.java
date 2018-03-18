@@ -79,7 +79,7 @@ public class BrowserCodeGenerator {
 	static boolean nextTest = false;
 
 	static StringBuilder table = new StringBuilder(
-		"<table class=\"tftable\"><tr><th>Test File</th><th>JSON Input</th><th style=\"min-width:50%\">Expected Result / UTF-8</th></tr>");
+		"<table class=\"tftable\">");
 
 	static String sanitize(byte[] rawUtf8) throws Exception {
 		return new String(rawUtf8, "utf-8").trim()
@@ -115,7 +115,6 @@ public class BrowserCodeGenerator {
 		if (nextTest) {
 			html.append(',');
 		}
-		nextTest = true;
 		html.append("{\n  fileName: '")
 		    .append(fileName)
 		    .append("',\n  inputData: new Uint8Array([")
@@ -123,16 +122,16 @@ public class BrowserCodeGenerator {
 			.append("]),\n  expectedData: new Uint8Array([")
 			.append(createHex(rawExpected, true))
 		    .append("])\n}");
-
-		table.append("<tr><td rowspan=\"2\" style=\"text-align:center\">")
+		table.append("<tr><th>JSON Input File: ")
 		     .append(fileName)
-			 .append("</td><td rowspan=\"2\" style=\"white-space:nowrap\">")
+			 .append("</th><tr><td style=\"white-space:nowrap\">")
 			 .append(sanitize(rawInput))
-			 .append("</td><td style=\"word-break:break-all\">")
+			 .append("</td></tr><tr><th>Expected Result / UTF-8</th></tr><tr><td style=\"word-break:break-all\">")
 			 .append(sanitize(rawExpected))
 			 .append("</td></tr>\n<tr><td><code>")
 			 .append(createHex(rawExpected, false))
-			 .append("</code></td></tr>");
+			 .append("</code></td></tr><tr><td style=\"background-color:white;border-width:0px\">&nbsp;<br>&nbsp;</td></tr>");
+		nextTest = true;
     }
 
     public static void main(String[] args) throws Exception {
