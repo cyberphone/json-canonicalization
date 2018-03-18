@@ -51,7 +51,11 @@ https://cyberphone.github.io/doc/security/browser-json-canonicalization.html
 
 ### Other Canonicalization Efforts
 https://www.npmjs.com/package/canonical-json
+
 https://tools.ietf.org/html/draft-staykov-hu-json-canonical-form-00
+
 http://wiki.laptop.org/go/Canonical_JSON
+
 https://gibson042.github.io/canonicaljson-spec/
+
 https://gist.github.com/mikesamuel/20710f94a53e440691f04bf79bc3d756
