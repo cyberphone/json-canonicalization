@@ -241,9 +241,9 @@
         </section>
         <section anchor="json.sorting.properties" title="Sorting of Object Properties">
           <t>
-            Although the previous step indeed normalized the representation of
-            primitive data types, the result would not qualify as "canonicalized"
-            since the properties are not in lexical (alphabetical) order.
+            Although the previous step indeed normalized the representation of primitive
+            JSON data types, the result would not qualify as "canonicalized" since
+            <spanx style="verb">Object</spanx> properties are not in lexical (alphabetical) order.
             <vspace blankLines="1"/>
             Applied to the sample in <xref target="json.serialization.data"/>,
             a properly canonicalized version should (with a
@@ -268,7 +268,7 @@
             The rules for lexical sorting of JSON properties according to JCS are as follows:
             <list style="symbols">
               <t>
-                Properties are sorted in a recursive manner which means that a found JSON
+                <spanx style="verb">Object</spanx> properties are sorted in a recursive manner which means that a found JSON
                 child <spanx style="verb">Object</spanx> type MUST be subject to sorting as well.
               </t>
               <t>
