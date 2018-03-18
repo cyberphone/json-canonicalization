@@ -228,7 +228,7 @@
                 <vspace blankLines="1"/>
                 Note that ES6 builds on the IEEE-754 <xref target="IEEE754"/> double precision
                 standard for storing <spanx style="verb">Number</spanx> data.  If the target
-                JSON system uses internal another format, it MUST (when targeting the 
+                JSON system uses another internal format, it MUST (when targeting the 
                 JSON <spanx style="verb">Number</spanx> type), always convert the internal
                 representation of a value to its closest IEEE-754 double precision counterpart.
                 Higher precision can be supported by using proprietary data schemes, where the
