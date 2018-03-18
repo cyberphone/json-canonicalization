@@ -4,8 +4,8 @@ Also see: https://cyberphone.github.io/doc/security/draft-rundgren-json-canonica
 
 This JSON canonicalization concept works by building on:
 - Serialization of primitive JSON data types compatible with ECMAScript's `JSON.stringify()`
-- Lexical sorting of properties in a *recursive* process
-- Array data is also included in the process *but element order remains untouched*
+- Lexical sorting of `Object` properties in a *recursive* process
+- Array data is also subject to canonicalization, *but element order remains untouched*
 
 Note: The sorting algorithm depends on that strings are represented as arrays of
 16-bit unsigned integers where each integer holds a *single* UCS2/UTF-16 code unit. 
