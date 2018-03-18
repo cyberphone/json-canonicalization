@@ -2,7 +2,7 @@
 
 Also see: https://cyberphone.github.io/doc/security/draft-rundgren-json-canonicalization-scheme.html
 
-This JSON canonicalization concept works by building on:
+This JSON canonicalization concept builds on:
 - Serialization of primitive JSON data types using methods compatible with ECMAScript's `JSON.stringify()`
 - Lexical sorting of `Object` properties in a *recursive* process
 - Array data is also subject to canonicalization, *but element order remains untouched*
