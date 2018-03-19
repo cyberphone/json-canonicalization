@@ -349,6 +349,9 @@
         Building on ES6 number normalization was originally
         proposed by James Manger. This ultimately led to
         the adoption of the entire ES6 JSON processing model.
+        <vspace blankLines="1"/>
+        Other people who have contributed to this specification include
+        Richard Gibson and Mike Samuel.
       </t>
     </section>
   </middle>
