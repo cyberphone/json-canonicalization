@@ -48,6 +48,8 @@ as well, here shown in hexadecimal notation:
 ### On-line Browser Sample
 https://cyberphone.github.io/doc/security/browser-json-canonicalization.html
 
+### ECMAScript Proposal: JSON.canonicalize()
+[JSON.canonicalize()](https://github.com/cyberphone/json-canonicalization/edit/master/JSON.canonicalize.md)
 
 ### Other Canonicalization Efforts
 https://www.npmjs.com/package/canonical-json
