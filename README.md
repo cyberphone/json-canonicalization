@@ -49,7 +49,7 @@ as well, here shown in hexadecimal notation:
 https://cyberphone.github.io/doc/security/browser-json-canonicalization.html
 
 ### ECMAScript Proposal: JSON.canonicalize()
-[JSON.canonicalize()](https://github.com/cyberphone/json-canonicalization/edit/master/JSON.canonicalize.md)
+[JSON.canonicalize()](https://github.com/cyberphone/json-canonicalization/blob/master/JSON.canonicalize.md)
 
 ### Other Canonicalization Efforts
 https://www.npmjs.com/package/canonical-json
