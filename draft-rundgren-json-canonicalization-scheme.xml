@@ -243,7 +243,7 @@
           <t>
             Although the previous step indeed normalized the representation of primitive
             JSON data types, the result would not qualify as "canonicalized" since
-            <spanx style="verb">Object</spanx> properties are not in lexical (alphabetical) order.
+            <spanx style="verb">Object</spanx> properties are not in lexicographic (alphabetical) order.
             <vspace blankLines="1"/>
             Applied to the sample in <xref target="json.serialization.data"/>,
             a properly canonicalized version should (with a
@@ -265,7 +265,7 @@
             </list>
               </t>
           <t>
-            The rules for lexical sorting of JSON properties according to JCS are as follows:
+            The rules for lexicographic sorting of JSON properties according to JCS are as follows:
             <list style="symbols">
               <t>
                 <spanx style="verb">Object</spanx> properties are sorted in a recursive manner which means that a found JSON
@@ -294,10 +294,10 @@
                 If they have different values at one or more index
                 positions, let k be the smallest such index; then the string whose
                 value at position k has the smaller value, as determined by using
-                the &lt; operator, lexically precedes the other string.
+                the &lt; operator, lexicographically precedes the other string.
                 <vspace blankLines="1"/>
                 If there is no index position at which they differ,
-                then the shorter string lexically precedes the longer string.
+                then the shorter string lexicographically precedes the longer string.
               </t>
             </list>
           </t>
