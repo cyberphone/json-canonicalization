@@ -16,21 +16,6 @@ This JSON canonicalization concept builds on:
 - Lexical sorting of `Object` properties in a *recursive* process
 - Array data is also subject to canonicalization, *but element order remains untouched*
 
-Note: The sorting algorithm depends on that strings are represented as arrays of
-16-bit unsigned integers where each integer holds a *single* UCS2/UTF-16 code unit. 
-The sorting is based on pure value comparisons, *independent of locale settings*.
-
-### Lexical Ordering
-
-Property strings either have different values at some index that is a valid
-index for both strings, or their lengths are different, or both. If they have
-different values at one or more index positions, let k be the smallest such index;
-then the string whose value at position k has the smaller value, as determined by
-using the < operator, lexically precedes the other string.
-
-If there is no index position at which they differ, then the shorter string
-lexically precedes the longer string.
-
 ### Sample Input:
 ```code
 {
