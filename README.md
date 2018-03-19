@@ -13,10 +13,10 @@ The sorting is based on pure value comparisons, *independent of locale settings*
 
 ### Lexical Ordering
 
-Property strings either have different characters at some index that is a valid
+Property strings either have different values at some index that is a valid
 index for both strings, or their lengths are different, or both. If they have
-different characters at one or more index positions, let k be the smallest such index;
-then the string whose character at position k has the smaller value, as determined by
+different values at one or more index positions, let k be the smallest such index;
+then the string whose value at position k has the smaller value, as determined by
 using the < operator, lexically precedes the other string.
 
 If there is no index position at which they differ, then the shorter string
