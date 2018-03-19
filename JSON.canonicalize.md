@@ -5,6 +5,6 @@
 Implementation wise `JSON.canonicalize()` is expected to require very modest changes to the existing ECMAScript `JSON` object; possibly something along the following:
 
 ```js
-    // We have an 'Object'
+    // We are about to serialize an 'Object'
     (canonicalizeMode ? Object.keys(object).sort() ?  Object.keys(object)).forEach((key) => {
 ```
