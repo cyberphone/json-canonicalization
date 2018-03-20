@@ -302,8 +302,18 @@
             </list>
           </t>
           <t>
+            The rationale for basing the sort algorithm on UCS2/UTF-16 code units is that
+            it maps directly to the string type in ECMAScript, Java, .NET and Python&nbsp;3.
+            Systems using another representation of string data will need to convert
+            JSON properties into arrays of UCS2/UTF-16 code units before sorting.
+            <vspace blankLines="1"/>
+            Note: for the purpose obtaining a deterministic property order, sorting on
+            UTF-8 or UTF-32 encoded data would indeed also have worked, but the result would be
+            incompatible with this specification.
+          </t>
+          <t>
             <xref target="canonicalize.js"/> shows the code for an ES6 based canonicalizer,
-            compatible with this specification.
+            matching JCS.
           </t>
         </section>
         <section anchor="json.utf8" title="UTF-8 Generation">
@@ -430,6 +440,10 @@
       <t>
         Below is a functionally complete example of a JCS compliant canonicalizer
         for usage with ES6 based systems.
+        <vspace blankLines="1"/>
+        Note: The primary purpose of this code is highlighting the sorting algorithm.
+        Using the full power of ES6 would reduce the code size considerably
+        but would also be more difficult to follow by non-experts.
       </t>
       <t>
         <figure align="center">
@@ -536,5 +550,25 @@
         </figure>
       </t>
      </section>
+    <section anchor="json.other" title="Other JSON Canonicalization Efforts">
+      <t>
+        There are (and have been) other efforts creating "Canonicalized JSON". 
+        Below is a list of URLs to some of them:
+        <list style="symbols">
+          <t>
+            <eref target="https://tools.ietf.org/html/draft-staykov-hu-json-canonical-form-00">https://tools.ietf.org/html/draft-staykov-hu-json-canonical-form-00</eref>
+          </t>
+          <t>
+            <eref target="https://gibson042.github.io/canonicaljson-spec/">https://gibson042.github.io/canonicaljson-spec/</eref>
+          </t>
+          <t>
+            <eref target="https://www.npmjs.com/package/canonical-json">https://www.npmjs.com/package/canonical-json</eref>
+          </t>
+          <t>
+            <eref target="http://wiki.laptop.org/go/Canonical_JSON">http://wiki.laptop.org/go/Canonical_JSON</eref>
+          </t>
+        </list>
+      </t>
+    </section>
   </back>
 </rfc>
