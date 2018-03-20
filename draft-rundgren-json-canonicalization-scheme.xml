@@ -552,7 +552,7 @@
      </section>
     <section anchor="json.other" title="Other JSON Canonicalization Efforts">
       <t>
-        There are (and have been) other efforts creating "Canonicalized JSON". 
+        There are (and have been) other efforts creating "Canonical JSON". 
         Below is a list of URLs to some of them:
         <list style="symbols">
           <t>
