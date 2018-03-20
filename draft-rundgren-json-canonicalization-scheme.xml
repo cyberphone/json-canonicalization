@@ -115,7 +115,7 @@
       <section anchor="json.datacreation" title="Creation of JSON Data">
         <t>
           In order to canonicalize JSON data, an internal representation
-          of the JSON data is needed.  This can be performed by:
+          of the JSON data is needed.  This can be achieved by:
         </t><t>
           <list style="symbols">
             <t>
