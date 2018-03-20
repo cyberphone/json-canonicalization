@@ -218,7 +218,7 @@
                 be serialized &quot;as&nbsp;is&quot; unless it is equivalent to
                 U+005C&nbsp;(\) or U+0022&nbsp;(") which MUST be serialized as \\ and \" respectively.
                 <vspace blankLines="1"/>
-                Finally, the serialized string value MUST be put within quotes (").
+                Finally, the serialized string value MUST be enclosed in double quotes (").
               </t>
               <t>
                 Data of the type <spanx style="verb">Number</spanx>, MUST be serialized according to
