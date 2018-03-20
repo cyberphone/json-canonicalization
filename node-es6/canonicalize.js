@@ -9,9 +9,9 @@ var canonicalize = function(object) {
     function serialize(object) {
         if (object !== null && typeof object === 'object') {
             if (Array.isArray(object)) {
+                // Array - Maintain element order
                 buffer += '[';
                 let next = false;
-                // Array - Maintain element order
                 object.forEach((element) => {
                     if (next) {
                         buffer += ',';
@@ -22,15 +22,15 @@ var canonicalize = function(object) {
                 });
                 buffer += ']';
             } else {
+                // Object - Sort properties before serializing
                 buffer += '{';
                 let next = false;
-                // Object - Sort properties before serializing
                 Object.keys(object).sort().forEach((property) => {
                     if (next) {
                         buffer += ',';
                     }
                     next = true;
-                    // Properties are just strings - Use ES6
+                    // Properties are just strings - Use ES6/JSON
                     buffer += JSON.stringify(property);
                     buffer += ':';
                     // Recursive call
@@ -39,7 +39,7 @@ var canonicalize = function(object) {
                 buffer += '}';
             }
         } else {
-            // Primitive data type - Use ES6
+            // Primitive data type - Use ES6/JSON
             buffer += JSON.stringify(object);
         }
     }
