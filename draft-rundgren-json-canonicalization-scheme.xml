@@ -221,7 +221,7 @@
                 Finally, the serialized string value MUST be enclosed in double quotes (").
               </t>
               <t>
-                Data of the type <spanx style="verb">Number</spanx>, MUST be serialized according to
+                Data of the type <spanx style="verb">Number</spanx> MUST be serialized according to
                 Section <xref target="ES6" format="none">7.1.12.1</xref> of ES6; for
                 maximum interoperability preferably including the "Note 2" enhancement as well.
                 The latter is implemented by for example Google's V8 <xref target="V8"/>.
