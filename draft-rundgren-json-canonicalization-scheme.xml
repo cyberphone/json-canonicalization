@@ -353,7 +353,9 @@
         In fact, the ES6 standard way of serializing objects using
         <spanx style="verb">JSON.stringify()</spanx> produces a
         (for developers), more logical format, where properties are
-        kept in the order they were created or received.
+        kept in the order they were created or received.  If message
+        size constraints are moderate, you may even "Pretty&nbsp;Print"
+        JSON data on the wire.
       </t>
     </section>
 
