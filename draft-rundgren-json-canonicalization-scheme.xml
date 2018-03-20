@@ -336,11 +336,25 @@
             </figure>
           </t>
           <t>
-            This data is intended to be usable as 
+            This data is intended to be usable as
             interoperable input to cryptographic functions.
           </t>
         </section>
       </section>
+    </section>
+    <section anchor="json.alt" title="Alternative Uses of Canonicalized JSON">
+      <t>
+        Since the result from the canonicalization process (see <xref target="json.utf8"/>),
+        is fully valid JSON, it can also be used as "Wire&nbsp;Format".
+        However, this is just an option since cryptographic schemes
+        based on JCS, in most cases would not depend on that externally
+        supplied JSON data already is canonicalized.
+        <vspace blankLines="1"/>
+        In fact, the ES6 standard way of serializing objects using
+        <spanx style="verb">JSON.stringify()</spanx> produces a
+        (for developers), more logical format, where properties are
+        kept in the order they were created or received.
+      </t>
     </section>
 
     <section anchor="IANA" title="IANA Considerations">
