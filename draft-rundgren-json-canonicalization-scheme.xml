@@ -342,7 +342,7 @@
         </section>
       </section>
     </section>
-    <section anchor="json.alt" title="Alternative Uses of Canonicalized JSON">
+    <section anchor="json.wireformat" title="Canonicalized JSON as &quot;Wire Format&quot;">
       <t>
         Since the result from the canonicalization process (see <xref target="json.utf8"/>),
         is fully valid JSON, it can also be used as "Wire&nbsp;Format".
