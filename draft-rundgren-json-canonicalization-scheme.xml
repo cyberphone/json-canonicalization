@@ -574,5 +574,13 @@
         </list>
       </t>
     </section>
+    <section anchor="json.dev" title="Development Portal">
+      <t>
+        The JSC specification is currently developed at
+        <eref target="https://github.com/cyberphone/json-canonicalization">https://github.com/cyberphone/json-canonicalization</eref>.
+        <vspace blankLines="1"/>
+        The portal also provides software for testing.
+      </t>
+    </section>
   </back>
 </rfc>
