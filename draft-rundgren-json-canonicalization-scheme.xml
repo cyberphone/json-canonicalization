@@ -205,18 +205,20 @@
               </t>
               <t>
                 For data of the type <spanx style="verb">String</spanx> (which includes
-                property names as well), each character MUST be serialized as
+                <spanx style="verb">Object</spanx> property names as well), each character MUST be serialized as
                 described in Section <xref target="ES6" format="none">24.3.2.2</xref> of ES6.
                 <vspace blankLines="1"/>
                 If the Unicode value falls within the traditional ASCII control
-                character range (0x0000-0x001f), it MUST
+                character range (U+0000 through U+001F), it MUST
                 be serialized using lowercase hexadecimal Unicode notation (\uhhhh) unless it is in the
-                set of predefined JSON control characters 0x0008, 0x0009, 0x000a, 0x000c or 0x000d
+                set of predefined JSON control characters U+0008, U+0009, U+000A, U+000C or U+000D
                 which MUST be serialized as \b, \t, \n, \f and \r respectively.
                 <vspace blankLines="1"/>
                 If the Unicode value is outside of the ASCII control character range, it MUST
                 be serialized &quot;as&nbsp;is&quot; unless it is equivalent to
-                0x005c&nbsp;(\) or 0x0022&nbsp;(") which MUST be serialized as \\ and \" respectively.
+                U+005C&nbsp;(\) or U+0022&nbsp;(") which MUST be serialized as \\ and \" respectively.
+                <vspace blankLines="1"/>
+                Finally, the serialized string value MUST be put within quotes (").
               </t>
               <t>
                 Data of the type <spanx style="verb">Number</spanx>, MUST be serialized according to
