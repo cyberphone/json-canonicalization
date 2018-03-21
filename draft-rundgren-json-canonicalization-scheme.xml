@@ -137,11 +137,13 @@
             </t>
             <t>
               Data of the type <spanx style="verb">String</spanx> MUST be expressible
-              as UNICODE <xref target="UNICODE"/> strings.
+              as Unicode <xref target="UNICODE"/> strings.
+              Also see <xref target="json.ser.string"/>.
             </t>
             <t>
               Data of the type <spanx style="verb">Number</spanx> MUST be expressible
               as IEEE-754 <xref target="IEEE754"/> double precision values.
+              Also see <xref target="json.ser.number"/>.
             </t>
           </list>
         </t>
@@ -195,51 +197,67 @@
             serialized counterpart, is due to a wider tolerance on input data (as defined
             by <xref target="RFC8259"/>) than on output data (as defined by ES6).
             <vspace blankLines="1"/>
-            For serializing primitive JSON data types according to JCS (which fully
-            relies on the ES6 scheme), the following rules apply:
-            <list style="symbols">
-              <t>
-                The literals <spanx style="verb">null</spanx>, <spanx style="verb">true</spanx>,
-                and <spanx style="verb">false</spanx> present no challenge since they already have a
-                fixed definition in JSON <xref target="RFC8259"/>.
-              </t>
-              <t>
-                For data of the type <spanx style="verb">String</spanx> (which includes
-                <spanx style="verb">Object</spanx> property names as well), each character MUST be serialized as
-                described in Section <xref target="ES6" format="none">24.3.2.2</xref> of ES6.
-                <vspace blankLines="1"/>
-                If the Unicode value falls within the traditional ASCII control
-                character range (U+0000 through U+001F), it MUST
-                be serialized using lowercase hexadecimal Unicode notation (\uhhhh) unless it is in the
-                set of predefined JSON control characters U+0008, U+0009, U+000A, U+000C or U+000D
-                which MUST be serialized as \b, \t, \n, \f and \r respectively.
-                <vspace blankLines="1"/>
-                If the Unicode value is outside of the ASCII control character range, it MUST
-                be serialized &quot;as&nbsp;is&quot; unless it is equivalent to
-                U+005C&nbsp;(\) or U+0022&nbsp;(") which MUST be serialized as \\ and \" respectively.
-                <vspace blankLines="1"/>
-                Finally, the serialized string value MUST be enclosed in double quotes (").
-              </t>
-              <t>
-                Data of the type <spanx style="verb">Number</spanx> MUST be serialized according to
-                Section <xref target="ES6" format="none">7.1.12.1</xref> of ES6; for
-                maximum interoperability preferably including the "Note 2" enhancement as well.
-                The latter is implemented by for example Google's V8 <xref target="V8"/>.
-                <vspace blankLines="1"/>
-                Due to the relative complexity of this part, it is not included in this specification.
-                <vspace blankLines="1"/>
-                Note that ES6 builds on the IEEE-754 <xref target="IEEE754"/> double precision
-                standard for storing <spanx style="verb">Number</spanx> data.  If the target
-                JSON system uses another internal format, it MUST (when targeting the 
-                JSON <spanx style="verb">Number</spanx> type), always convert the internal
-                representation of a value to its closest IEEE-754 double precision counterpart.
-                Higher precision can be supported by using proprietary data schemes, where the
-                JSON <spanx style="verb">String</spanx> type is used as a holder.
-                <vspace blankLines="1"/>
-                <xref target="ieee754.test"/> holds a set of test values.
-              </t>
-            </list>
+            The following sub sections describe serialization of primitive JSON data types
+            according to JCS.  This part is identical to that of ES6.
           </t>
+          <section anchor="json.ser.literals" title="Serialization of Null and Boolean">
+            <t>
+              The literals <spanx style="verb">null</spanx>, <spanx style="verb">true</spanx>,
+              and <spanx style="verb">false</spanx> present no challenge since they already have a
+              fixed definition in JSON <xref target="RFC8259"/>.
+            </t>
+          </section>
+          <section anchor="json.ser.string" title="Serialization of String">
+            <t>
+              For data of the type <spanx style="verb">String</spanx> (which includes
+              <spanx style="verb">Object</spanx> property names as well), each character MUST be serialized as
+              described in Section <xref target="ES6" format="none">24.3.2.2</xref> of ES6.
+              <vspace blankLines="1"/>
+              If the Unicode value falls within the traditional ASCII control
+              character range (U+0000 through U+001F), it MUST
+              be serialized using lowercase hexadecimal Unicode notation (\uhhhh) unless it is in the
+              set of predefined JSON control characters U+0008, U+0009, U+000A, U+000C or U+000D
+              which MUST be serialized as \b, \t, \n, \f and \r respectively.
+              <vspace blankLines="1"/>
+              If the Unicode value is outside of the ASCII control character range, it MUST
+              be serialized &quot;as&nbsp;is&quot; unless it is equivalent to
+              U+005C&nbsp;(\) or U+0022&nbsp;(") which MUST be serialized as \\ and \" respectively.
+              <vspace blankLines="1"/>
+              Finally, the serialized string value MUST be enclosed in double quotes (").
+              <vspace blankLines="1"/>
+              Note that many JSON systems permit the use of invalid Unicode data
+              like "lone&nbsp;surrogates" (e.g. U+DEAD), which also is dealt with in a platform specific way.
+              Since this leads to interoperability issues including broken signatures,
+              such usages MUST be avoided.
+              <vspace blankLines="1"/>
+              Note that although the Unicode standard offers a possibility combining
+              certain characters into one, referred to as "Unicode Normalization"
+              (<eref target="https://www.unicode.org/reports/tr15/">https://www.unicode.org/reports/tr15/</eref>),
+              such functionality MUST be delegated to the application layer
+              which already is the case for most other uses of JSON.
+            </t>
+          </section>
+          <section anchor="json.ser.number" title="Serialization of Number">
+            <t>
+              Data of the type <spanx style="verb">Number</spanx> MUST be serialized according to
+              Section <xref target="ES6" format="none">7.1.12.1</xref> of ES6; for
+              maximum interoperability preferably including the "Note 2" enhancement as well.
+              The latter is implemented by for example Google's V8 <xref target="V8"/>.
+              <vspace blankLines="1"/>
+              Due to the relative complexity of this part, it is not included in this specification.
+              <vspace blankLines="1"/>
+              Note that ES6 builds on the IEEE-754 <xref target="IEEE754"/> double precision
+              standard for storing <spanx style="verb">Number</spanx> data.  If the target
+              JSON system uses another internal format, it MUST (when targeting the
+              JSON <spanx style="verb">Number</spanx> type), always convert the internal
+              representation of a value to its closest IEEE-754 double precision counterpart.
+              Higher precision can be supported by using proprietary data schemes, where the
+              JSON <spanx style="verb">String</spanx> type is used as a holder.
+              <vspace blankLines="1"/>
+              <xref target="ieee754.test"/> holds a set of IEEE-754 sample values and their
+              corresponding JSON serialization.
+            </t>
+          </section>
         </section>
         <section anchor="json.sorting.properties" title="Sorting of Object Properties">
           <t>
@@ -379,7 +397,7 @@
         the adoption of the entire ES6 JSON processing model.
         <vspace blankLines="1"/>
         Other people who have contributed to this specification include
-        Richard Gibson and Mike Samuel.
+        Mike Samuel, Richard Gibson, Scott Ananian and Michal Wadas.
       </t>
     </section>
   </middle>
@@ -454,7 +472,7 @@
         </front>
       </reference>
     </references>
-    <section anchor="canonicalize.js" title="ES6 Canonicalizer">
+    <section anchor="canonicalize.js" title="ES6 Sample Canonicalizer">
       <t>
         Below is a functionally complete example of a JCS compliant canonicalizer
         for usage with ES6 based systems.
@@ -516,10 +534,10 @@
   };]]></artwork></figure>
       </t>
     </section>
-    <section anchor="ieee754.test" title="Sample Number Serializations">
+    <section anchor="ieee754.test" title="Number Serialization Samples">
       <t>
-        The following table holds a set of ES6 <spanx style="verb">Number</spanx> serializations including
-        some edge cases.  The field  &quot;ES6&nbsp;Internal&quot; refers to the internal
+        The following table holds a set of ES6 <spanx style="verb">Number</spanx> serialization samples,
+        including some edge cases.  The field  &quot;ES6&nbsp;Internal&quot; refers to the internal
         ES6 representation of the <spanx style="verb">Number</spanx> data type which is based on the
         IEEE-754 <xref target="IEEE754"/> standard using 64-bit (double precision) values,
         here expressed in hexadecimal.
