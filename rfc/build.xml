@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="fixing the I-D" default="help" basedir=".">
+
+  <property name="rfc.file" location="..\..\doc\security\draft-rundgren-json-canonicalization-scheme.html"/>
+
+  <property name="span.blue" value="&lt;span style=&quot;color:blue&quot;&gt;"/>
+  <property name="span.bi" value="&lt;span style=&quot;color:brown&quot;&gt;"/>
+
+  <target name="help">
+    <echo message="Targets: help fixing"/>
+  </target>
+
+  <target name="fixing">
+    <replace file="${rfc.file}" token="return buffer" value="return buffer" failOnNoReplacements="true"/>
+    <fixcrlf file="${rfc.file}" eol="lf"/>
+    <replaceregexp file="${rfc.file}"
+        match="lightyellow"
+        replace="#f0f0f0"
+        flags="g"/>
+    <replaceregexp file="${rfc.file}"
+        match="(&lt;pre)(.*\n?.*&quot;escaping&quot;)"
+        replace="\1 style=&quot;padding:1em 0.5em&quot;\2"
+        flags="g"/>
+    <replaceregexp file="${rfc.file}"
+        match="&lt;ul&gt;\n&lt;li&gt;"
+        replace="&lt;ul&gt;&lt;li&gt;"
+        flags="g"/>
+    <replaceregexp file="${rfc.file}"
+        match="&lt;ol&gt;\n&lt;li&gt;"
+        replace="&lt;ol&gt;&lt;li&gt;"
+        flags="g"/>
+    <replaceregexp file="${rfc.file}"
+        match="(\n&lt;li)(&gt;.* &lt;/li&gt;\n)"
+        replace="\1 style=&quot;margin-top:0.5em&quot;\2"
+        flags="g"/>
+    <replaceregexp file="${rfc.file}"
+        match="(\n&lt;li)(&gt;.* &lt;/li&gt;\n)"
+        replace="\1 style=&quot;margin-top:0.5em&quot;\2"
+        flags="g"/>
+    <replaceregexp file="${rfc.file}"
+        match="(\n&lt;li)(&gt;.* &lt;/li&gt;\n)"
+        replace="\1 style=&quot;margin-top:0.5em&quot;\2"
+        flags="g"/>
+    <replaceregexp file="${rfc.file}"
+        match="(&lt;pre)(.*var canonicalize)"
+        replace="\1 style=&quot;padding:1em 0.5em&quot;\2"
+        flags="g"/>
+    <replaceregexp file="${rfc.file}"
+        match="(&lt;pre)(.*7b\n?)"
+        replace="\1 style=&quot;padding:1em 0.5em&quot;\2"
+        flags="g"/>
+    <replaceregexp file="${rfc.file}"
+          match="&lt;p&gt;&lt;/p&gt;.*\n&lt;p&gt;&lt;/p&gt;.*\n.*\n&lt;ul .*ASCII.*\n.*\n"
+          replace=""
+          flags="g"/>
+    <replaceregexp file="${rfc.file}"
+          match="\:\&quot;\\u20ac"
+          replace=":&quot;&#x20AC;"
+          flags="g"/>
+    <replaceregexp file="${rfc.file}"
+          match="( \+\= )(JSON)(\.)"
+          replace="\1${span.bi}\2&lt;/span&gt;\3"
+          flags="g"/>
+    <replaceregexp file="${rfc.file}"
+          match="(       )(Object)(\.)"
+          replace="\1${span.bi}\2&lt;/span&gt;\3"
+          flags="g"/>
+    <replaceregexp file="${rfc.file}"
+          match="( \()(Array)(\.)"
+          replace="\1${span.bi}\2&lt;/span&gt;\3"
+          flags="g"/>
+    <replaceregexp file="${rfc.file}"
+          match="(\= )(true|false)(\;)"
+          replace="\1${span.blue}\2&lt;/span&gt;\3"
+          flags="g"/>
+    <replaceregexp file="${rfc.file}"
+          match="(  )(return)( buffer)"
+          replace="\1${span.blue}\2&lt;/span&gt;\3"
+          flags="g"/>
+     <replaceregexp file="${rfc.file}"
+          match=" if \("
+          replace=" ${span.blue}if&lt;/span&gt; ("
+          flags="g"/>
+    <replaceregexp file="${rfc.file}"
+          match="= function\("
+          replace="= ${span.blue}function&lt;/span&gt;("
+          flags="g"/>
+    <replaceregexp file="${rfc.file}"
+          match="  function "
+          replace="  ${span.blue}function&lt;/span&gt; "
+          flags="g"/>
+    <replaceregexp file="${rfc.file}"
+          match="\} else "
+          replace="} ${span.blue}else&lt;/span&gt; "
+          flags="g"/>
+    <replaceregexp file="${rfc.file}"
+          match=" typeof "
+          replace=" ${span.blue}typeof&lt;/span&gt; "
+          flags="g"/>
+    <replaceregexp file="${rfc.file}"
+          match="\= null "
+          replace="= ${span.blue}null&lt;/span&gt; "
+          flags="g"/>
+    <replaceregexp file="${rfc.file}"
+          match="(    )(//.*)(\n)"
+          replace="\1&lt;span style=&quot;color:#808080&quot;&gt;\2&lt;/span&gt;\3"
+          flags="g"/>
+    <replaceregexp file="${rfc.file}"
+          match="  var "
+          replace="  ${span.blue}var&lt;/span&gt; "
+          flags="g"/>
+    <replaceregexp file="${rfc.file}"
+          match="  let "
+          replace="  ${span.blue}let&lt;/span&gt; "
+          flags="g"/>
+    <replaceregexp file="${rfc.file}"
+          match="('[\[\]\{\}\,\:a-z]*')"
+          replace="&lt;span style=&quot;color:green&quot;&gt;\1&lt;/span&gt;"
+          flags="g"/>
+    <fixcrlf file="${rfc.file}" eol="crlf"/>
+  </target>
+</project>
