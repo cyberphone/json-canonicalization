@@ -80,7 +80,7 @@
         XML canonicalization rules as well as of the equally extensive
         Web Services security standards), may rightfully wonder why this
         particular effort would succeed. The reasons are twofold:
-        <list style="numbers">
+        <list style="symbols">
           <t>JSON is a considerably simpler format than XML, as well as lacking
           support for the powerful (but complex) namespace concept.</t>
           <t>
@@ -315,7 +315,6 @@
                 positions, let k be the smallest such index; then the string whose
                 value at position k has the smaller value, as determined by using
                 the &lt; operator, lexicographically precedes the other string.
-                <vspace blankLines="1"/>
                 If there is no index position at which they differ,
                 then the shorter string lexicographically precedes the longer string.
               </t>
@@ -370,8 +369,22 @@
         <vspace blankLines="1"/>
         In fact, the ES6 standard way of serializing objects using
         <spanx style="verb">JSON.stringify()</spanx> produces a
-        (for developers), more logical format, where properties are
-        kept in the order they were created or received.  If message
+        (for humans), more "logical" format, where properties are
+        kept in the order they were created or received.  The
+        example below shows an address record which could benefit from
+        ES6 standard serialization:
+      </t>
+      <t>
+        <figure align="center"><artwork><![CDATA[  {
+    "Name": "John Doe",
+    "Address": "2000 Sunset Boulevard",
+    "City": "Los Angeles",
+    "Zip": "90001",
+    "State": "CA"
+  }]]></artwork></figure>
+      </t>
+      <t>
+        If message
         size constraints are moderate, you may even "Pretty&nbsp;Print"
         JSON data on the wire.
       </t>
@@ -392,11 +405,11 @@
 
     <section anchor="Acknowledgements" title="Acknowledgements">
       <t>
-        Building on ES6 number normalization was originally
-        proposed by James Manger. This ultimately led to
+        Building on ES6 <spanx style="verb">Number</spanx> normalization was
+        originally proposed by James Manger. This ultimately led to
         the adoption of the entire ES6 JSON processing model.
         <vspace blankLines="1"/>
-        Other people who have contributed to this specification include
+        Other people who have contributed with valuable input to this specification include
         Mike Samuel, Richard Gibson, Scott Ananian and Michal Wadas.
       </t>
     </section>

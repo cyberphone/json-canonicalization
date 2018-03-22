@@ -9,16 +9,37 @@
   <target name="help">
     <echo message="Targets: help fixing"/>
   </target>
-
+  
+  <resources id="styling.xml">
+    <string>
+  <![CDATA[
+.tftable {border-collapse: collapse}
+.tftable th {font-size:10pt;background-color: #f0f0f0;
+border-width:1px;padding:4pt 10pt 4pt 10pt;
+border-style:solid;border-color: #a9a9a9;text-align:center;font-family:arial,verdana,helvetica}
+.tftable tr {background-color:#FFFFE0}
+.tftable td {border-width:1px;padding:4pt 8pt 4pt 8pt;border-style:solid;border-color:#a9a9a9}
+]]></string>
+  </resources>
+  <property name="styling" refid="styling.xml"/>
+  
   <target name="fixing">
     <replace file="${rfc.file}" token="return buffer" value="return buffer" failOnNoReplacements="true"/>
     <fixcrlf file="${rfc.file}" eol="lf"/>
+    <replaceregexp file="${rfc.file}"
+        match="(&lt;p&gt;This Internet-Draft will expire.*?&lt;\/p&gt;)"
+        replace="\1&lt;p&gt;&lt;i&gt;Note: this document has been slightly &quot;enhanced&quot; to make it more readable.&lt;\/i&gt;&lt;\/p&gt;"
+        flags="s"/>
     <replaceregexp file="${rfc.file}"
         match="lightyellow"
         replace="#f0f0f0"
         flags="g"/>
     <replaceregexp file="${rfc.file}"
         match="(&lt;pre)(.*\n?.*&quot;escaping&quot;)"
+        replace="\1 style=&quot;padding:1em 0.5em&quot;\2"
+        flags="g"/>
+    <replaceregexp file="${rfc.file}"
+        match="(&lt;pre)(.*\n.*&quot;John Doe&quot;)"
         replace="\1 style=&quot;padding:1em 0.5em&quot;\2"
         flags="g"/>
     <replaceregexp file="${rfc.file}"
@@ -30,17 +51,21 @@
         replace="&lt;ol&gt;&lt;li&gt;"
         flags="g"/>
     <replaceregexp file="${rfc.file}"
-        match="(\n&lt;li)(&gt;.* &lt;/li&gt;\n)"
-        replace="\1 style=&quot;margin-top:0.5em&quot;\2"
-        flags="g"/>
+        match="(\n&lt;li)(&gt;)((\d\.){1,4})"
+        replace="\1 \2\3"
+        flags="gs"/>
     <replaceregexp file="${rfc.file}"
-        match="(\n&lt;li)(&gt;.* &lt;/li&gt;\n)"
-        replace="\1 style=&quot;margin-top:0.5em&quot;\2"
-        flags="g"/>
+        match="(\n&lt;li)(&gt;)(Appendix)"
+        replace="\1 \2\3"
+        flags="gs"/>
     <replaceregexp file="${rfc.file}"
-        match="(\n&lt;li)(&gt;.* &lt;/li&gt;\n)"
-        replace="\1 style=&quot;margin-top:0.5em&quot;\2"
-        flags="g"/>
+        match="(\n&lt;li)(&gt;)(&lt;a href=&quot;#rfc.authors)"
+        replace="\1 \2\3"
+        flags="gs"/>
+    <replaceregexp file="${rfc.file}"
+        match="(\n&lt;li)(&gt;)"
+        replace="\1 style=&quot;margin-top:0.8em&quot;\2"
+        flags="gs"/>
     <replaceregexp file="${rfc.file}"
         match="(&lt;pre)(.*var canonicalize)"
         replace="\1 style=&quot;padding:1em 0.5em&quot;\2"
@@ -117,6 +142,30 @@
           match="('[\[\]\{\}\,\:a-z]*')"
           replace="&lt;span style=&quot;color:green&quot;&gt;\1&lt;/span&gt;"
           flags="g"/>
+    <replaceregexp file="${rfc.file}"
+          match="(\|\=\=.*)(ES6 Internal)(.*)(JSON Representation)(.*)(Comment)(.*\=\=\|)"
+          replace="&lt;tr&gt;&lt;th&gt;\2&lt;/th&gt;&lt;th&gt;\4&lt;/th&gt;&lt;th&gt;\6&lt;/th&gt;&lt;/tr&gt;"
+          flags="gs"/>
+    <replaceregexp file="${rfc.file}"
+          match="\|\-\-.*?\-\-\|\n"
+          replace=""
+          flags="gs"/>
+    <replaceregexp file="${rfc.file}"
+          match="\|\-\-.*?\-\-\|"
+          replace="&lt;/table&gt;"
+          flags="gs"/>
+    <replaceregexp file="${rfc.file}"
+          match="(\|\ )(.*?)(\ \|\ )(.*?)(\ \|\ )(.*?)(\ \|)"
+          replace="&lt;tr&gt;&lt;td&gt;&lt;tt style=&quot;font-size:12pt&quot;&gt;\2&lt;/tt&gt;&lt;/td&gt;&lt;td&gt;\4&lt;/td&gt;&lt;td&gt;\6&lt;/td&gt;&lt;/tr&gt;"
+          flags="g"/>
+    <replaceregexp file="${rfc.file}"
+          match="(&lt;pre&gt;)(.*Zero.*)(&lt;\/pre&gt;)"
+          replace="&lt;table style=&quot;margin-left:3em&quot; class=&quot;tftable&quot;&gt;\2"
+          flags="gs"/>
+    <replaceregexp file="${rfc.file}"
+          match="(&lt;\!\[CDATA\[\*\/\n)"
+          replace="\1${styling}"
+          flags="gs"/>
     <fixcrlf file="${rfc.file}" eol="crlf"/>
   </target>
 </project>
