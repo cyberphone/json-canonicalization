@@ -147,6 +147,9 @@
             </t>
           </list>
         </t>
+        <t>
+          These restrictions on JSON data are also compliant with I-JSON <xref target="RFC7493"/>.
+        </t>
       </section>
       <section anchor="json.canonicalization" title="JSON Canonicalization">
         <t>
@@ -324,11 +327,11 @@
             The rationale for basing the sort algorithm on UCS2/UTF-16 code units is that
             it maps directly to the string type in ECMAScript, Java, .NET and Python&nbsp;3.
             Systems using another representation of string data will need to convert
-            JSON properties into arrays of UCS2/UTF-16 code units before sorting.
+            JSON property strings into arrays of UCS2/UTF-16 code units before sorting.
             <vspace blankLines="1"/>
             Note: for the purpose obtaining a deterministic property order, sorting on
-            UTF-8 or UTF-32 encoded data would indeed also have worked, but the result would be
-            incompatible with this specification.
+            UTF-8 or UTF-32 encoded data would also work, but the result would differ
+            (and thus be incompatible with this specification).
           </t>
           <t>
             <xref target="canonicalize.js"/> shows the code for an ES6 based canonicalizer,
@@ -343,51 +346,22 @@
             should yield the following bytes here shown in hexadecimal notation:
           </t>
           <t>
-            <figure align="center">
-              <artwork><![CDATA[  7b 22 65 73 63 61 70 69 6e 67 22 3a 22 e2 82 ac 24 5c 75 30
+            <figure align="center"><artwork><![CDATA[  7b 22 65 73 63 61 70 69 6e 67 22 3a 22 e2 82 ac 24 5c 75 30
   30 30 66 5c 6e 41 27 42 5c 22 5c 5c 5c 5c 5c 22 2f 22 2c 22
   6e 75 6d 62 65 72 73 22 3a 5b 31 65 2b 33 30 2c 34 2e 35 2c
   36 2c 30 2e 30 30 32 2c 31 65 2d 32 37 5d 2c 22 6f 74 68 65
   72 22 3a 5b 6e 75 6c 6c 2c 74 72 75 65 2c 66 61 6c 73 65 5d
-  7d]]></artwork>
-            </figure>
+  7d]]></artwork></figure>
           </t>
           <t>
             This data is intended to be usable as
             interoperable input to cryptographic functions.
           </t>
+          <t>
+            For other uses see <xref target="json.wireformat"/>.
+          </t>
         </section>
       </section>
-    </section>
-    <section anchor="json.wireformat" title="Canonicalized JSON as &quot;Wire Format&quot;">
-      <t>
-        Since the result from the canonicalization process (see <xref target="json.utf8"/>),
-        is fully valid JSON, it can also be used as "Wire&nbsp;Format".
-        However, this is just an option since cryptographic schemes
-        based on JCS, in most cases would not depend on that externally
-        supplied JSON data already is canonicalized.
-        <vspace blankLines="1"/>
-        In fact, the ES6 standard way of serializing objects using
-        <spanx style="verb">JSON.stringify()</spanx> produces a
-        (for humans), more "logical" format, where properties are
-        kept in the order they were created or received.  The
-        example below shows an address record which could benefit from
-        ES6 standard serialization:
-      </t>
-      <t>
-        <figure align="center"><artwork><![CDATA[  {
-    "Name": "John Doe",
-    "Address": "2000 Sunset Boulevard",
-    "City": "Los Angeles",
-    "Zip": "90001",
-    "State": "CA"
-  }]]></artwork></figure>
-      </t>
-      <t>
-        If message
-        size constraints are moderate, you may even "Pretty&nbsp;Print"
-        JSON data on the wire.
-      </t>
     </section>
 
     <section anchor="IANA" title="IANA Considerations">
@@ -452,6 +426,7 @@
     <references title="Informal References">
       <?rfc include='reference.RFC.4648'?>
       <?rfc include='reference.RFC.7515'?>
+      <?rfc include='reference.RFC.7493'?>
       <reference anchor="V8" target="https://developers.google.com/v8/">
         <front>
           <title>Chrome V8 Open Source JavaScript Engine</title>
@@ -485,6 +460,7 @@
         </front>
       </reference>
     </references>
+
     <section anchor="canonicalize.js" title="ES6 Sample Canonicalizer">
       <t>
         Below is a functionally complete example of a JCS compliant canonicalizer
@@ -547,6 +523,7 @@
   };]]></artwork></figure>
       </t>
     </section>
+ 
     <section anchor="ieee754.test" title="Number Serialization Samples">
       <t>
         The following table holds a set of ES6 <spanx style="verb">Number</spanx> serialization samples,
@@ -603,6 +580,41 @@
         </figure>
       </t>
      </section>
+    
+    <section anchor="json.wireformat" title="Canonicalized JSON as &quot;Wire Format&quot;">
+      <t>
+        Since the result from the canonicalization process (see <xref target="json.utf8"/>),
+        is fully valid JSON, it can also be used as "Wire&nbsp;Format".
+        However, this is just an option since cryptographic schemes
+        based on JCS, in most cases would not depend on that externally
+        supplied JSON data already is canonicalized.
+        <vspace blankLines="1"/>
+        In fact, the ES6 standard way of serializing objects using
+        <spanx style="verb">JSON.stringify()</spanx> produces a
+        (for humans), more "logical" format, where properties are
+        kept in the order they were created or received.  The
+        example below shows an address record which could benefit from
+        ES6 standard serialization:
+      </t>
+      <t>
+        <figure align="center"><artwork><![CDATA[  {
+    "Name": "John Doe",
+    "Address": "2000 Sunset Boulevard",
+    "City": "Los Angeles",
+    "Zip": "90001",
+    "State": "CA"
+  }]]></artwork></figure>
+      </t>
+      <t>
+        Using canonicalization the properties above would be output in the order
+        "Address", "City", "Name", "State" and "Zip", which probably is somewhat less appealing.
+      </t>
+      <t>
+        If message size is not a concern, you may even "Pretty&nbsp;Print"
+        JSON data on the wire since whitespace is ignored regardless of chosed format.
+      </t>
+    </section>
+
     <section anchor="json.other" title="Other JSON Canonicalization Efforts">
       <t>
         There are (and have been) other efforts creating "Canonical JSON". 
@@ -623,6 +635,7 @@
         </list>
       </t>
     </section>
+
     <section anchor="json.dev" title="Development Portal">
       <t>
         The JSC specification is currently developed at

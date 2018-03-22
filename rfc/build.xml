@@ -39,11 +39,11 @@ border-style:solid;border-color: #a9a9a9;text-align:center;font-family:arial,ver
         replace="us-ascii"
         flags="g"/>
     <replaceregexp file="${rfc.file}"
-        match="(&lt;pre)(.*\n?.*&quot;escaping&quot;)"
+        match="(&lt;pre)(&gt;.*\n?.*&quot;escaping&quot;)"
         replace="\1 style=&quot;padding:1em 0.5em&quot;\2"
         flags="g"/>
     <replaceregexp file="${rfc.file}"
-        match="(&lt;pre)(.*\n.*&quot;John Doe&quot;)"
+        match="(&lt;pre)(&gt;.*?\n.*&quot;John Doe&quot;)"
         replace="\1 style=&quot;padding:1em 0.5em&quot;\2"
         flags="g"/>
     <replaceregexp file="${rfc.file}"
@@ -71,11 +71,11 @@ border-style:solid;border-color: #a9a9a9;text-align:center;font-family:arial,ver
         replace="\1 style=&quot;margin-top:0.8em&quot;\2"
         flags="gs"/>
     <replaceregexp file="${rfc.file}"
-        match="(&lt;pre)(.*var canonicalize)"
+        match="(&lt;pre)(&gt;.*var canonicalize)"
         replace="\1 style=&quot;padding:1em 0.5em&quot;\2"
         flags="g"/>
     <replaceregexp file="${rfc.file}"
-        match="(&lt;pre)(.*7b\n?)"
+        match="(&lt;pre)(&gt;.*7b\n?)"
         replace="\1 style=&quot;padding:1em 0.5em&quot;\2"
         flags="g"/>
     <replaceregexp file="${rfc.file}"
@@ -163,7 +163,7 @@ border-style:solid;border-color: #a9a9a9;text-align:center;font-family:arial,ver
           replace="&lt;tr&gt;&lt;td&gt;&lt;tt style=&quot;font-size:12pt&quot;&gt;\2&lt;/tt&gt;&lt;/td&gt;&lt;td&gt;\4&lt;/td&gt;&lt;td&gt;\6&lt;/td&gt;&lt;/tr&gt;"
           flags="g"/>
     <replaceregexp file="${rfc.file}"
-          match="(&lt;pre&gt;)(.*Zero.*)(&lt;\/pre&gt;)"
+          match="(&lt;pre&gt;)(.*?Zero.*?)(&lt;\/pre&gt;)"
           replace="&lt;table style=&quot;margin-left:3em&quot; class=&quot;tftable&quot;&gt;\2"
           flags="gs"/>
     <replaceregexp file="${rfc.file}"
