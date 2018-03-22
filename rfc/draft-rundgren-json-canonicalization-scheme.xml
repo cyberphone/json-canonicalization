@@ -95,6 +95,10 @@
         The JCS specification describes how JSON serializing rules compliant
         with ES6, can be used for supporting &quot;Crypto&nbsp;Safe&quot; JSON.
       </t>
+      <t>
+        JCS is compatible with some existing systems relying on JSON canonicalization
+        such as JWK Thumbprint <xref target="RFC7638"/> and Keybase <xref target="KEYBASE"/>. 
+      </t>
     </section>
 
     <section anchor="Terminology" title="Terminology">
@@ -122,7 +126,7 @@
               Parsing externally supplied JSON data which MUST conform to <xref target="RFC8259"/>.
             </t>
             <t>
-              Creating JSON data programmatically.
+              Programmatic creation of JSON data.
             </t>
           </list>
         </t>
@@ -158,7 +162,7 @@
         </t>
         <section anchor="json.whitespace" title="Whitespace Handling">
           <t>
-            Whitespace between elements MUST NOT be emitted when JCS is targeted.
+            Whitespace between elements MUST NOT be emitted.
           </t>
         </section>
         <section anchor="json.serialization.data" title="Serialization of Primitive Data Types">
@@ -250,15 +254,15 @@
               Due to the relative complexity of this part, it is not included in this specification.
               <vspace blankLines="1"/>
               Note that ES6 builds on the IEEE-754 <xref target="IEEE754"/> double precision
-              standard for storing <spanx style="verb">Number</spanx> data.  If the target
-              JSON system uses another internal format, it MUST (when targeting the
-              JSON <spanx style="verb">Number</spanx> type), always convert the internal
-              representation of a value to its closest IEEE-754 double precision counterpart.
-              Higher precision can be supported by using proprietary data schemes, where the
-              JSON <spanx style="verb">String</spanx> type is used as a holder.
-              <vspace blankLines="1"/>
+              standard for storing <spanx style="verb">Number</spanx> data.
               <xref target="ieee754.test"/> holds a set of IEEE-754 sample values and their
               corresponding JSON serialization.
+              <vspace blankLines="1"/>
+              Ocassionally applications need higher precision or longer integers than
+              offered by the current implementation of <spanx style="verb">Number</spanx>
+              in ES6 (and most other JSON systems as well).
+              <xref target="json.bignumbers"/> outlines how this can be achieved
+              in a portable and extensible way.
             </t>
           </section>
         </section>
@@ -424,6 +428,7 @@
       </reference>
     </references>
     <references title="Informal References">
+      <?rfc include='reference.RFC.7638'?>
       <?rfc include='reference.RFC.4648'?>
       <?rfc include='reference.RFC.7515'?>
       <?rfc include='reference.RFC.7493'?>
@@ -446,6 +451,20 @@
       <reference anchor="OPENKEY" target="https://github.com/cyberphone/openkeystore">
         <front>
           <title>Open Keystore</title>
+          <author/>
+          <date/>
+        </front>
+      </reference>
+      <reference anchor="KEYBASE" target="https://keybase.io/docs/api/1.0/canonical_packings#json">
+        <front>
+          <title>Keybase</title>
+          <author/>
+          <date/>
+        </front>
+      </reference>
+      <reference anchor="OPENAPI" target="https://www.openapis.org/">
+        <front>
+          <title>The OpenAPI Initiative</title>
           <author/>
           <date/>
         </front>
@@ -591,7 +610,7 @@
         <vspace blankLines="1"/>
         In fact, the ES6 standard way of serializing objects using
         <spanx style="verb">JSON.stringify()</spanx> produces a
-        (for humans), more "logical" format, where properties are
+        more "logical" format, where properties are
         kept in the order they were created or received.  The
         example below shows an address record which could benefit from
         ES6 standard serialization:
@@ -607,11 +626,71 @@
       </t>
       <t>
         Using canonicalization the properties above would be output in the order
-        "Address", "City", "Name", "State" and "Zip", which probably is somewhat less appealing.
+        "Address", "City", "Name", "State" and "Zip", which adds fuzziness
+        to the data from a human (developer or technical support), perspective.
       </t>
       <t>
-        If message size is not a concern, you may even "Pretty&nbsp;Print"
-        JSON data on the wire since whitespace is ignored regardless of chosed format.
+        Note that if message size is not a concern, you may even "Pretty&nbsp;Print"
+        JSON data on the wire, since whitespace is ignored regardless of format chosen.
+      </t>
+    </section>
+
+    <section anchor="json.bignumbers" title="Dealing with Big Numbers">
+      <t>
+        There are two major issues associated with the
+        JSON <spanx style="verb">Number</spanx> type, here illustrated by the following
+        sample object:
+      </t>
+      <t>
+        <figure align="center"><artwork><![CDATA[  {
+    "giantNumber": 1.4e+9999,
+    "payMeThis": 26000.33,
+    "int64Max": 9223372036854775807
+  }]]></artwork></figure>
+      </t>
+      <t>
+        Although the sample above conforms to JSON (according to <xref target="RFC8259"/>),
+        there are some practical hurdles to consider:
+      </t><t>
+        <list style="symbols">
+          <t>
+            Standard JSON parsers rarely process "giantNumber" in a meaningful way.
+            64-bit integers like "int64Max" normally pass through parsers, but in
+            most systems (including ES6), at the expense of lost precision.
+          </t>
+          <t>
+            Even if a parser would accept such objects, a remaining issue is that
+            you typically would use different math and code for handling "giantNumber"
+            and "int64Max".  In addition, monetary data like "payMeThis" would preferably
+            not rely on a floating point scheme due to rounding issues with respect
+            to decimal arithmetic.
+            <vspace blankLines="1"/>
+            The (to the author NB), only known way handling this kind of "overloading" of the
+            <spanx style="verb">Number</spanx> type (at least in an extensible manner), is through 
+            mapping mechanisms, instructing parsers what to do with different properties
+            based on their name.  However, this greatly limits the value of using the
+            <spanx style="verb">Number</spanx> type outside of its original
+            somewhat constrained, JavaScript context.
+          </t>
+        </list>
+      </t>
+      <t>
+        For using JCS (or actually any application intended for usage by multiple
+        parties potentially using independently developed software), it is therefore RECOMMENDED
+        to rather wrap numbers that do not have a natural place in the current JSON ecosystem,
+        using the JSON <spanx style="verb">String</spanx> type.  This is close to
+        a de-facto standard for open systems.  Aided by a mapping system; be it
+        programmatic like
+      </t>
+      <t>
+          <figure align="center">
+            <artwork><![CDATA[  var obj = JSON.parse('{"giantNumber": "1.4e+9999"}');
+  var biggie = new BigNum(obj.giantNumber);]]></artwork>
+          </figure>
+      </t>
+      <t>
+        or declarative schemes like OpenAPI <xref target="OPENAPI"/>,
+        there are no real limits, not even when using ES6.
       </t>
     </section>
 

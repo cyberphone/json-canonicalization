@@ -47,6 +47,10 @@ border-style:solid;border-color: #a9a9a9;text-align:center;font-family:arial,ver
         replace="\1 style=&quot;padding:1em 0.5em&quot;\2"
         flags="g"/>
     <replaceregexp file="${rfc.file}"
+        match="(&lt;pre)(&gt;.*?\n?.*1\.4e\+9999)"
+        replace="\1 style=&quot;padding:1em 0.5em&quot;\2"
+        flags="g"/>
+    <replaceregexp file="${rfc.file}"
         match="&lt;ul&gt;\n&lt;li&gt;"
         replace="&lt;ul&gt;&lt;li&gt;"
         flags="g"/>
@@ -87,7 +91,7 @@ border-style:solid;border-color: #a9a9a9;text-align:center;font-family:arial,ver
           replace=":&quot;&amp;#x20AC;"
           flags="g"/>
     <replaceregexp file="${rfc.file}"
-          match="( \+\= )(JSON)(\.)"
+          match="( \= )(JSON)(\.)"
           replace="\1${span.bi}\2&lt;/span&gt;\3"
           flags="g"/>
     <replaceregexp file="${rfc.file}"
@@ -100,6 +104,10 @@ border-style:solid;border-color: #a9a9a9;text-align:center;font-family:arial,ver
           flags="g"/>
     <replaceregexp file="${rfc.file}"
           match="(\= )(true|false)(\;)"
+          replace="\1${span.blue}\2&lt;/span&gt;\3"
+          flags="g"/>
+    <replaceregexp file="${rfc.file}"
+          match="(\= )(new)(\ )"
           replace="\1${span.blue}\2&lt;/span&gt;\3"
           flags="g"/>
     <replaceregexp file="${rfc.file}"
