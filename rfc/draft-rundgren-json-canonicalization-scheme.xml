@@ -258,7 +258,7 @@
               <xref target="ieee754.test"/> holds a set of IEEE-754 sample values and their
               corresponding JSON serialization.
               <vspace blankLines="1"/>
-              Ocassionally applications need higher precision or longer integers than
+              Occasionally applications need higher precision or longer integers than
               offered by the current implementation of <spanx style="verb">Number</spanx>
               in ES6 (and most other JSON systems as well).
               <xref target="json.bignumbers"/> outlines how this can be achieved
@@ -656,7 +656,7 @@
           <t>
             Standard JSON parsers rarely process "giantNumber" in a meaningful way.
             64-bit integers like "int64Max" normally pass through parsers, but in
-            most systems (including ES6), at the expense of lost precision.
+            most systems (including ES6), at the expense of loss of precision.
           </t>
           <t>
             Even if a parser would accept such objects, a remaining issue is that
