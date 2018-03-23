@@ -674,9 +674,9 @@
         </list>
       </t>
       <t>
-        For using JCS (or actually any application intended for usage by multiple
-        parties potentially using independently developed software), it is therefore RECOMMENDED
-        to rather wrap numbers that do not have a natural place in the current JSON ecosystem,
+        For usage with JCS (and in fact any application intended for usage by multiple
+        parties potentially using independently developed software), numbers that do
+        not have a natural place in the current JSON ecosystem MUST be wrapped
         using the JSON <spanx style="verb">String</spanx> type.  This is close to
         a de-facto standard for open systems.  Aided by a mapping system; be it
         programmatic like
