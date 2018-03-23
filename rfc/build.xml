@@ -180,4 +180,22 @@ border-style:solid;border-color: #a9a9a9;text-align:center;font-family:arial,ver
           flags="gs"/>
     <fixcrlf file="${rfc.file}" eol="crlf"/>
   </target>
+
+  <target name="try">
+    <fixcrlf file="${rfc.file}" eol="lf"/>
+    <replaceregexp file="${rfc.file}"
+        match="(&quot;:\ ?)(\d.*?)(\,|\n)"
+        replace="\1&lt;span style=&quot;color:green&quot;&gt;\2\&lt;/span&gt;\3"
+        flags="g"/>
+    <replaceregexp file="${rfc.file}"
+        match="(( \{?)|(\,))(&quot;)([a-z,A-Z,0-9]+)(&quot;\:)"
+        replace="\1\4&lt;span style=&quot;color:crimson&quot;&gt;\5&lt;/span&gt;\6"
+        flags="g"/>
+    <replaceregexp file="${rfc.file}"
+        match="(\:\ ?&quot;)(.*?)((&quot;)(\,|\n))"
+        replace="\1&lt;span style=&quot;color:royalblue&quot;&gt;\2\&lt;/span&gt;\3"
+        flags="g"/>
+    <fixcrlf file="${rfc.file}" eol="crlf"/>
+  </target>
+
 </project>
