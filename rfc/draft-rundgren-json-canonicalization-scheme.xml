@@ -659,10 +659,9 @@
             most systems (including ES6), at the expense of loss of precision.
           </t>
           <t>
-            Even if a parser would accept such objects, a remaining issue is that
-            you typically would use different math and code for handling "giantNumber"
-            and "int64Max".  In addition, monetary data like "payMeThis" would preferably
-            not rely on a floating point scheme due to rounding issues with respect
+            Another issue is that parsers typically would use different schemes for handling
+            "giantNumber" and "int64Max".  In addition, monetary data like "payMeThis" would
+            presumably not rely on a floating point scheme due to rounding issues with respect
             to decimal arithmetic.
             <vspace blankLines="1"/>
             The (to the author NB), only known way handling this kind of "overloading" of the
