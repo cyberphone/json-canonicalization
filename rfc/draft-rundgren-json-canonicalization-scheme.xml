@@ -162,7 +162,7 @@
         </t>
         <section anchor="json.whitespace" title="Whitespace Handling">
           <t>
-            Whitespace between elements MUST NOT be emitted.
+            Whitespace between JSON elements MUST NOT be emitted.
           </t>
         </section>
         <section anchor="json.serialization.data" title="Serialization of Primitive Data Types">
@@ -260,7 +260,7 @@
               <vspace blankLines="1"/>
               Occasionally applications need higher precision or longer integers than
               offered by the current implementation of <spanx style="verb">Number</spanx>
-              in ES6 (and most other JSON systems as well).
+              in ES6 (and in most other JSON systems as well).
               <xref target="json.bignumbers"/> outlines how this can be achieved
               in a portable and extensible way.
             </t>
@@ -674,12 +674,13 @@
         </list>
       </t>
       <t>
-        For usage with JCS (and in fact any application intended for usage by multiple
+        For usage with JCS (and in fact for any usage of JSON by multiple
         parties potentially using independently developed software), numbers that do
         not have a natural place in the current JSON ecosystem MUST be wrapped
         using the JSON <spanx style="verb">String</spanx> type.  This is close to
-        a de-facto standard for open systems.  Aided by a mapping system; be it
-        programmatic like
+        a de-facto standard for open systems.
+        <vspace blankLines="1"/>
+        Aided by a mapping system; be it programmatic like
       </t>
       <t>
           <figure align="center">
