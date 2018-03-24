@@ -22,7 +22,7 @@ border-style:solid;border-color: #a9a9a9;text-align:center;font-family:arial,ver
 ]]></string>
   </resources>
   <property name="styling" refid="styling.xml"/>
-  
+  <!-- No, I'm NOT a regex expert :-( -->
   <target name="fixing">
     <replace file="${rfc.file}" token="return buffer" value="return buffer" failOnNoReplacements="true"/>
     <fixcrlf file="${rfc.file}" eol="lf"/>
@@ -178,22 +178,53 @@ border-style:solid;border-color: #a9a9a9;text-align:center;font-family:arial,ver
           match="(&lt;\!\[CDATA\[\*\/\n)"
           replace="\1${styling}"
           flags="gs"/>
-    <fixcrlf file="${rfc.file}" eol="crlf"/>
-  </target>
-
-  <target name="try">
-    <fixcrlf file="${rfc.file}" eol="lf"/>
     <replaceregexp file="${rfc.file}"
         match="(&quot;:\ ?)(\d.*?)(\,|\n)"
         replace="\1&lt;span style=&quot;color:green&quot;&gt;\2\&lt;/span&gt;\3"
         flags="g"/>
     <replaceregexp file="${rfc.file}"
-        match="(( \{?)|(\,))(&quot;)([a-z,A-Z,0-9]+)(&quot;\:)"
+        match="(( \{?)|(\,))(&quot;)([a-zA-Z0-9]+)(&quot;\:)"
         replace="\1\4&lt;span style=&quot;color:crimson&quot;&gt;\5&lt;/span&gt;\6"
         flags="g"/>
     <replaceregexp file="${rfc.file}"
         match="(\:\ ?&quot;)(.*?)((&quot;)(\,|\n))"
         replace="\1&lt;span style=&quot;color:royalblue&quot;&gt;\2\&lt;/span&gt;\3"
+        flags="g"/>
+    <replaceregexp file="${rfc.file}"
+        match="(\:\ *\[)(.*?)(\,)"
+        replace="\1&lt;span style=&quot;color:green&quot;&gt;\2\&lt;/span&gt;\3"
+        flags="g"/>
+    <replaceregexp file="${rfc.file}"
+        match="(\:\ *\[\n?[\ ]*.*&gt;\,\n?[\ ]*)([a-z0-9\.\-]*)(\]|\,)"
+        replace="\1&lt;span style=&quot;color:green&quot;&gt;\2\&lt;/span&gt;\3"
+        flags="g"/>
+    <replaceregexp file="${rfc.file}"
+        match="(\:\ *\[\n?[\ ]*.*&gt;\,\n?[\ ]*)([a-z0-9\.\-]*)(\]|\,)"
+        replace="\1&lt;span style=&quot;color:green&quot;&gt;\2\&lt;/span&gt;\3"
+        flags="g"/>
+    <replaceregexp file="${rfc.file}"
+        match="(\:\ *\[\n?[\ ]*.*&gt;\,\n?[\ ]*)([a-z0-9\.\-]*)(\]|\,)"
+        replace="\1&lt;span style=&quot;color:green&quot;&gt;\2\&lt;/span&gt;\3"
+        flags="g"/>
+    <replaceregexp file="${rfc.file}"
+        match="(\:\ *\[\n?[\ ]*.*&gt;\,\n?[\ ]*)([a-z0-9\.\-]*)(\]|\,)"
+        replace="\1&lt;span style=&quot;color:green&quot;&gt;\2\&lt;/span&gt;\3"
+        flags="g"/>
+    <replaceregexp file="${rfc.file}"
+        match="(\:\[.*?\n?[\ ]*.*&gt;\,\n?[\ ]*)([a-z0-9\.\-]*)(\]|\,)"
+        replace="\1&lt;span style=&quot;color:green&quot;&gt;\2\&lt;/span&gt;\3"
+        flags="g"/>
+    <replaceregexp file="${rfc.file}"
+        match="(\:\[.*?\n?[\ ]*.*&gt;\,\n?[\ ]*)([a-z0-9\.\-]*)(\]|\,)"
+        replace="\1&lt;span style=&quot;color:green&quot;&gt;\2\&lt;/span&gt;\3"
+        flags="g"/>
+    <replaceregexp file="${rfc.file}"
+        match="(\:\[.*?\n?[\ ]*.*&gt;\,\n?[\ ]*)([a-z0-9\.\-]*)(\]|\,)"
+        replace="\1&lt;span style=&quot;color:green&quot;&gt;\2\&lt;/span&gt;\3"
+        flags="g"/>
+    <replaceregexp file="${rfc.file}"
+        match="(\:\[.*?\n?[\ ]*.*&gt;\,\n?[\ ]*)([a-z0-9\.\-]*)(\]|\,)"
+        replace="\1&lt;span style=&quot;color:green&quot;&gt;\2\&lt;/span&gt;\3"
         flags="g"/>
     <fixcrlf file="${rfc.file}" eol="crlf"/>
   </target>

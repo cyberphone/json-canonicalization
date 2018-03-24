@@ -661,7 +661,7 @@
           <t>
             Another issue is that parsers typically would use different schemes for handling
             "giantNumber" and "int64Max".  In addition, monetary data like "payMeThis" would
-            presumably not rely on a floating point scheme due to rounding issues with respect
+            presumably not rely on a floating point system due to rounding issues with respect
             to decimal arithmetic.
             <vspace blankLines="1"/>
             The (to the author NB), only known way handling this kind of "overloading" of the
