@@ -6,5 +6,5 @@
 
 ```js
     // We are about to serialize an 'Object'
-    (canonicalizeMode ? Object.keys(object).sort() ?  Object.keys(object)).forEach((key) => {
+    (canonicalizeMode ? Object.keys(object).sort() :  Object.keys(object)).forEach((key) => {
 ```
