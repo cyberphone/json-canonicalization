@@ -329,7 +329,7 @@
           </t>
           <t>
             The rationale for basing the sort algorithm on UCS2/UTF-16 code units is that
-            it maps directly to the string type in ECMAScript, Java, .NET and Python&nbsp;3.
+            it maps directly to the string type in ECMAScript, Java and .NET.
             Systems using another representation of string data will need to convert
             JSON property strings into arrays of UCS2/UTF-16 code units before sorting.
             <vspace blankLines="1"/>
@@ -344,7 +344,7 @@
         </section>
         <section anchor="json.utf8" title="UTF-8 Generation">
           <t>
-            Finally, the resulting string data MUST be converted into an UTF-8 formatted array.
+            Finally, the resulting JSON string data MUST be encoded in UTF-8.
             <vspace blankLines="1"/>
             Applied to the sample in <xref target="json.sorting.properties"/> this
             should yield the following bytes here shown in hexadecimal notation:
