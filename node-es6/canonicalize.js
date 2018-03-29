@@ -24,7 +24,9 @@ var canonicalize = function(object) {
                     buffer += ',';
                 }
                 next = true;
-                // Recursive call
+                /////////////////////////////////////////
+                // Array element - Recursive expansion //
+                /////////////////////////////////////////
                 serialize(element);
             });
             buffer += ']';
@@ -40,10 +42,14 @@ var canonicalize = function(object) {
                     buffer += ',';
                 }
                 next = true;
-                // Properties are just strings - Use ES6/JSON
+                ///////////////////////////////////////////////
+                // Property names are strings - Use ES6/JSON //
+                ///////////////////////////////////////////////
                 buffer += JSON.stringify(property);
                 buffer += ':';
-                // Recursive call
+                //////////////////////////////////////////
+                // Property value - Recursive expansion //
+                //////////////////////////////////////////
                 serialize(object[property]);
             });
             buffer += '}';
