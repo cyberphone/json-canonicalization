@@ -59,10 +59,10 @@ var canonicalize = function(object) {
 
 const tests = [{
   fileName: 'arrays.json',
-  inputData: new Uint8Array([0x5b,0x0d,0x0a,0x20,0x20,0x35,0x36,0x2c,0x0d,0x0a,0x20,0x20,0x7b,0x0d,0x0a,0x20,0x20,0x20,0x20,0x22,
-0x64,0x22,0x3a,0x20,0x74,0x72,0x75,0x65,0x2c,0x0d,0x0a,0x20,0x20,0x20,0x20,0x22,0x31,0x30,0x22,0x3a,
-0x20,0x6e,0x75,0x6c,0x6c,0x2c,0x0d,0x0a,0x20,0x20,0x20,0x20,0x22,0x31,0x22,0x3a,0x20,0x5b,0x20,0x5d,
-0x0d,0x0a,0x20,0x20,0x7d,0x0d,0x0a,0x5d]),
+  inputData: new Uint8Array([0x5b,0x0a,0x20,0x20,0x35,0x36,0x2c,0x0a,0x20,0x20,0x7b,0x0a,0x20,0x20,0x20,0x20,0x22,0x64,0x22,0x3a,
+0x20,0x74,0x72,0x75,0x65,0x2c,0x0a,0x20,0x20,0x20,0x20,0x22,0x31,0x30,0x22,0x3a,0x20,0x6e,0x75,0x6c,
+0x6c,0x2c,0x0a,0x20,0x20,0x20,0x20,0x22,0x31,0x22,0x3a,0x20,0x5b,0x20,0x5d,0x0a,0x20,0x20,0x7d,0x0a,
+0x5d,0x0a]),
   expectedData: new Uint8Array([0x5b,0x35,0x36,0x2c,0x7b,0x22,0x31,0x22,0x3a,0x5b,0x5d,0x2c,0x22,0x31,0x30,0x22,0x3a,0x6e,0x75,0x6c,
 0x6c,0x2c,0x22,0x64,0x22,0x3a,0x74,0x72,0x75,0x65,0x7d,0x5d])
 },{
@@ -189,7 +189,7 @@ function testing() {
 </g>
 </svg></div><div style="font-size:14pt;padding:10pt 0pt">JSON Canonicalization Test</div>
 <div style="font-weight:bold;padding-bottom:10pt" id="message"></div>
-<table class="tftable"><tr><th>JSON Input File: arrays.json</th><tr><td style="white-space:nowrap">[<br>&nbsp;&nbsp;56,<br>&nbsp;&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&quot;d&quot;:&nbsp;true,<br>&nbsp;&nbsp;&nbsp;&nbsp;&quot;10&quot;:&nbsp;null,<br>&nbsp;&nbsp;&nbsp;&nbsp;&quot;1&quot;:&nbsp;[&nbsp;]<br>&nbsp;&nbsp;}<br>]</td></tr><tr><th>Expected Result / UTF-8</th></tr><tr><td style="word-break:break-all">[56,{&quot;1&quot;:[],&quot;10&quot;:null,&quot;d&quot;:true}]</td></tr>
+<table class="tftable"><tr><th>JSON Input File: arrays.json</th><tr><td style="white-space:nowrap">[<br>&nbsp;&nbsp;56,<br>&nbsp;&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&quot;d&quot;:&nbsp;true,<br>&nbsp;&nbsp;&nbsp;&nbsp;&quot;10&quot;:&nbsp;null,<br>&nbsp;&nbsp;&nbsp;&nbsp;&quot;1&quot;:&nbsp;[&nbsp;]<br>&nbsp;&nbsp;}<br>]</td></tr><tr><th>Expected Result / UTF-8</th></tr><tr><td style="word-break:break-all">[56,{&quot;1&quot;:[],&quot;10&quot;:null,&quot;d&quot;:true}]</td></tr>
 <tr><td><code>5b 35 36 2c 7b 22 31 22 3a 5b 5d 2c 22 31 30 22 3a 6e 75 6c
 6c 2c 22 64 22 3a 74 72 75 65 7d 5d</code></td></tr><tr><td style="background-color:white;border-width:0px">&nbsp;<br>&nbsp;</td></tr><tr><th>JSON Input File: french.json</th><tr><td style="white-space:nowrap">{<br>&nbsp;&nbsp;&quot;peach&quot;:&nbsp;&quot;This&nbsp;sorting&nbsp;order&quot;,<br>&nbsp;&nbsp;&quot;péché&quot;:&nbsp;&quot;is&nbsp;wrong&nbsp;according&nbsp;to&nbsp;French&quot;,<br>&nbsp;&nbsp;&quot;pêche&quot;:&nbsp;&quot;but&nbsp;canonicalization&nbsp;MUST&quot;,<br>&nbsp;&nbsp;&quot;sin&quot;:&nbsp;&nbsp;&nbsp;&quot;ignore&nbsp;locale&quot;<br>}</td></tr><tr><th>Expected Result / UTF-8</th></tr><tr><td style="word-break:break-all">{&quot;peach&quot;:&quot;This&nbsp;sorting&nbsp;order&quot;,&quot;péché&quot;:&quot;is&nbsp;wrong&nbsp;according&nbsp;to&nbsp;French&quot;,&quot;pêche&quot;:&quot;but&nbsp;canonicalization&nbsp;MUST&quot;,&quot;sin&quot;:&quot;ignore&nbsp;locale&quot;}</td></tr>
 <tr><td><code>7b 22 70 65 61 63 68 22 3a 22 54 68 69 73 20 73 6f 72 74 69
