@@ -255,7 +255,7 @@
               <vspace blankLines="1"/>
               Note that ES6 builds on the IEEE-754 <xref target="IEEE754"/> double precision
               standard for storing <spanx style="verb">Number</spanx> data.
-              <xref target="ieee754.test"/> holds a set of IEEE-754 sample values and their
+              <xref target="json.ieee754.test"/> holds a set of IEEE-754 sample values and their
               corresponding JSON serialization.
               <vspace blankLines="1"/>
               Occasionally applications need higher precision or longer integers than
@@ -543,7 +543,7 @@
       </t>
     </section>
  
-    <section anchor="ieee754.test" title="Number Serialization Samples">
+    <section anchor="json.ieee754.test" title="Number Serialization Samples">
       <t>
         The following table holds a set of ES6 <spanx style="verb">Number</spanx> serialization samples,
         including some edge cases.  The field  &quot;ES6&nbsp;Internal&quot; refers to the internal
@@ -630,6 +630,11 @@
         to the data from a human (developer or technical support), perspective.
       </t>
       <t>
+        That is, for many applications, canonicalization would only be used internally
+        for creating a "hashable" representation of the data needed for cryptographic
+        operations.
+      </t>
+      <t>
         Note that if message size is not a concern, you may even "Pretty&nbsp;Print"
         JSON data on the wire, since whitespace is ignored regardless of format chosen.
       </t>
@@ -694,7 +699,7 @@
       </t>
     </section>
 
-    <section anchor="json.other" title="Other JSON Canonicalization Efforts">
+    <section anchor="json.otherefforts" title="Other JSON Canonicalization Efforts">
       <t>
         There are (and have been) other efforts creating "Canonical JSON". 
         Below is a list of URLs to some of them:
@@ -715,7 +720,7 @@
       </t>
     </section>
 
-    <section anchor="json.dev" title="Development Portal">
+    <section anchor="json.development" title="Development Portal">
       <t>
         The JSC specification is currently developed at
         <eref target="https://github.com/cyberphone/json-canonicalization">https://github.com/cyberphone/json-canonicalization</eref>.
