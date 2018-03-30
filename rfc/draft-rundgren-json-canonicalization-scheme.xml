@@ -86,7 +86,7 @@
           <t>
             ES6 compatible JSON serialization is already supported by most
             Web browsers, Node.js <xref target="NODEJS"/>,
-            as well as by third party libraries like Open&nbsp;Keystore <xref target="OPENKEY"/>
+            as well as by third party libraries like Open&nbsp;Keystore <xref target="OPENKEY"/>,
             giving the proposed canonicalization scheme a head start.
           </t>
         </list>
