@@ -68,7 +68,7 @@
         with XML Signature <xref target="XMLDSIG"/> as a prime example.
       </t>
       <t>
-        Since the desire here was keeping the data "as is", the canonicalization
+        Since the objective was keeping the data "as is", the canonicalization
         method was selected.  For reasons outlined in this document, JCS also
         depends on JSON serialization compatible with
         ECMAScript (aka JavaScript) version 6 <xref target="ES6"/>,
@@ -93,7 +93,8 @@
       </t>
       <t>
         The JCS specification describes how JSON serializing rules compliant
-        with ES6, can be used for supporting &quot;Crypto&nbsp;Safe&quot; JSON.
+        with ES6 combined with an elementary sorting scheme, can be used for
+        supporting &quot;Crypto&nbsp;Safe&quot; JSON.
       </t>
       <t>
         JCS is compatible with some existing systems relying on JSON canonicalization
