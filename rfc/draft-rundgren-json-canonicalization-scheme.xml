@@ -46,8 +46,8 @@
         By applying the rules defined by JCS (JSON Canonicalization Scheme),
         data provided in the JSON <xref target="RFC8259"/> format can be exchanged "as is",
         while still being subject to secure cryptographic operations.
-        JCS achieves this by exploiting the strict operation of the JSON serialization
-        method defined in ECMAScript beginning with version 6 <xref target="ES6"/>.
+        JCS achieves this by exploiting the strict serialization of JSON data
+        defined in ECMAScript, beginning with version 6 <xref target="ES6"/>.
       </t>
       <t>
         The intended audiences of this document are JSON tool vendors, as
