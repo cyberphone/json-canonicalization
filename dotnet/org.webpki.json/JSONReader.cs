@@ -32,6 +32,12 @@ namespace Org.Webpki.Json
         {
         }
 
+        public JSONReader(byte[] jsonData)
+            : this(new UTF8Encoding().GetString(jsonData))
+        {
+
+        }
+
         public object Read()
         {
             object v = ReadCore();

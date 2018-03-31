@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+using System;
+using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using Org.Webpki.Json;
 
@@ -10,32 +8,53 @@ namespace test
 {
     class Program
     {
+        static string testData;
+
+        static void PerformOneTest(string inputFilePath)
+        {
+            string fileName = Path.GetFileName(inputFilePath);
+            Console.WriteLine(fileName);
+            byte[] actual = new JSONCanonicalizer(ArrayUtil.ReadFile(inputFilePath)).GetEncodedUTF8();
+//            Console.WriteLine(new JSONCanonicalizer(ArrayUtil.ReadFile(inputFilePath)).GetEncodedString());
+            byte[] expected = ArrayUtil.ReadFile(Path.Combine(Path.Combine(testData, "output"), fileName));
+            if (!actual.SequenceEqual(expected))
+            {
+                Console.WriteLine("FAIL");
+                Console.WriteLine(actual.Length);
+                Console.WriteLine(expected.Length);
+            }
+        }
+
         static void Main(string[] args)
         {
-            Class1 o = new Class1();
-            Console.WriteLine("Kurt=" + o.kurt);
-            object json = new JSONReader("[]").Read();
-            Console.WriteLine("json=" + json.ToString());
-            int i;
-            int q = 3;
-            string path = new Uri(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().CodeBase)).LocalPath;
-            while (--q > 0)
+            if (args.Length == 0)
             {
-                i = System.IO.Path.GetDirectoryName(path).LastIndexOf(System.IO.Path.DirectorySeparatorChar);
-                Console.WriteLine(path);
-                if (i <= 0)
+                // This code is based on the directory structure of the repository
+                int i;
+                int q = 3;
+                string path = new Uri(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().CodeBase)).LocalPath;
+                while (--q > 0)
                 {
-                    throw new Exception("Strange file path");
+                    i = Path.GetDirectoryName(path).LastIndexOf(Path.DirectorySeparatorChar);
+                    Console.WriteLine(path);
+                    if (i <= 0)
+                    {
+                        throw new Exception("Strange file path");
+                    }
+                    path = Path.GetDirectoryName(path).Substring(0, i);
                 }
-                path = System.IO.Path.GetDirectoryName(path).Substring(0, i);
+                testData = Path.Combine(path, "testdata");
             }
-            string testData = System.IO.Path.Combine(path, "testdata");
+            else
+            {
+                // Alternatively you may give the full path to the testdata folder
+                testData = args[0];
+            }
             Console.WriteLine(testData);
-            string[] files = System.IO.Directory.GetFiles(System.IO.Path.Combine(testData, "input"));
+            string[] files = Directory.GetFiles(Path.Combine(testData, "input"));
             foreach (string file in files)
             {
-                new JSONReader(new System.IO.StreamReader(file)).Read();
-                System.Console.WriteLine(System.IO.Path.GetFileName(file));
+                PerformOneTest(file);
             }
         }
     }

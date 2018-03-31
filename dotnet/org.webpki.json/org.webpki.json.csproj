@@ -40,7 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="JSONCanonicalizer.cs" />
     <Compile Include="JSONReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
