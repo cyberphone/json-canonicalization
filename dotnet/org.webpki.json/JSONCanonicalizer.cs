@@ -1,9 +1,9 @@
 using System;
 using System.IO;
 using System.Text;
+using System.Collections;
 using System.Collections.Specialized;
 using System.Collections.Generic;
-using System.Collections;
 
 // Ultra simple canonicalizer for .NET
 // Needs an improvment for "Number" to cope with the full spec... 

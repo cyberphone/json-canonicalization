@@ -10,6 +10,7 @@ using System.Collections.Specialized;
 using System.Collections.Generic;
 
 // Simple JSON parser for .NET
+// It uses OrderedDictionary for Object, and List for Array
 
 namespace Org.Webpki.Json
 {

@@ -68,8 +68,7 @@ namespace test
                 // Alternatively you may give the full path to the testdata folder
                 testData = args[0];
             }
-            string[] files = Directory.GetFiles(Path.Combine(testData, "input"));
-            foreach (string file in files)
+            foreach (string file in Directory.GetFiles(Path.Combine(testData, "input")))
             {
                 PerformOneTest(file);
             }
