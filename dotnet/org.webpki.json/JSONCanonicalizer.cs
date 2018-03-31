@@ -88,22 +88,22 @@ namespace Org.Webpki.Json
             {
                 SortedDictionary<string, object> dict =
                     new SortedDictionary<string, object>(StringComparer.Ordinal);
-                foreach (DictionaryEntry de in (OrderedDictionary)o)
+                foreach (DictionaryEntry directoryEntry in (OrderedDictionary)o)
                 {
-                    dict.Add((string)de.Key, de.Value);
+                    dict.Add((string)directoryEntry.Key, directoryEntry.Value);
                 }
                 buffer.Append('{');
                 bool next = false;
-                foreach (var de in dict)
+                foreach (var directoryEntry in dict)
                 {
                     if (next)
                     {
                         buffer.Append(',');
                     }
                     next = true;
-                    SerializeString(de.Key);
+                    SerializeString(directoryEntry.Key);
                     buffer.Append(':');
-                    Serialize(de.Value);
+                    Serialize(directoryEntry.Value);
                 }
                 buffer.Append('}');
             }

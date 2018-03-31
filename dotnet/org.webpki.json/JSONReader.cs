@@ -9,6 +9,7 @@ using System.Globalization;
 using System.Collections.Specialized;
 using System.Collections.Generic;
 
+// Simple JSON parser for .NET
 
 namespace Org.Webpki.Json
 {
