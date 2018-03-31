@@ -46,6 +46,7 @@ namespace Org.Webpki.Json
                     case '\n':
                         Escape('n');
                         break;
+
                     case '\b':
                         Escape('b');
                         break;
@@ -137,6 +138,10 @@ namespace Org.Webpki.Json
             else if (o is Double)
             {
                 buffer.Append(o.ToString().ToLowerInvariant());
+            }
+            else
+            {
+                throw new Exception("Unknown object: " + o);
             }
         }
 
