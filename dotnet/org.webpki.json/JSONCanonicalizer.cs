@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Collections;
 
 // Ultra simple canonicalizer for .NET
-// Needs an improvment for "Number" to cope with the full spec.. 
+// Needs an improvment for "Number" to cope with the full spec... 
 
 namespace Org.Webpki.Json
 {
@@ -35,6 +35,7 @@ namespace Org.Webpki.Json
         {
             buffer.Append('\\').Append(c);
         }
+
         private void SerializeString(string value)
         {
             buffer.Append('"');
@@ -149,6 +150,6 @@ namespace Org.Webpki.Json
         public byte[] GetEncodedUTF8()
         {
             return new UTF8Encoding().GetBytes(GetEncodedString());
-       }
+        }
     }
 }
