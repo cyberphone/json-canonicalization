@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "test", "test\test.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "org.webpki.json", "org.webpki.json\org.webpki.json.csproj", "{B55A7FF8-A761-4E8C-9794-E0B8D9E11339}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "datacontract", "datacontract\datacontract.csproj", "{B68C1D60-6ABD-45DB-9BED-2BFFB2C6449B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{B55A7FF8-A761-4E8C-9794-E0B8D9E11339}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B55A7FF8-A761-4E8C-9794-E0B8D9E11339}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B55A7FF8-A761-4E8C-9794-E0B8D9E11339}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B68C1D60-6ABD-45DB-9BED-2BFFB2C6449B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B68C1D60-6ABD-45DB-9BED-2BFFB2C6449B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B68C1D60-6ABD-45DB-9BED-2BFFB2C6449B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B68C1D60-6ABD-45DB-9BED-2BFFB2C6449B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
