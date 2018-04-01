@@ -192,7 +192,7 @@ border-style:solid;border-color: #a9a9a9;text-align:center;font-family:arial,ver
 
   	<replaceregexp file="${rfc.file}"
         match="(( \{?)|(\,))(&quot;)([a-zA-Z0-9]+)(&quot;\:)"
-        replace="\1\4&lt;span style=&quot;color:crimson&quot;&gt;\5&lt;/span&gt;\6"
+        replace="\1\4&lt;span style=&quot;color:brown&quot;&gt;\5&lt;/span&gt;\6"
         flags="g"/>
 
   	<replaceregexp file="${rfc.file}"
