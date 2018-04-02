@@ -39,8 +39,7 @@ namespace test
             Console.WriteLine(utf8InHex.Append('\n').ToString());
             if (!actual.SequenceEqual(expected))
             {
-                Console.WriteLine(new UTF8Encoding().GetString(actual));
-                throw new Exception("Failed");
+                Console.WriteLine("Failed:\n" + new UTF8Encoding().GetString(actual));
             }
         }
 

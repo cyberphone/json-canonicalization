@@ -124,7 +124,7 @@
         </t><t>
           <list style="symbols">
             <t>
-              Parsing externally supplied JSON data which MUST conform to <xref target="RFC8259"/>.
+              Parsing externally supplied JSON data.
             </t>
             <t>
               Programmatic creation of JSON data.
@@ -132,8 +132,8 @@
           </list>
         </t>
         <t>
-          Irrespective of method used, the internal representation of JSON data MUST be compatible
-          both with ES6 and <xref target="RFC8259"/> which implies the following:
+          Irrespective of method used, the JSON data MUST be compatible
+          both with ES6 and I-JSON <xref target="RFC7493"/>, which implies the following:
         </t>
         <t>
           <list style="symbols">
@@ -151,9 +151,6 @@
               Also see <xref target="json.ser.number"/>.
             </t>
           </list>
-        </t>
-        <t>
-          These restrictions on JSON data are also compliant with I-JSON <xref target="RFC7493"/>.
         </t>
       </section>
       <section anchor="json.canonicalization" title="JSON Canonicalization">
@@ -175,7 +172,8 @@
               <artwork><![CDATA[  {
     "escaping": "\u20ac$\u000F\u000aA'\u0042\u0022\u005c\\\"\/",
     "other":  [null, true, false],
-    "numbers": [1E30, 4.50, 6, 2e-3, 0.000000000000000000000000001]
+    "numbers": [1E30, 4.50, 333333333.33333329,
+                2e-3, 0.000000000000000000000000001]
   }]]></artwork>
             </figure>
           </t>
@@ -188,7 +186,7 @@
           <t>
             <figure align="center">
               <artwork><![CDATA[  {"escaping":"\u20ac$\u000f\nA'B\"\\\\\"/","other":[null,true,
-  false],"numbers":[1e+30,4.5,6,0.002,1e-27]}]]></artwork>
+  false],"numbers":[1e+30,4.5,333333333.3333333,0.002,1e-27]}]]></artwork>
             </figure>
           </t>
           <t>
@@ -280,7 +278,7 @@
           <t>
             <figure align="center">
               <artwork><![CDATA[  {"escaping":"\u20ac$\u000f\nA'B\"\\\\\"/","numbers":[1e+30,
-  4.5,6,0.002,1e-27],"other":[null,true,false]}]]></artwork>
+  4.5,333333333.3333333,0.002,1e-27],"other":[null,true,false]}]]></artwork>
             </figure>
           </t>
           <t>
@@ -354,9 +352,9 @@
             <figure align="center"><artwork><![CDATA[  7b 22 65 73 63 61 70 69 6e 67 22 3a 22 e2 82 ac 24 5c 75 30
   30 30 66 5c 6e 41 27 42 5c 22 5c 5c 5c 5c 5c 22 2f 22 2c 22
   6e 75 6d 62 65 72 73 22 3a 5b 31 65 2b 33 30 2c 34 2e 35 2c
-  36 2c 30 2e 30 30 32 2c 31 65 2d 32 37 5d 2c 22 6f 74 68 65
-  72 22 3a 5b 6e 75 6c 6c 2c 74 72 75 65 2c 66 61 6c 73 65 5d
-  7d]]></artwork></figure>
+  33 33 33 33 33 33 33 33 33 2e 33 33 33 33 33 33 33 2c 30 2e
+  30 30 32 2c 31 65 2d 32 37 5d 2c 22 6f 74 68 65 72 22 3a 5b
+  6e 75 6c 6c 2c 74 72 75 65 2c 66 61 6c 73 65 5d 7d]]></artwork></figure>
           </t>
           <t>
             This data is intended to be usable as
@@ -399,6 +397,7 @@
       <?rfc include='reference.RFC.2119'?>
       <?rfc include='reference.RFC.8259'?>
       <?rfc include='reference.RFC.8174'?>
+      <?rfc include='reference.RFC.7493'?>
 
       <reference anchor="ES6" target="https://www.ecma-international.org/ecma-262/6.0/index.html">
         <front>
@@ -432,7 +431,6 @@
       <?rfc include='reference.RFC.7638'?>
       <?rfc include='reference.RFC.4648'?>
       <?rfc include='reference.RFC.7515'?>
-      <?rfc include='reference.RFC.7493'?>
       <reference anchor="V8" target="https://developers.google.com/v8/">
         <front>
           <title>Chrome V8 Open Source JavaScript Engine</title>

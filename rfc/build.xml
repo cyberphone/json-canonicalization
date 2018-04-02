@@ -236,6 +236,10 @@ border-style:solid;border-color: #a9a9a9;text-align:center;font-family:arial,ver
         match="(\:\[.*?\n?[\ ]*.*&gt;\,\n?[\ ]*)([a-z0-9\.\-]*)(\]|\,)"
         replace="\1${span.green}\2\&lt;/span&gt;\3"
         flags="g"/>
+    <replaceregexp file="${rfc.file}"
+        match="(&gt;\,\ )([a-z0-9\.\-]*)(\])"
+        replace="\1${span.green}\2\&lt;/span&gt;\3"
+        flags="g"/>
 
     <replaceregexp file="${rfc.file}"
         match="(in most cases would)(.*?)(canonicalized)"
