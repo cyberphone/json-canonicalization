@@ -1,0 +1,3 @@
+The value:          333333333.33333329
+Is roundtripped to: 333333333.333333
+It should be:       333333333.3333333
