@@ -137,7 +137,7 @@ namespace Org.Webpki.Json
             }
             else if (o is Double)
             {
-                buffer.Append(o.ToString().ToLowerInvariant());
+                buffer.Append(((Double)o).ToString("G16").ToLowerInvariant());
             }
             else
             {
