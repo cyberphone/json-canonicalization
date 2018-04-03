@@ -670,7 +670,7 @@
           <t>
             Standard JSON parsers rarely process "giantNumber" in a meaningful way.
             64-bit integers like "int64Max" normally pass through parsers, but in
-            most systems (including ES6), at the expense of loss of precision.
+            systems like ES6, at the expense of lost precision.
           </t>
           <t>
             Another issue is that parsers typically would use different schemes for handling
