@@ -6,13 +6,12 @@ By applying the rules defined by JCS (JSON Canonicalization Scheme),
 data provided in the JSON [[RFC8259](https://tools.ietf.org/html/rfc8259)]
 format can be exchanged "as is", while still being subject to secure cryptographic operations.
 JCS achieves this by combining the JSON serialization
-methods defined in ECMAScript beginning with version 6
-[[ES6](https://www.ecma-international.org/ecma-262/6.0/index.html)],
+methods defined in ECMAScript [[ES6](https://www.ecma-international.org/ecma-262/6.0/index.html)],
 with an elementary sorting scheme.
 
 Specification: https://cyberphone.github.io/doc/security/draft-rundgren-json-canonicalization-scheme.html
 
-The JSON Canonicalization Scheme concept builds on:
+The JSON Canonicalization Scheme concept in a nutshell:
 - Serialization of primitive JSON data types using methods compatible with ECMAScript's `JSON.stringify()`
 - Lexicographic sorting of `Object` properties in a *recursive* process
 - Array data is also subject to canonicalization, *but element order remains untouched*
