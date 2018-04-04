@@ -338,7 +338,8 @@
         </section>
         <section anchor="json.utf8" title="UTF-8 Generation">
           <t>
-            Finally, the resulting JSON string data MUST be encoded in UTF-8.
+            Finally, in order to create a platform independent representation,
+            the resulting JSON string data MUST be encoded in UTF-8.
             <vspace blankLines="1"/>
             Applied to the sample in <xref target="json.sorting.properties"/> this
             should yield the following bytes here shown in hexadecimal notation:
@@ -352,8 +353,7 @@
   33 33 33 33 33 33 2c 30 2e 30 30 32 2c 31 65 2d 32 37 5d 7d]]></artwork></figure>
           </t>
           <t>
-            This data is intended to be usable as
-            interoperable input to cryptographic functions.
+            This data is intended to be usable as input to cryptographic functions.
           </t>
           <t>
             For other uses see <xref target="json.wireformat"/>.
