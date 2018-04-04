@@ -197,8 +197,10 @@
           </t>
           <t>
             The reason for the huge difference between the parsed data and its
-            serialized counterpart, is due to a wider tolerance on input data (as defined
-            by <xref target="RFC8259"/>) than on output data (as defined by ES6).
+            serialized counterpart, is due to a wide tolerance on input data (as defined
+            by <xref target="RFC8259"/>), while output data (as defined by ES6),
+            has a fixed representation.  As can be seen by the example,
+            numbers are subject to rounding as well.
             <vspace blankLines="1"/>
             The following sub sections describe serialization of primitive JSON data types
             according to JCS.  This part is identical to that of ES6.
