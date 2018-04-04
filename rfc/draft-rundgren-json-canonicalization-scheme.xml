@@ -621,16 +621,16 @@
       </t>
       <t>
         <figure align="center"><artwork><![CDATA[  {
-    "Name": "John Doe",
-    "Address": "2000 Sunset Boulevard",
-    "City": "Los Angeles",
-    "Zip": "90001",
-    "State": "CA"
+    "name": "John Doe",
+    "address": "2000 Sunset Boulevard",
+    "city": "Los Angeles",
+    "zip": "90001",
+    "state": "CA"
   }]]></artwork></figure>
       </t>
       <t>
         Using canonicalization the properties above would be output in the order
-        "Address", "City", "Name", "State" and "Zip", which adds fuzziness
+        "address", "city", "name", "state" and "zip", which adds fuzziness
         to the data from a human (developer or technical support), perspective.
       </t>
       <t>
