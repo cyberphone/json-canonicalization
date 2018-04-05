@@ -26,6 +26,7 @@
           <country>France</country>
         </postal>
         <email>anders.rundgren.net@gmail.com</email>
+        <uri>https://www.linkedin.com/in/andersrundgren/</uri>
       </address>
     </author>
 
@@ -70,9 +71,9 @@
       </t>
       <t>
         Since the objective was keeping the data "as is", the canonicalization
-        method was selected.  For reasons outlined in this document, JCS
-        depends heavily on serialization of JSON data compatible with
-        ECMAScript (aka JavaScript), beginning with version 6 <xref target="ES6"/>,
+        method was selected.  For avoiding "reinventing the wheel",
+        JCS relies on serialization of JSON data compatible with
+        ECMAScript (aka JavaScript) beginning with version 6 <xref target="ES6"/>,
         from now on simply referred to as "ES6".
       </t>
       <t>
