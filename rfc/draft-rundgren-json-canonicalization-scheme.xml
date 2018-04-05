@@ -70,8 +70,8 @@
       </t>
       <t>
         Since the objective was keeping the data "as is", the canonicalization
-        method was selected.  For reasons outlined in this document, JCS also
-        depends on serialization of JSON data compatible with
+        method was selected.  For reasons outlined in this document, JCS
+        depends heavily on serialization of JSON data compatible with
         ECMAScript (aka JavaScript), beginning with version 6 <xref target="ES6"/>,
         from now on simply referred to as "ES6".
       </t>
@@ -82,8 +82,10 @@
         Web Services security standards), may rightfully wonder why this
         particular effort would succeed. The reasons are twofold:
         <list style="symbols">
-          <t>JSON is a considerably simpler format than XML, as well as lacking
-          support for the powerful (but complex) namespace concept.</t>
+          <t>
+            JSON is a considerably simpler format than XML, as well as lacking
+            support for the powerful (but complex) namespace concept.
+          </t>
           <t>
             ES6 compatible JSON serialization is already supported by most
             Web browsers, Node.js <xref target="NODEJS"/>,
@@ -257,8 +259,8 @@
               corresponding JSON serialization.
               <vspace blankLines="1"/>
               Occasionally applications need higher precision or longer integers than
-              offered by the current implementation of <spanx style="verb">Number</spanx>
-              in ES6 (and in most other JSON systems as well).
+              offered by the current implementation of JSON <spanx style="verb">Number</spanx>
+              in ES6.
               <xref target="json.bignumbers"/> outlines how this can be achieved
               in a portable and extensible way.
             </t>
