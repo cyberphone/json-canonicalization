@@ -4,6 +4,7 @@
   <property name="src.dir" location="src"/>
   <property name="test.dir" location="../testdata"/>
   <property name="browser.file" location="../browsers/browser-json-canonicalization.html"/>
+  <property name="es6test.file" location="c:/es6/numbers/es6testfile100m.txt"/>
   <property name="temp.dir" location=".tmp"/>
   <property file="webpki.properties"/>
   <property name="logotype.file" location="${webpki.openkeystore}/library/generators/org/webpki/json/webpki-logo.svg"/>
@@ -15,7 +16,7 @@
   </path>
 
   <target name="help">
-    <echo message="Targets: help test [-Dfile=filename] browser"/>
+    <echo message="Targets: help test [-Dfile=filename] browser mega"/>
   </target>
 	
   <target name="_compile">
@@ -65,6 +66,20 @@
       <arg value="${test.dir}"/>
       <arg value="${browser.file}"/>
       <arg value="${logotype.file}"/>
+      <jvmarg value="-Dfile.encoding=UTF8"/>
+    </java>
+  </target>
+
+  <target name="mega" depends="_compile">
+    <java fork="yes"
+          classname="MegaES6NumberTest"
+            dir="${temp.dir}"
+          failonerror="true">
+      <classpath>
+        <pathelement path="${temp.dir}"/>
+        <path refid="lib.classpath"/>
+      </classpath>
+      <arg value="${es6test.file}"/>
       <jvmarg value="-Dfile.encoding=UTF8"/>
     </java>
   </target>
