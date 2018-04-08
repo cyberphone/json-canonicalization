@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using Org.Webpki.Json;
+using Org.Webpki.Es6Numbers;
 
 namespace datacontract
 {

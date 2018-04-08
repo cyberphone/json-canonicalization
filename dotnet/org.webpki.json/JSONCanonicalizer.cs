@@ -8,7 +8,7 @@ using System.Collections.Generic;
 // Ultra simple canonicalizer for .NET
 // Needs an improvment for "Number" to cope with the full spec... 
 
-namespace Org.Webpki.Json
+namespace Org.Webpki.Es6Numbers
 {
     public class JSONCanonicalizer
     {
