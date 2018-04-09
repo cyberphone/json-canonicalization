@@ -85,7 +85,12 @@ public class Base10ExponentGenerator {
 			for (int l = fractionMultiplier.length(); l < 36; l++) {
 				s.append(' ');
 			}
-			s.append(exp).append(") /* [").append(i + EXPONENT_OFFSET).append("] */");
+			String expString = String.valueOf(exp);
+			s.append(exp).append(")");
+			for (int l = expString.length(); l < 5; l++) {
+				s.append(' ');
+			}
+			s.append("/* [").append(i + EXPONENT_OFFSET).append("] */");
 		}
 		s.append("\n        };\n    }\n}\n");
 		System.out.println(s.toString());

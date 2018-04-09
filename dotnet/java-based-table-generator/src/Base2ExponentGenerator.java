@@ -85,7 +85,12 @@ public class Base2ExponentGenerator {
 			for (int l = mantissaMultiplier.length(); l < 36; l++) {
 				s.append(' ');
 			}
-			s.append(exp).append(") /* [").append(i + EXPONENT_OFFSET).append("] */");
+			String expString = String.valueOf(exp);
+			s.append(expString).append(")");
+			for (int l = expString.length(); l < 6; l++) {
+				s.append(' ');
+			}
+			s.append("/* [").append(i + EXPONENT_OFFSET).append("] */");
 		}
 		s.append("\n        };\n    }\n}\n");
 		System.out.println(s.toString());
