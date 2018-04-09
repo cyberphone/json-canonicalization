@@ -1,4 +1,4 @@
-﻿/*
+/*
  *  Copyright 2006-2018 WebPKI.org (http://webpki.org).
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,6 +15,8 @@
  *
  */
 
+using System;
+using System.Linq;
 
 //////////////////////////////////////////////////////
 // Formatting of IEEE-754 double precision objects  //
@@ -23,12 +25,9 @@
 // Author: Anders Rundgren                          //
 //////////////////////////////////////////////////////
 
-using System;
-using System.Linq;
-
 namespace Org.Webpki.Es6Numbers
 {
-    public class ES6NumberFormatter
+    public static class ES6NumberFormatter
     {
         const ulong MASK_FRACTION = 0x000fffffffffffff;
         const ulong IMPLICIT_ONE  = 0x0010000000000000;
