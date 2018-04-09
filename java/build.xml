@@ -16,7 +16,7 @@
   </path>
 
   <target name="help">
-    <echo message="Targets: help test [-Dfile=filename] browser mega"/>
+    <echo message="Targets: help test [-Dfile=filename] browser megatest interactive"/>
   </target>
 	
   <target name="_compile">
@@ -70,7 +70,7 @@
     </java>
   </target>
 
-  <target name="mega" depends="_compile">
+  <target name="megatest" depends="_compile">
     <java fork="yes"
           classname="MegaES6NumberTest"
             dir="${temp.dir}"
@@ -81,6 +81,17 @@
       </classpath>
       <arg value="${es6test.file}"/>
       <jvmarg value="-Dfile.encoding=UTF8"/>
+    </java>
+  </target>
+
+  <target name="interactive" depends="_compile">
+    <java fork="no"
+          classname="ES6InterActive"
+          failonerror="true">
+      <classpath>
+        <pathelement path="${temp.dir}"/>
+        <path refid="lib.classpath"/>
+      </classpath>
     </java>
   </target>
 

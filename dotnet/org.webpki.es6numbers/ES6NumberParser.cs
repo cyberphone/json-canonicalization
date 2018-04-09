@@ -34,15 +34,27 @@ namespace Org.Webpki.Es6Numbers
         static internal char[] EXPONENT_LETTERS = {'e', 'E'};
 
         const ulong MSB_U64                 = 0x8000000000000000L;
-        const ulong MANTISSA_ROUNDER        = 0x0000000000000800L;
+        const ulong MANTISSA_ROUNDER        = 0x0000000000000100L;
         const ulong SCALE_POINT             = 0xe000000000000000L;
         const ulong LARGEST_SAFE_MULTIPLIER = 0x1000000000000000L;
 
         const int MAX_EXPONENT = 0x7fe; // 2046
 
+        public static string Ieee754String(ulong v)
+        {
+            string res = Convert.ToString((long)v, 2);
+            while (res.Length < 64)
+            {
+                res = '0' + res;
+            }
+            return res[0] + " " + res.Substring(1, 11) + " " + res.Substring(12);
+        }
+        
         // Number format: d{f...}   Note: "d" must be 1-9 
         internal static double Parse(bool sign, string digitAndOptionalFraction, int exponent)
         {
+            string ieeeString;
+
             int base10index = exponent + Base2Lookup.EXPONENT_OFFSET;
             if (base10index < 0)
             {
@@ -64,36 +76,47 @@ namespace Org.Webpki.Es6Numbers
                 exp2Update++;
             }
             ulong binary = (ulong)(base2 * LARGEST_SAFE_MULTIPLIER);
+            ieeeString = Ieee754String(binary);
             while ((binary & SCALE_POINT) != 0)
             {
                 binary >>= 1;
+                ieeeString = Ieee754String(binary);
                 exp2Update++;
-            }
-            while ((binary & MSB_U64) == 0)
-            {
-                binary <<= 1;
             }
             exp2Update += base2Entry.Base2Exponent;
             if (exp2Update > MAX_EXPONENT)
             {
                 return Double.NaN;   // Overflow are dealt with as a Not a Number
             }
-            if (exp2Update < 0)  // Are we dealing with unormalized numbers?
+            if (exp2Update <= 0)  // Are we dealing with unormalized numbers?
             {
                 if (exp2Update < -ES6NumberFormatter.MANTISSA_SIZE)
                 {
                     return 0;  // Too small to make any IEEE-754 bits
                 }
+                binary += MANTISSA_ROUNDER << -exp2Update;
+                ieeeString = Ieee754String(binary);
                 binary >>= -exp2Update;
+                ieeeString = Ieee754String(binary);
+
                 exp2Update = 0;
             }
             else
             {
                 binary <<= 1;  // Normalized numbers use a "virtual" 1.nnnnnn
+                binary &= ~SCALE_POINT;
+                ieeeString = Ieee754String(binary);
+                binary += MANTISSA_ROUNDER;
+                ieeeString = Ieee754String(binary);
             }
-            binary += MANTISSA_ROUNDER;
-            binary >>= 12;
+            if ((binary & SCALE_POINT) != 0)
+            {
+                binary >>= 1;
+            }
+            binary >>= 9;
+            ieeeString = Ieee754String(binary);
             binary += (ulong)exp2Update << ES6NumberFormatter.MANTISSA_SIZE;
+            ieeeString = Ieee754String(binary);
             if (sign)
             {
                 binary |= MSB_U64;
@@ -142,9 +165,9 @@ namespace Org.Webpki.Es6Numbers
                 {
                     return 0;
                 }
-                number = number.Substring(0, point) + number.Substring(point + 1);
                 if (point == 0)
                 {
+                    number = number.Substring(1);
                     exponent--;
                     while (number[0] == '0')
                     {
@@ -154,6 +177,14 @@ namespace Org.Webpki.Es6Numbers
                 }
                 else
                 {
+                    if (point == number.Length - 1)
+                    {
+                        number = number.Substring(0, point);
+                    }
+                    else
+                    {
+                        number = number.Substring(0, point) + number.Substring(point + 1);
+                    }
                     exponent -= point - 1;
                 }
             }
