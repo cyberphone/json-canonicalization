@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "org.webpki.es6numbers", "or
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "es6cli", "es6cli\es6cli.csproj", "{9ECB338E-9409-43CD-B209-BE5D7C97A496}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "megatest", "megatest\megatest.csproj", "{777249FB-061C-4C89-B392-F041BEC377F5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{9ECB338E-9409-43CD-B209-BE5D7C97A496}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9ECB338E-9409-43CD-B209-BE5D7C97A496}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9ECB338E-9409-43CD-B209-BE5D7C97A496}.Release|Any CPU.Build.0 = Release|Any CPU
+		{777249FB-061C-4C89-B392-F041BEC377F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{777249FB-061C-4C89-B392-F041BEC377F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{777249FB-061C-4C89-B392-F041BEC377F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{777249FB-061C-4C89-B392-F041BEC377F5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

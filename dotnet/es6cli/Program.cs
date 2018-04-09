@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using Org.Webpki.Es6Numbers;
 
