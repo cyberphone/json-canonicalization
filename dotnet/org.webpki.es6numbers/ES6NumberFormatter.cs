@@ -29,12 +29,12 @@ namespace Org.Webpki.Es6Numbers
 {
     public static class ES6NumberFormatter
     {
-        const ulong MASK_FRACTION = 0x000fffffffffffff;
-        const ulong IMPLICIT_ONE  = 0x0010000000000000;
+        internal const ulong MASK_FRACTION = 0x000fffffffffffff;
+        internal const ulong IMPLICIT_ONE  = 0x0010000000000000;
 
-        const int MANTISSA_SIZE   = 52;
+        internal const int MANTISSA_SIZE   = 52;
 
-        const int START_DIGITS    = 18;
+        internal const int START_DIGITS    = 18;
 
         class Success
         {
