@@ -101,10 +101,10 @@ namespace Org.Webpki.Es6Numbers
             // Setup. "Roundcontrol to major Tom"
             ulong roundControl = SCALE_POINT_MASK;
 
-            // Normalized versus Unormalized
+            // Normalized versus Denormalized
             if (base2Exponent <= 0)
             {
-                // Unormalized number. Ignore numbers that do not make any IEEE-754 bits 
+                // Denormalized number. Ignore numbers that do not make any IEEE-754 bits 
                 if (base2Exponent < -ES6NumberFormatter.MANTISSA_SIZE)
                 {
                     return 0; 
@@ -114,7 +114,7 @@ namespace Org.Webpki.Es6Numbers
                 ieee754 >>= -base2Exponent;
                 ieeeString = DebugBinary(ieee754);
 
-                // Unormalized numbers have a zero exponent
+                // Denormalized numbers have a zero exponent
                 base2Exponent = 0;
             }
             else
