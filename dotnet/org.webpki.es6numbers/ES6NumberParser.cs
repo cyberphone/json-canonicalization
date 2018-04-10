@@ -54,7 +54,7 @@ namespace Org.Webpki.Es6Numbers
             return res;
         }
         
-        // Number format: d{f...}   Note: "d" must be 1-9 
+        // Number format: d{f...}   Note: "d" MUST be 1-9 
         internal static double Parse(bool sign, string digitAndOptionalFraction, int base10Exponent)
         {
             string ieeeString;
@@ -202,10 +202,33 @@ namespace Org.Webpki.Es6Numbers
                 number = number.Substring(1);
             }
 
-            // Remove trailing zeroes
-            while (number.Length > 0 && number[number.Length - 1] == '0')
+            // Find and remove possible decimal point
+            int point = number.IndexOf('.');
+            if (point == 0)
             {
-                number = number.Substring(0, number.Length - 1);
+                // .{000}fff
+                number = number.Substring(1);
+
+                // Normalize to d.ff
+                exponent--;
+                while (number.Length > 0 && number[0] == '0')
+                {
+                    number = number.Substring(1);
+                    exponent--;
+                }
+            }
+            else if (point > 0)
+            {
+                // ddd.{fff}
+                number = number.Substring(0, point) + (point == number.Length - 1 ? "" : number.Substring(point + 1));
+
+                // Normalize to d.dd{fff}
+                exponent -= point - 1;
+            }
+            else
+            {
+                // Normalize ddd to d.ff
+                exponent += number.Length - 1;
             }
 
             // One or more zeroes only?
@@ -214,42 +237,7 @@ namespace Org.Webpki.Es6Numbers
                 return 0;
             }
 
-            // Find and remove possible decimal point
-            int point = number.IndexOf('.');
-            if (point >= 0)
-            {
-                // It was just 0.0?
-                if (number.Length == 1)
-                {
-                    return 0;
-                }
-                if (point == 0)
-                {
-                    // .{000}fff
-                    number = number.Substring(1);
-
-                    // Normalize to d.ff
-                    exponent--;
-                    while (number[0] == '0')
-                    {
-                        number = number.Substring(1);
-                        exponent--;
-                    }
-                }
-                else
-                {
-                    // ddd.{fff}
-                    number = number.Substring(0, point) + (point == number.Length - 1 ? "" : number.Substring(point + 1));
-
-                    // Normalize to d.dd{fff}
-                    exponent -= point - 1;
-                }
-            }
-            else
-            {
-                // Normalize ddd to d.ff
-                exponent += number.Length - 1;
-            }
+            // Fnally, the low level stuff!
             double d = Parse(signBit, number, exponent);
             if (Double.IsNaN(d))
             {
