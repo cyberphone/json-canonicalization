@@ -34,9 +34,9 @@ namespace Org.Webpki.Es6Numbers
         static internal char[] EXPONENT_LETTERS = {'e', 'E'};
 
         const ulong MSB_U64                 = 0x8000000000000000L;
-        const ulong MANTISSA_ROUNDER        = 0x0000000000000100L;
-        const ulong SCALE_POINT_MASK        = 0xe000000000000000L;
-        const ulong LARGEST_SAFE_MULTIPLIER = 0x1000000000000000L;
+        const ulong MANTISSA_ROUNDER        = 0x0000000000000080L;
+        const ulong SCALE_POINT_MASK        = 0xf000000000000000L;
+        const ulong LARGEST_SAFE_MULTIPLIER = 0x0800000000000000L;
 
         const int MAX_EXPONENT = 0x7fe; // 2046
 
@@ -86,13 +86,6 @@ namespace Org.Webpki.Es6Numbers
 
             // Entering the "bit fiddling" where we are stuffing an "ulong" with IEEE-754 data
             int base2Exponent = 0;
-
-            // Use "ulong" but realize its limits...
-            if (base2 > 17)
-            {
-                base2 /= 2;
-                base2Exponent++;
-            }
             ulong ieee754 = (ulong)(base2 * LARGEST_SAFE_MULTIPLIER);
             ieeeString = DebugBinary(ieee754);
             while ((ieee754 & SCALE_POINT_MASK) != 0)
@@ -152,8 +145,8 @@ namespace Org.Webpki.Es6Numbers
             ieee754 &= ~SCALE_POINT_MASK;
             ieeeString = DebugBinary(ieee754);
 
-            // Mantissa MSB is now at bit 60. Move it down to its proper position at bit 51
-            ieee754 >>= 9;
+            // Mantissa MSB is now at bit 59. Move it down to its proper position at bit 51
+            ieee754 >>= 8;
             ieeeString = DebugBinary(ieee754);
 
             // Add exponent shifted into the proper position
@@ -223,7 +216,7 @@ namespace Org.Webpki.Es6Numbers
                 number = number.Substring(0, point) + (point == number.Length - 1 ? "" : number.Substring(point + 1));
 
                 // Normalize to d.dd{fff}
-                exponent -= point - 1;
+                exponent += point - 1;
             }
             else
             {
