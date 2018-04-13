@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 
 //////////////////////////////////////////////////////
@@ -36,8 +37,7 @@ namespace Org.Webpki.Es6Numbers
         const ulong MSB_U64                 = 0x8000000000000000L;
         const ulong MANTISSA_ROUNDER        = 0x0000000000000080L;
         const ulong SCALE_POINT_MASK        = 0xf000000000000000L;
-        const ulong LARGEST_SAFE_MULTIPLIER = 0x0800000000000000L;
-
+ 
         const int MAX_EXPONENT = 0x7fe; // 2046
 
         const decimal LSB_FACTOR = 0.000000000000000011102230246m;
@@ -111,12 +111,9 @@ namespace Org.Webpki.Es6Numbers
                                                 '.' +
                                                 digitAndOptionalFraction.Substring(1));
 
-            // The number in "base2" MUST after this be >= 1 and < 20
-            decimal base2 = decimalValue * base2Entry.MantissaMultiplier;
-
             // Entering the "bit fiddling" where we are stuffing an "ulong" with IEEE-754 data
-            int base2Exponent = 0;
-            ulong ieee754 = (ulong)(base2 * LARGEST_SAFE_MULTIPLIER);
+            int base2Exponent = base2Entry.Base2Exponent;
+            ulong ieee754 = (ulong)(decimalValue * base2Entry.MantissaMultiplier);
             ieeeString = DebugBinary(ieee754);
             while ((ieee754 & SCALE_POINT_MASK) != 0)
             {
@@ -124,9 +121,6 @@ namespace Org.Webpki.Es6Numbers
                 ieeeString = DebugBinary(ieee754);
                 base2Exponent++;
             }
-
-            // Add base10 to base2 exponent offset
-            base2Exponent += base2Entry.Base2Exponent;
 
             // Setup. "Roundcontrol to major Tom"
             ulong roundControl = SCALE_POINT_MASK;

@@ -9,6 +9,16 @@ public class Base2ExponentGenerator {
 
     static final int EXPONENT_OFFSET = 350;
 
+    static final long LARGEST_SAFE_MULTIPLIER = 0x0800000000000000L;
+
+	static String getLongHex(long value) {
+		String hex = Long.toHexString(value);
+		while (hex.length() < 16) {
+			hex = '0' + hex;
+		}
+		return hex;
+	}
+
     static StringBuilder s = new StringBuilder(
 	    "/*\n" +
 		" *  Copyright 2006-2018 WebPKI.org (http://webpki.org).\n" +
@@ -39,6 +49,8 @@ public class Base2ExponentGenerator {
 		"{\n" +
 		"    internal class Base2Lookup\n" +
 		"    {\n" +
+		"        internal const long LARGEST_SAFE_MULTIPLIER = 0x" + getLongHex(LARGEST_SAFE_MULTIPLIER) + "L;\n" +
+		"\n" +
 		"        internal const int EXPONENT_OFFSET = "  + EXPONENT_OFFSET + ";\n" +
 		"\n" +
 		"        // What to multiply the mantissa with\n" +
@@ -68,6 +80,7 @@ public class Base2ExponentGenerator {
 			} else for (int q = 0; q < i; q++) {
 				v = v.multiply(BigDecimal.TEN);
 			}
+			// Move into the proper 2 exponent
 			while (v.compareTo(BigDecimal.ONE) < 0) {
 				exp--;
 				v = v.multiply(TWO, MathContext.DECIMAL128);
@@ -76,11 +89,16 @@ public class Base2ExponentGenerator {
 				exp++;
 				v = v.divide(TWO, MathContext.DECIMAL128);
 			}
+			// Adopt for IEEE-754 placement by right shifts
+			v = v.multiply(new BigDecimal(LARGEST_SAFE_MULTIPLIER));
 			if (next) {
 				s.append(",\n");
 			}
 			next = true;
 			String mantissaMultiplier = v.toString();
+			if (mantissaMultiplier.length() > 36) {
+				mantissaMultiplier = mantissaMultiplier.substring(0, 36);
+			}
 			s.append("            new Base2Lookup(").append(mantissaMultiplier).append("m, ");
 			for (int l = mantissaMultiplier.length(); l < 36; l++) {
 				s.append(' ');
