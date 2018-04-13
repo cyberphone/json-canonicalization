@@ -40,9 +40,7 @@ namespace datacontract
             myObject.escaping = "\u20ac$\u000F\u000aA'\u0042\u0022\u005c\\\"";
             myObject.aDouble = 1.5e+33;
             myObject.interoperableLong = 9223372036854775807;     // Is treated as a "string" on the wire
-            myObject.nonInteroperableLong = 9007199254740990;     // Max integer fitting an IEEE-754 double
-                                                                  // Actually it is 9007199254740991 but there is
-                                                                  // a bug/limitation in C#'s convert
+            myObject.nonInteroperableLong = 9007199254740991;     // Max integer fitting an IEEE-754 double
             OneRoundTrip(myObject);
 
             myObject.nonInteroperableLong = 9223372036854775807;  // Max "long" doesn't fit an IEEE-754 double
