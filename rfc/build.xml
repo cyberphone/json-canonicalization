@@ -96,6 +96,10 @@ border-style:solid;border-color: #a9a9a9;text-align:center;font-family:arial,ver
           replace=":&quot;&amp;#x20AC;"
           flags="g"/>
     <replaceregexp file="${rfc.file}"
+          match="\ \ \&quot;\\u20ac"
+          replace="  &quot;&amp;#x20AC;"
+          flags="g"/>
+    <replaceregexp file="${rfc.file}"
           match="(\= )(JSON)(\.)"
           replace="\1${span.bi}\2&lt;/span&gt;\3"
           flags="g"/>
