@@ -1,4 +1,21 @@
-import java.io.FileOutputStream;
+/*
+ *  Copyright 2006-2018 WebPKI.org (http://webpki.org).
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
+
+ import java.io.FileOutputStream;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -38,12 +55,12 @@ public class Base2ExponentGenerator {
 		" */\n" +
 		"\n" +
 		"\n" +
-	    "//////////////////////////////////////////////////////\n" +
-		"// For quick lookup of 10base to IEEE-754 exponents //\n" +
-		"// Index: Base10 exponent                           //\n" +
-		"//                                                  //\n" +
-		"// Author: Anders Rundgren                          //\n" +
-	    "//////////////////////////////////////////////////////\n" +
+	    "          //////////////////////////////////////////////////////\n" +
+		"          // For quick lookup of 10base to IEEE-754 exponents //\n" +
+		"          // Index: Base10 exponent                           //\n" +
+		"          //                                                  //\n" +
+		"          // Author: Anders Rundgren                          //\n" +
+	    "          //////////////////////////////////////////////////////\n" +
 		"\n" +
 		"namespace Org.Webpki.Es6Numbers\n" +
 		"{\n" +
@@ -53,15 +70,15 @@ public class Base2ExponentGenerator {
 		"\n" +
 		"        internal const int EXPONENT_OFFSET = "  + EXPONENT_OFFSET + ";\n" +
 		"\n" +
-		"        // What to multiply the mantissa with\n" +
-        "        internal decimal MantissaMultiplier;\n" +
+		"        // What to multiply the d{fffff} with\n" +
+        "        internal decimal Multiplier;\n" +
 		"\n" +
 		"        // The Base2 exponent we (presumably) are looking for\n" +
         "        internal int Base2Exponent;\n" +
         "\n" +
-        "        private Base2Lookup(decimal MantissaMultiplier, int Base2Exponent)\n" +
+        "        private Base2Lookup(decimal Multiplier, int Base2Exponent)\n" +
         "        {\n" +
-        "            this.MantissaMultiplier = MantissaMultiplier;\n" +
+        "            this.Multiplier = Multiplier;\n" +
         "            this.Base2Exponent = Base2Exponent;\n" +
         "        }\n" +
 		"\n" +
@@ -69,7 +86,6 @@ public class Base2ExponentGenerator {
 
     public static void main(String[] args) throws Exception {
 	    BigDecimal TWO = new BigDecimal(2, MathContext.DECIMAL128);
-		boolean next = false;
 	    for (int i = -EXPONENT_OFFSET; i < EXPONENT_OFFSET; i++) {
 		    int exp = 1023;
 			BigDecimal v = BigDecimal.ONE;
@@ -91,26 +107,22 @@ public class Base2ExponentGenerator {
 			}
 			// Adopt for IEEE-754 placement by right shifts
 			v = v.multiply(new BigDecimal(LARGEST_SAFE_MULTIPLIER));
-			if (next) {
-				s.append(",\n");
+			String multiplier = v.toString();
+			if (multiplier.length() > 36) {
+				multiplier = multiplier.substring(0, 36);
 			}
-			next = true;
-			String mantissaMultiplier = v.toString();
-			if (mantissaMultiplier.length() > 36) {
-				mantissaMultiplier = mantissaMultiplier.substring(0, 36);
-			}
-			s.append("            new Base2Lookup(").append(mantissaMultiplier).append("m, ");
-			for (int l = mantissaMultiplier.length(); l < 36; l++) {
+			s.append("            new Base2Lookup(").append(multiplier).append("m, ");
+			for (int l = multiplier.length(); l < 36; l++) {
 				s.append(' ');
 			}
 			String expString = String.valueOf(exp);
-			s.append(expString).append(")");
+			s.append(expString).append(")").append(i + 1 == EXPONENT_OFFSET ? ' ' : ',');
 			for (int l = expString.length(); l < 6; l++) {
 				s.append(' ');
 			}
-			s.append("/* [").append(i + EXPONENT_OFFSET).append("] */");
+			s.append("/* [").append(i + EXPONENT_OFFSET).append("] */\n");
 		}
-		s.append("\n        };\n    }\n}\n");
+		s.append("        };\n    }\n}\n");
 		System.out.println(s.toString());
 		FileOutputStream file = new FileOutputStream(args[0]);
 		file.write(s.toString().getBytes("utf-8"));
