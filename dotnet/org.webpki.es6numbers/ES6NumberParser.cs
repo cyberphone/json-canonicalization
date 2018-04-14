@@ -17,14 +17,15 @@
 
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Text.RegularExpressions;
 
-//////////////////////////////////////////////////////
-// Parsing of ES6/JSON compatible numbers and       //
-// returning them in IEEE-754 double precision      //
-//                                                  //
-// Author: Anders Rundgren                          //
-//////////////////////////////////////////////////////
+          //////////////////////////////////////////////////////
+          // Parsing of ES6/JSON compatible numbers and       //
+          // returning them in IEEE-754 double precision      //
+          //                                                  //
+          // Author: Anders Rundgren                          //
+          //////////////////////////////////////////////////////
 
 namespace Org.Webpki.Es6Numbers
 {
@@ -85,10 +86,9 @@ namespace Org.Webpki.Es6Numbers
         }
         
         // Number format: d{f...}   Note: "d" MUST be 1-9 
-        internal static double Parse(bool sign, string digitAndOptionalFraction, int base10Exponent)
-        {
-            
-
+        internal static double Ieee754Encode(bool sign, string digitAndFraction, int base10Exponent)
+        {            
+            // Get the base 10 exponent (adjusted for table lookup)
             int base10index = base10Exponent + Base2Lookup.EXPONENT_OFFSET;
 
             // Sanity check
@@ -107,13 +107,12 @@ namespace Org.Webpki.Es6Numbers
 
             // Core base10 to base2 operation
             Base2Lookup base2Entry = Base2Lookup.Cache[base10index];
-            decimal decimalValue= Decimal.Parse(digitAndOptionalFraction.Substring(0, 1) +
-                                                '.' +
-                                                digitAndOptionalFraction.Substring(1));
+            decimal decimalValue= Decimal.Parse(digitAndFraction.Substring(0, 1) + '.' + digitAndFraction.Substring(1),
+                                                NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture);
 
             // Entering the "bit fiddling" where we are stuffing an "ulong" with IEEE-754 data
             int base2Exponent = base2Entry.Base2Exponent;
-            ulong ieee754 = (ulong)(decimalValue * base2Entry.MantissaMultiplier);
+            ulong ieee754 = (ulong)(decimalValue * base2Entry.Multiplier);
             ieeeString = DebugBinary(ieee754);
             while ((ieee754 & SCALE_POINT_MASK) != 0)
             {
@@ -186,8 +185,8 @@ namespace Org.Webpki.Es6Numbers
                     break;
                 }
             }
-            decimal j2 = decimal.Round(((decimal)(ieee754 >> 8) * Base10Lookup.Cache[base2Exponent].FractionMultiplier) / 0x0010000000000000, 22);
-            decimal j3 = decimal.Round(((decimal)((ieee754 >> 8) + 1) * Base10Lookup.Cache[base2Exponent].FractionMultiplier) / 0x0010000000000000, 22);
+            decimal j2 = decimal.Round(((decimal)(ieee754 >> 8) * Base10Lookup.Cache[base2Exponent].Multiplier) / 0x0010000000000000, 22);
+            decimal j3 = decimal.Round(((decimal)((ieee754 >> 8) + 1) * Base10Lookup.Cache[base2Exponent].Multiplier) / 0x0010000000000000, 22);
             if (j3 > 10)
             {
                 j3 /= 10;
@@ -208,13 +207,13 @@ namespace Org.Webpki.Es6Numbers
             {
                 if ((ieee754 & (MANTISSA_ROUNDER - 1)) != 0)
                 {
-                    Console.WriteLine("Round CORE: " + ieeeString + " o=" + digitAndOptionalFraction + " a=" + adjusted);
+                    Console.WriteLine("Round CORE: " + ieeeString + " o=" + digitAndFraction + " a=" + adjusted);
                     ieee754 += MANTISSA_ROUNDER;
                 }
                 else
                 {
                     adjusted = (decimalValue * 1.000000000000000055511151m).ToString();
-                    string refValue = digitAndOptionalFraction + "0000000000000000000000000";
+                    string refValue = digitAndFraction + "0000000000000000000000000";
                     int q = 0;
                     foreach (char c in adjusted)
                     {
@@ -240,7 +239,7 @@ namespace Org.Webpki.Es6Numbers
             }
             else
             {
-                Console.WriteLine("NO Round: " + ieeeString + " o=" + digitAndOptionalFraction + " a=" + adjusted);
+                Console.WriteLine("NO Round: " + ieeeString + " o=" + digitAndFraction + " a=" + adjusted);
             }
             */
 
@@ -348,7 +347,7 @@ namespace Org.Webpki.Es6Numbers
             }
 
             // Fnally, the low level stuff!
-            double d = Parse(signBit, number, exponent);
+            double d = Ieee754Encode(signBit, number, exponent);
             if (Double.IsNaN(d))
             {
                 error = "Number out of range";

@@ -64,7 +64,7 @@ namespace Org.Webpki.Es6Numbers
         {
             Base2Lookup base2Entry = Base2Lookup.Cache[exp10 + 349];
             int exp2 = base2Entry.Base2Exponent;
-            decimal fractionDec = decimal.Parse(fraction) * base2Entry.MantissaMultiplier;
+            decimal fractionDec = decimal.Parse(fraction) * base2Entry.Multiplier;
             ulong fractionBin = (ulong)fractionDec;
             string bin = Convert.ToString((long)fractionBin, 2);
             int nativeExp = exp10 - 1;
@@ -101,7 +101,7 @@ namespace Org.Webpki.Es6Numbers
             }
             uint index = (uint)(raw >> MANTISSA_SIZE);
             Base10Lookup base10Entry = Base10Lookup.Cache[index];
-            decimal value = base10Entry.FractionMultiplier;
+            decimal value = base10Entry.Multiplier;
             int exp10 = base10Entry.Base10Exponent;
             ulong fractionBin = raw & MASK_FRACTION;
             ulong divider = IMPLICIT_ONE;
