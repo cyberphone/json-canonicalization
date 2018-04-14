@@ -49,6 +49,7 @@ namespace Org.Webpki.Es6Numbers
         public static string orig;
         public static bool evenFlag;
         public static bool highFlag;
+        public static bool downRound;
 
         public static string DebugBinary(ulong v)
         {
@@ -67,13 +68,13 @@ namespace Org.Webpki.Es6Numbers
         static string truncate(decimal v)
         {
             string str = v.ToString();
-            if (str.Length > 22)
+            if (str.Length > 24)
             {
-                str = str.Substring(0, 22);
+                str = str.Substring(0, 24);
             }
             else
             {
-                while (str.Length < 22)
+                while (str.Length < 24)
                 {
                     str += '0';
                 }
@@ -147,8 +148,10 @@ namespace Org.Webpki.Es6Numbers
 
             decimal j2 = decimal.Round((decimal)(ieee754 >> 8) / Base10Lookup.Cache[base2Exponent].Divider, 22);
             decimal j3 = decimal.Round((decimal)((ieee754 >> 8) + 1) / Base10Lookup.Cache[base2Exponent].Divider, 22);
+            downRound = false;
             if (j3 > 10)
             {
+                downRound = true;
                 j3 /= 10;
                 j2 /= 10;
             }
@@ -159,7 +162,7 @@ namespace Org.Webpki.Es6Numbers
             highFlag= j3 < 0;
             evenFlag = j3 == 0;
             //           if (j3 < 0)
-            if (j3 < 0 || (j3 == 0 && (ieee754 & 0xff) != 0 && (ieee754 & 0x100) != 0))
+            if (j3 < 0 || (j3 == 0 && ((ieee754 & 0xff) > 0x80) || ((ieee754 & 0x180) == 0x180)))
             {
                 ieee754 += 0x100;
             }
