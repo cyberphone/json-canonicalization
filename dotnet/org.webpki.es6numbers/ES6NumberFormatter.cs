@@ -101,7 +101,7 @@ namespace Org.Webpki.Es6Numbers
             }
             uint index = (uint)(raw >> MANTISSA_SIZE);
             Base10Lookup base10Entry = Base10Lookup.Cache[index];
-            decimal value = base10Entry.Multiplier;
+            decimal value = base10Entry.Divider;
             int exp10 = base10Entry.Base10Exponent;
             ulong fractionBin = raw & MASK_FRACTION;
             ulong divider = IMPLICIT_ONE;

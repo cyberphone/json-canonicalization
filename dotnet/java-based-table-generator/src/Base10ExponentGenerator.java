@@ -9,6 +9,8 @@ public class Base10ExponentGenerator {
 
     static final int EXPONENT_OFFSET = 1023;  // From the IEEE-754 spec
 
+	static final long MANTISSA_DIVIDER = 0x0010000000000000L;
+
     static StringBuilder s = new StringBuilder(
 	    "/*\n" +
 		" *  Copyright 2006-2018 WebPKI.org (http://webpki.org).\n" +
@@ -28,28 +30,29 @@ public class Base10ExponentGenerator {
 		" */\n" +
 		"\n" +
 		"\n" +
-	    "//////////////////////////////////////////////////////\n" +
-	    "// For quick lookup of IEEE-754 to 10base exponents //\n" +
-		"// Index: IEEE-754 exponent                         //\n" +
-		"//                                                  //\n" +
-		"// Author: Anders Rundgren                          //\n" +
-	    "//////////////////////////////////////////////////////\n" +
-		"\n" +		"namespace Org.Webpki.Es6Numbers\n" +
+	    "          //////////////////////////////////////////////////////\n" +
+	    "          // For quick lookup of IEEE-754 to 10base exponents //\n" +
+		"          // Index: IEEE-754 exponent                         //\n" +
+		"          //                                                  //\n" +
+		"          // Author: Anders Rundgren                          //\n" +
+	    "          //////////////////////////////////////////////////////\n" +
+		"\n" +
+		"namespace Org.Webpki.Es6Numbers\n" +
 		"{\n" +
 		"    internal class Base10Lookup\n" +
 		"    {\n" +
 		"        // According to IEEE-754\n" +
 		"        internal const int EXPONENT_OFFSET = "  + EXPONENT_OFFSET + ";\n" +
 		"\n" +
-		"        // What to multiply the fraction with\n" +
-        "        internal decimal FractionMultiplier;\n" +
+		"        // What to divide the mantissa with\n" +
+        "        internal decimal Divider;\n" +
 		"\n" +
 		"        // The Base10 exponent we (presumably) are looking for\n" +
         "        internal int Base10Exponent;\n" +
         "\n" +
-        "        private Base10Lookup(decimal FractionMultiplier, int Base10Exponent)\n" +
+        "        private Base10Lookup(decimal Divider, int Base10Exponent)\n" +
         "        {\n" +
-        "            this.FractionMultiplier = FractionMultiplier;\n" +
+        "            this.Divider = Divider;\n" +
         "            this.Base10Exponent = Base10Exponent;\n" +
         "        }\n" +
 		"\n" +
@@ -57,7 +60,7 @@ public class Base10ExponentGenerator {
 
     public static void main(String[] args) throws Exception {
 	    BigDecimal TWO = new BigDecimal(2, MathContext.DECIMAL128);
-		boolean next = false;
+		BigDecimal mantissaSize = new BigDecimal(MANTISSA_DIVIDER, MathContext.DECIMAL128);
 	    for (int i = -EXPONENT_OFFSET; i <= EXPONENT_OFFSET; i++) {
 		    int exp = 0;
 			BigDecimal v = BigDecimal.ONE;
@@ -76,23 +79,22 @@ public class Base10ExponentGenerator {
 				exp++;
 				v = v.divide(BigDecimal.TEN, MathContext.DECIMAL128);
 			}
-			if (next) {
-				s.append(",\n");
+			String divider = mantissaSize.divide(v, MathContext.DECIMAL128).toPlainString();
+			if (!divider.contains(".")) {
+				divider += ".0";
 			}
-			next = true;
-			String fractionMultiplier = v.toString();
-			s.append("            new Base10Lookup(").append(fractionMultiplier).append("m, ");
-			for (int l = fractionMultiplier.length(); l < 36; l++) {
+			s.append("            new Base10Lookup(").append(divider).append("m, ");
+			for (int l = divider.length(); l < 36; l++) {
 				s.append(' ');
 			}
 			String expString = String.valueOf(exp);
-			s.append(exp).append(")");
+			s.append(exp).append(")").append(i == EXPONENT_OFFSET ? ' ' : ',');
 			for (int l = expString.length(); l < 5; l++) {
 				s.append(' ');
 			}
-			s.append("/* [").append(i + EXPONENT_OFFSET).append("] */");
+			s.append("/* [").append(i + EXPONENT_OFFSET).append("] */\n");
 		}
-		s.append("\n        };\n    }\n}\n");
+		s.append("        };\n    }\n}\n");
 		System.out.println(s.toString());
 		FileOutputStream file = new FileOutputStream(args[0]);
 		file.write(s.toString().getBytes("utf-8"));

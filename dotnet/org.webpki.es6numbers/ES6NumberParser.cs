@@ -44,15 +44,11 @@ namespace Org.Webpki.Es6Numbers
         const decimal LSB_FACTOR = 0.000000000000000011102230246m;
 
         public static string ieeeString;
-
-        public static bool roundBit;
-
         public static string higher;
         public static string lower;
         public static string orig;
-        public static bool upRound;
-        public static bool evenHigh;
-        public static bool evenLow;
+        public static bool evenFlag;
+        public static bool highFlag;
 
         public static string DebugBinary(ulong v)
         {
@@ -146,108 +142,33 @@ namespace Org.Webpki.Es6Numbers
                 // Normalized number. Assume a "virtual" 1 like 1.nnnnnn
                 ieee754 <<= 1;
                 ieeeString = DebugBinary(ieee754);
-                 roundControl <<= 1;
+                roundControl <<= 1;
             }
 
-            orig = truncate(decimalValue);
-            roundBit = (ieee754 & MANTISSA_ROUNDER) != 0;
-            decimal lowerValue = decimalValue  - (decimalValue * (LSB_FACTOR * (ieee754 & ((MANTISSA_ROUNDER << 1) - 1)))) / (MANTISSA_ROUNDER << 1);
-            lower = truncate(lowerValue);
-            decimal higherValue = decimalValue + decimalValue * LSB_FACTOR;
-                                                 
-            higher = truncate(higherValue);
-            upRound = (higherValue - decimalValue) < (decimalValue - lowerValue);
-            evenHigh = true;
-            int q = 0;
-            foreach (char c in higher)
-            {
-                char d = orig[q++];
-                if (c != d)
-                {
-                    if ((c & 1) == 1 || (d & 1) == 0)
-                    {
-                        evenHigh = false;
-                    }
-                    break;
-                }
-            }
-            q = 0;
-            evenLow = true;
-            foreach (char c in lower)
-            {
-                char d = orig[q++];
-                if (c != d)
-                {
-                    if ((c & 1) == 1 || (d & 1) == 0)
-                    {
-                        evenLow = false;
-                    }
-                    break;
-                }
-            }
-            decimal j2 = decimal.Round(((decimal)(ieee754 >> 8) * Base10Lookup.Cache[base2Exponent].Multiplier) / 0x0010000000000000, 22);
-            decimal j3 = decimal.Round(((decimal)((ieee754 >> 8) + 1) * Base10Lookup.Cache[base2Exponent].Multiplier) / 0x0010000000000000, 22);
+            decimal j2 = decimal.Round((decimal)(ieee754 >> 8) / Base10Lookup.Cache[base2Exponent].Divider, 22);
+            decimal j3 = decimal.Round((decimal)((ieee754 >> 8) + 1) / Base10Lookup.Cache[base2Exponent].Divider, 22);
             if (j3 > 10)
             {
                 j3 /= 10;
                 j2 /= 10;
             }
+            orig = truncate(decimalValue);
             lower = truncate(j2);
             higher = truncate(j3);
             j3 -= decimalValue + decimalValue - j2;
-            evenHigh = j3 < 0;
-            upRound = j3 == 0;
+            highFlag= j3 < 0;
+            evenFlag = j3 == 0;
             //           if (j3 < 0)
             if (j3 < 0 || (j3 == 0 && (ieee754 & 0xff) != 0 && (ieee754 & 0x100) != 0))
             {
                 ieee754 += 0x100;
             }
-            /*
-            if ((ieee754 & MANTISSA_ROUNDER) != 0)
-            {
-                if ((ieee754 & (MANTISSA_ROUNDER - 1)) != 0)
-                {
-                    Console.WriteLine("Round CORE: " + ieeeString + " o=" + digitAndFraction + " a=" + adjusted);
-                    ieee754 += MANTISSA_ROUNDER;
-                }
-                else
-                {
-                    adjusted = (decimalValue * 1.000000000000000055511151m).ToString();
-                    string refValue = digitAndFraction + "0000000000000000000000000";
-                    int q = 0;
-                    foreach (char c in adjusted)
-                    {
-                        if (c == '.')
-                        {
-                            continue;
-                        }
-                        if (c != refValue[q++])
-                        {
-                            if ((c & 1) == 0 || c < '2' || c > '8')
-                            {
-                                Console.WriteLine("Round CLOSEST: " + ieeeString + " o=" + refValue + " a=" + adjusted);
-                                ieee754 += MANTISSA_ROUNDER;
-                            }
-                            else
-                            {
-                                Console.WriteLine("NO Round: " + ieeeString + " o=" + refValue + " a=" + adjusted);
-                            }
-                            break;
-                        }
-                    }
-                }
-            }
-            else
-            {
-                Console.WriteLine("NO Round: " + ieeeString + " o=" + digitAndFraction + " a=" + adjusted);
-            }
-            */
-
+ 
             // There could be a carry from rounding
             if ((ieee754 & roundControl) != 0)
             {
                 ieee754 >>= 1;
-                ieeeString = DebugBinary(ieee754);
+                ieeeString = "R+" + DebugBinary(ieee754);
                 base2Exponent++;
             }
 
