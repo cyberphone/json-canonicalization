@@ -146,23 +146,28 @@ namespace Org.Webpki.Es6Numbers
                 roundControl <<= 1;
             }
 
-            decimal j2 = decimal.Round((decimal)(ieee754 >> 8) / Base10Lookup.Cache[base2Exponent].Divider, 22);
-            decimal j3 = decimal.Round((decimal)((ieee754 >> 8) + 1) / Base10Lookup.Cache[base2Exponent].Divider, 22);
+            decimal lastBit = decimal.One / Base10Lookup.Cache[base2Exponent].Divider;
+            decimal lowResult = (decimal)(ieee754 >> 8) / Base10Lookup.Cache[base2Exponent].Divider;
+            decimal highResult = lowResult + lastBit;
             downRound = false;
-            if (j3 > 10)
+            if (lowResult > decimalValue)
             {
                 downRound = true;
-                j3 /= 10;
-                j2 /= 10;
+                lastBit /= 10;
+                lowResult /= 10;
+                highResult /= 10;
             }
+            lastBit = decimal.Round(lastBit, 22);
+            lowResult = decimal.Round(lowResult, 22);
+            highResult = decimal.Round(highResult, 22);
             orig = truncate(decimalValue);
-            lower = truncate(j2);
-            higher = truncate(j3);
-            j3 -= decimalValue + decimalValue - j2;
-            highFlag= j3 < 0;
-            evenFlag = j3 == 0;
+            lower = truncate(lowResult);
+            higher = truncate(highResult);
+            decimal comparator = highResult - decimalValue - decimalValue + lowResult;
+            highFlag = comparator < 0;
+            evenFlag = comparator == 0;
             //           if (j3 < 0)
-            if (j3 < 0 || (j3 == 0 && ((ieee754 & 0xff) > 0x80) || ((ieee754 & 0x180) == 0x180)))
+            if (highFlag || (evenFlag && ((ieee754 & 0xff) > 0x80) || ((ieee754 & 0x180) == 0x180)))
             {
                 ieee754 += 0x100;
             }
