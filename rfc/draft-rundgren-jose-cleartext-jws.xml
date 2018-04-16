@@ -45,7 +45,7 @@
        without representing the JSON to be signed in a non-JSON representation, such as base64url-encoded JSON.
        The signature and information about the signature is added to the JSON object when it is signed.
        The signature calculation for signing the JSON object relies on the
-       JSON canoninicalization scheme defined by JCS <xref target="JCS"/>.
+       JSON canonicalization scheme defined by JCS <xref target="JCS"/>.
        Cleartext JWS builds on the JWS, JWA, and JWK specifications,
        reusing data structures and semantics from these specifications, where applicable.
      </t>
