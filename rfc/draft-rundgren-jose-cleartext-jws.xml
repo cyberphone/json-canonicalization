@@ -604,7 +604,7 @@
       so special thanks are due to the authors of that document, Michael B. Jones, John Bradley,
       and Nat Sakimura.
       </t><t>
-      Building on ES6 number normalization was originally
+      Building on ECMAScript number normalization was originally
       proposed by James Manger. This ultimately led to the
       creation of the JCS specification underpinning cleartext JWS.
     </t>
