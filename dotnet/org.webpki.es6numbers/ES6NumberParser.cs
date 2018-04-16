@@ -146,18 +146,15 @@ namespace Org.Webpki.Es6Numbers
                 roundControl <<= 1;
             }
 
-            decimal lastBit = decimal.One / Base10Lookup.Cache[base2Exponent].Divider;
             decimal lowResult = (decimal)(ieee754 >> 8) / Base10Lookup.Cache[base2Exponent].Divider;
-            decimal highResult = lowResult + lastBit;
+            decimal highResult = (decimal)((ieee754 >> 8) + 1) / Base10Lookup.Cache[base2Exponent].Divider;
             downRound = false;
             if (lowResult > decimalValue)
             {
                 downRound = true;
-                lastBit /= 10;
                 lowResult /= 10;
                 highResult /= 10;
             }
-            lastBit = decimal.Round(lastBit, 22);
             lowResult = decimal.Round(lowResult, 22);
             highResult = decimal.Round(highResult, 22);
             orig = truncate(decimalValue);
@@ -166,7 +163,6 @@ namespace Org.Webpki.Es6Numbers
             decimal comparator = highResult - decimalValue - decimalValue + lowResult;
             highFlag = comparator < 0;
             evenFlag = comparator == 0;
-            //           if (j3 < 0)
             if (highFlag || (evenFlag && ((ieee754 & 0xff) > 0x80) || ((ieee754 & 0x180) == 0x180)))
             {
                 ieee754 += 0x100;
