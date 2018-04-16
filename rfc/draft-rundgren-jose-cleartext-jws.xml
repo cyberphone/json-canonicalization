@@ -1,0 +1,646 @@
+<?xml version="1.0" encoding="US-ASCII"?>
+<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd">
+
+<?rfc strict="yes" ?>
+<?rfc toc="yes"?>
+<?rfc tocdepth="4"?>
+<?rfc symrefs="yes"?>
+<?rfc sortrefs="yes" ?>
+<?rfc compact="yes" ?>
+<?rfc subcompact="no" ?>
+
+<rfc category="info" docName="draft-rundgren-jose-cleartext-jws-00" ipr="trust200902">
+ <front>
+   <title abbrev="draft-rundgren-jose-cleartext-jws">
+     Cleartext JSON Web Signature (JWS)
+   </title>
+
+   <author fullname="Anders Rundgren" initials="A." surname="Rundgren">
+     <organization>Independent</organization>
+     <address>
+       <postal>
+         <street></street>
+         <code></code> <city>Montpellier</city>
+         <country>France</country>
+       </postal>
+       <email>anders.rundgren.net@gmail.com</email>
+       <uri>https://www.linkedin.com/in/andersrundgren/</uri>
+     </address>
+   </author>
+
+   <date year="2018" />
+
+   <area>Security</area>
+
+   <workgroup>JSON Object Signing and Encryption (JOSE)</workgroup>
+
+   <keyword>
+     JOSE, Signing, Encryption, Cleartext
+   </keyword>
+
+   <abstract>
+     <t>
+       Cleartext JSON Web Signature (JWS) is a means of signing JSON objects directly
+       without representing the JSON to be signed in a non-JSON representation, such as base64url-encoded JSON.
+       The signature and information about the signature is added to the JSON object when it is signed.
+       The signature calculation for signing the JSON object relies on the
+       JSON canoninicalization scheme defined by JCS <xref target="JCS"/>.
+       Cleartext JWS builds on the JWS, JWA, and JWK specifications,
+       reusing data structures and semantics from these specifications, where applicable.
+     </t>
+   </abstract>
+ </front>
+
+<middle>
+  <section anchor="Introduction" title="Introduction">
+    <t>
+      Cleartext JSON Web Signature (JWS) represents a signed JSON object directly
+      as a JSON object <xref target="RFC8259"/>,
+      without representing the JSON to be signed in a non-JSON representation, such as base64url-encoded JSON.
+      The signature and information about the signature is added to the JSON object when it is signed.
+      The signature calculation for signing the JSON object on the
+      JSON canoninicalization scheme defined by JCS <xref target="JCS"/>.
+      By including the signature information in the JSON object to be signed, it is easy to
+      inspect data in transit and when archived, integrity can be guaranteed.
+    </t>
+    <t>
+      Cleartext JWS builds on the JWS <xref target="RFC7515"/>,
+      JWA <xref target="RFC7518"/>, and JWK <xref target="RFC7517"/> specifications,
+      reusing data structures and semantics from these specifications, where applicable.
+      Cryptographic algorithm identifiers used by this specification come from the
+      IANA "JSON Web Signature and Encryption Algorithms" registry <xref target="IANA.JOSE.Algorithms"/>.
+    </t>
+    <t>
+      There are three essential differences between Cleartext JWS and JWS:
+      <list style="symbols">
+	<t>
+	  Cleartext JWS can only sign JSON objects, rather than arbitrary data.
+	</t>
+	<t>
+	  Cleartext JWS signature information is included within the signed data.
+	</t>
+	<t>
+	  Cleartext JWS depends on canonicalized JSON data,
+	  rather than base64url-encoding the data to be signed.
+	</t>
+      </list>
+    </t>
+    <t>
+      The table below is a comparison of JWS and Cleartext JWS:
+      </t>
+      <texttable>
+        <ttcol align="left"></ttcol>
+        <ttcol align="left">JWS</ttcol>
+        <ttcol align="left">Cleartext JWS</ttcol>
+        <c>Data&nbsp;to&nbsp;be&nbsp;Signed</c>
+        <c>Arbitrary&nbsp;data</c>
+        <c>
+          JSON or JavaScript objects
+        </c>
+        <c>Encoding&nbsp;of&nbsp;Signed&nbsp;Data</c>
+        <c>Base64url</c>
+        <c>None</c>
+        <c>Encoding&nbsp;of&nbsp;Header&nbsp;Parameters</c>
+        <c>Base64url</c>
+        <c>None</c>
+        <c>URL Friendly</c>
+        <c>Core&nbsp;feature</c>
+        <c>Out of scope</c>
+      </texttable>
+    <t>
+      In the following example, note that the signature information is included in the JSON object.
+      The members in the <spanx style="verb">__cleartext_signature</spanx> object are
+      the JWS Header Parameters for the signature.
+      The <spanx style="verb">signature</spanx> member contains the base64url-encoded signature value.
+      (Line breaks within values are for display purposes only.)
+    </t>
+    <t>
+      <figure align="center">
+        <artwork>
+<![CDATA[{
+  "iss": "joe",
+  "exp": 1300819380,
+  "__cleartext_signature": {
+    "alg": "ES256",
+    "kid": "example.com:p256",
+    "signature": "pXP0GFHms0SntctNk1G1pHZfccVYdZkmAJktY_hpMsI
+                  AckzX7wZJIJNlsBzmJ1_7LmKATiW-YHHZjsYdT96JZw"
+  }
+}]]></artwork>
+      </figure>
+      </t>
+    <t>
+      The key in <xref target="example.com:p256"/> can be used for verifying the example signature.
+    </t><t>
+    Note: Recreating the example signature using the example private key would normally
+    result in a different <spanx style="verb">signature</spanx> value
+    since ECDSA includes random data in the signature calculation.
+    </t>
+  </section>
+
+  <section title="Terminology">
+    <t>
+      The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
+      NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED",
+      "MAY", and "OPTIONAL" in this document are to be interpreted as
+      described in BCP 14 <xref target="RFC2119"/> <xref target="RFC8174"/>
+      when, and only when, they appear in all capitals, as shown here.
+    </t>
+  </section>
+
+  <section anchor="SignatureObject" title="The Signature Object">
+    <t>
+      When signing JSON data with Cleartext JWS, a JSON object with the
+      JWS Header Parameters is created and placed within the JSON data to be
+      signed. In addition to the already defined JWS Header Parameters,
+      Cleartext JWS defines two new Header Parameters: <spanx style="verb">signature</spanx>
+      for the base64url-encoded signature value and <spanx style="verb">signers</spanx>
+      to support multiple signers within the same signature object.
+    </t>
+    <t>
+      The identifier for the Cleartext Signature Object in the JSON data to be
+      signed MUST be <spanx style="verb">__cleartext_signature</spanx>, unless
+      the application specifies that a different identifier is to be used.
+    </t>
+    <section anchor="SignatureScope" title="Signature Scope">
+      <t>
+	The scope of a signature (the data that is actually signed) comprises all
+	values including child objects of the signature object
+	except for the <spanx style="verb">signature</spanx> member.
+	If multiple signers are present, only the data pertaining to all signers
+	and the data specific to that signer are included
+	(but not the data specific to other signers).
+	See <xref target="MultipleSignatures"/> for more about the multiple signatures case.
+      </t>
+    </section>
+    <section anchor="SignatureHeaderParameter" title="The &quot;signature&quot; Header Parameter">
+      <t>
+        The <spanx style="verb">signature</spanx> Header Parameter contains the
+        base64url-encoded JWS Signature as a string.
+      </t>
+    </section>
+    <section anchor="SignersHeaderParameter" title="The &quot;signers&quot; Header Parameter">
+      <t>
+        The optional <spanx style="verb">signers</spanx> Header Parameter contains an
+        array of sets of Header Parameters that are specific to each signer,
+	including the <spanx style="verb">signature</spanx> value for each signer.
+	See <xref target="MultipleSignatures"/> for more about the multiple signatures case.
+      </t>
+    </section>
+  </section>
+
+  <section anchor="ProducingConsumingCleartextJWSs" title="Producing and Consuming Cleartext JWSs">
+    <section anchor="MessageSignatureMACComputation" title="Message Signature or MAC Computation">
+      <t>
+        To create a Cleartext JWS, the following steps are performed.  The order of the
+        steps is not significant in cases where there are no dependencies
+        between the inputs and outputs of the steps.
+      </t>
+      <t>
+        <list style="numbers">
+          <t>
+            Create the JSON object to be signed.
+	    <!-- TBD This needs to be more specific.  Are you just talking about accepting input or doing ES6 serialization? -->
+          </t>
+          <t>
+            Create the <spanx style="verb">__cleartext_signature</spanx> object with the Header Parameters to be used and add it
+            as a top-level member to the object to be signed with the key
+            <spanx style="verb">__cleartext_signature</spanx>.
+          </t>
+          <t>
+            Serialize the object to be signed using the serialization defined in JCS
+            <xref target="JCS" />.
+          </t>
+          <t>
+            Compute the JWS Signature in the manner defined for the particular
+            algorithm being used over the serialized object to be signed. The
+            <spanx style="verb">alg</spanx> (algorithm) Header Parameter MUST be present in the <spanx style="verb">__cleartext_signature</spanx>
+            member, with the algorithm value accurately representing the
+            algorithm used to construct the JWS Signature.
+          </t>
+          <t>
+            Add the <spanx style="verb">signature</spanx> member to the signature object
+	    with the value BASE64URL(JWS Signature).
+	    <!-- TBD This needs to talk about doing this for each signer. -->
+          </t>
+        </list>
+      </t>
+    </section>
+    <section anchor="MessageSignatureMACValidation" title="Message Signature or MAC Validation">
+      <t>
+        When validating a Cleartext JWS, the following steps are performed.  The order
+        of the steps is not significant in cases where there are no
+        dependencies between the inputs and outputs of the steps.  If any of
+        the listed steps fails, then the input MUST be rejected.
+      </t>
+      <t>
+        When there are multiple JWS Signature values, it is an application
+        decision which of the JWS Signature values must successfully validate
+        for the Cleartext JWS to be accepted.  In some cases, all must successfully
+        validate, or the Cleartext JWS will be considered invalid.  In other cases,
+        only a specific JWS Signature value needs to be successfully
+        validated.  However, in all cases, at least one JWS Signature value
+        MUST successfully validate, or the Cleartext JWS MUST be considered invalid.
+      </t>
+      <t>
+        <list style="numbers">
+          <t>
+            Parse the JSON data, including the signature object.
+          </t>
+          <t>
+            Verify that the implementation understands and can process all
+            fields that it is required to support, whether required by this
+            specification, by the algorithm being used, or by the <spanx style="verb">crit</spanx>
+            Header Parameter value, and that the values of those parameters
+            are also understood and supported.
+          </t>
+          <t>
+            Save and remove the <spanx style="verb">signature</spanx> member from the signature object and
+            base64url-decode the encoded representation of the JWS Signature.
+          </t>
+          <t>
+            Serialize the signed object, including the signature
+            object, by following the rules in JCS
+            <xref target="JCS" />.
+          </t>
+          <t>
+            Validate the JWS Signature against the JWS Signing Input, i.e., the
+            serialized data, in the manner defined for the
+            algorithm being used, which MUST be accurately represented by the
+            value of the <spanx style="verb">alg</spanx> (algorithm) Header Parameter value,
+	    which MUST be present. Record whether the
+            validation succeeded or not.
+          </t>
+          <t>
+            Return a result indicating whether or not the Cleartext JWS was
+            successfully validated.
+          </t>
+          <t>
+            For later validation of the signed object, put the <spanx style="verb">signature</spanx>
+            member back into the JSON data structure.
+	    <!-- TBD It's not clear whether the signature object and its signature
+		 are being put into the unnormalized or normalized JSON.
+		 Either should be a legal implementation, right?  We should say so.
+	    -->
+          </t>
+        </list>
+      </t>
+    </section>
+    <section anchor="MultipleSignatures" title="Multiple Signatures">
+      <t>
+	Multiple signers using different keys can independently add signatures to a JSON object
+	in the manner described in this section.
+      </t>
+      <t>
+        The signature procedure is essentially the same as for single signatures
+	but also includes the following:
+        <list style="symbols">
+          <t>
+            There MUST be an additional JWS Header parameter <spanx style="verb">signers</spanx>, holding an array
+            of signature constructs.
+          </t>
+          <t>
+            Each signature requires its own serialization process. During this
+            process, the signature constructs for other signatures MUST be (temporarily) removed.
+          </t>
+          <t>
+            The serialized data in the <spanx style="verb">signers</spanx> value
+	    MUST include the array brackets ([]) containing the data specific to this signature
+	    but MUST NOT include the data for other signatures.
+	    The resulting array will be single-valued, with no commas separating additional elements.
+          </t>
+	  <t>
+	    A given Header Parameter MUST NOT occur in both the top-level signature object
+	    and a signature object within the <spanx style="verb">signers</spanx> value.
+	    Any Header Parameter occurring in the top-level signature object applies to all signatures.
+	  </t>
+          <t>
+            A signature construct is equivalent to an ordinary signature object,
+            but MAY exclude the <spanx style="verb">alg</spanx> Header parameter
+	    if it is present in the top-level signature object itself.
+	    If in the top-level signature object,
+            all enclosed signature constructs MUST use the same algorithm as well as not
+            including the <spanx style="verb">alg</spanx> Header parameter.
+            See <xref target="multipleglobalalg"/> for an example.
+          </t>
+          <t>
+            Likewise, if a <spanx style="verb">crit</spanx> Header parameter is specified in
+            the top-level signature object, it is be applied to
+            all signature constructs and MUST NOT be present in them individually.
+            See <xref target="multipleglobalcrit"/> for an example.
+          </t>
+	  <!-- TBD We need to choose consistent wording between "signature construct" and "signature object". -->
+      </list>
+      </t>
+      <t>
+        The following example shows a multiply signed object:
+      </t>
+      <t>
+        <figure align="center">
+          <artwork>
+<![CDATA[{
+  "iss": "joe",
+  "exp": 1300819380,
+  "__cleartext_signature": {
+    "signers": [{
+      "alg": "ES256",
+      "kid": "example.com:p256",
+      "signature": "83gr5rmjKgngLTaPpxuQWiZaQmlQ555jLHNcZLmcBpg
+                    X7JZLeqrNhIrQRg3jTsNwh1RuibDYBzCsaxVUkhGEKg"
+    },{
+      "alg": "RS256",
+      "kid": "example.com:r2048",
+      "signature": "PVQeL8XtjnetambQe98FuMBDuijwWTIFXouyNjL8WX0
+                    WvamWkHjv34Iz8VOHHWr9w8t14FXJJuQ22j-h5BR7qP
+                    xE7cBVS8XSltR7VvcNidfn-r-TtAVwDwn7Iz_Gk-RI7
+                    QIv4ctbreYt1myG64Ikw38OEmNURCxzf9h9w3tvA3R8
+                    ZE3MYgELFaQRowSW92JC1HhGZRijzHoIzvH6l_GULP_
+                    hf7kggwFNtRrzN8DLXbhBhGaoP-O0cNZsCWY2hbNU6L
+                    7km6bdrqHdq88DSOEGg_-5T6qUsIAYbmCgUK7XBi2q-
+                    DRPQZYnxr5570mj9Nkh0hpZ-VfAC2ftbzxFAB7ZYg"
+    }]
+  }
+}]]></artwork>
+        </figure>
+    </t>
+      <t>
+        The ECDSA signature can be validated using the key in <xref target="example.com:p256"/>
+	and the RSA signature can be validated using the key in <xref target="example.com:r2048"/>.
+      </t>
+    </section>
+  </section>
+
+  <section anchor="IANA" title="IANA Considerations">
+      <section anchor="IANAJSONHeaderParametersRegistry" title="JSON Header Parameters Registry">
+        <t>
+          This section registers the following Header Parameters in the
+	  IANA "JSON Web Signature and Encryption Header Parameters" registry
+          <xref target="IANA.JOSE.HeaderParameters"/>.
+        </t>
+        <section anchor="IANAJSONHeaderParametersRegistryContents" title="Registry Contents">
+          <t>
+            <list style='symbols'>
+              <t>Header Parameter Name: <spanx style="verb">signature</spanx></t>
+              <t>Header Parameter Description: The base64url-encoded signature value</t>
+              <t>Header Parameter Usage Location(s): <spanx style="verb">Cleartext JWS</spanx></t>
+              <t>Change Controller: IESG</t>
+              <t>Specification Document(s): <xref target="SignatureHeaderParameter"/></t>
+            </list>
+            <list style='symbols'>
+              <t>Header Parameter Name: <spanx style="verb">signers</spanx></t>
+              <t>Header Parameter Description: List of signature constructs, each with a set of Header Parameters and a signature value</t>
+              <t>Header Parameter Usage Location(s): <spanx style="verb">Cleartext JWS</spanx></t>
+              <t>Change Controller: IESG</t>
+              <t>Specification Document(s): <xref target="SignersHeaderParameter"/></t>
+            </list>
+          </t>
+        </section>
+      </section>
+    </section>
+
+  <section anchor="Security" title="Security Considerations">
+    <t>
+      The same security considerations apply to this specification as do for JWS
+      <xref target="RFC7515"/>.
+    </t>
+  </section>
+
+ </middle>
+
+ <back>
+   <references title="Normative References">
+     <?rfc include='reference.RFC.2119'?>
+     <?rfc include='reference.RFC.8259'?>
+     <?rfc include='reference.RFC.7515'?>
+     <?rfc include='reference.RFC.7517'?>
+     <?rfc include='reference.RFC.7518'?>
+     <?rfc include='reference.RFC.8174'?>
+
+     <reference anchor="JCS" target="https://cyberphone.github.io/doc/security/draft-rundgren-json-canonicalization-scheme.html">
+       <front>
+         <title>JCS - JSON Canonicalization Scheme</title>
+         <author/>
+         <date/>
+       </front>
+     </reference>
+   </references>
+
+   <references title="Informative References">
+
+      <reference anchor="IANA.JOSE.Algorithms" target="https://www.iana.org/assignments/jose/jose.xhtml#web-signature-encryption-algorithms">
+        <front>
+          <title>JSON Web Signature and Encryption Algorithms</title>
+          <author>
+            <organization>IANA</organization>
+          </author>
+	  <date/>
+        </front>
+      </reference>
+
+      <reference anchor="IANA.JOSE.HeaderParameters" target="https://www.iana.org/assignments/jose/jose.xhtml#web-signature-encryption-header-parameters">
+        <front>
+          <title>JSON Web Signature and Encryption Header Parameters</title>
+          <author>
+            <organization>IANA</organization>
+          </author>
+	  <date/>
+        </front>
+      </reference>
+
+   </references>
+
+   <section anchor="TestVectors" title="Test Vectors">
+     <t>
+       This section contains a set of test vectors.
+       (Line breaks within values are for display purposes only.)
+     </t>
+
+   <section anchor="multipleglobalalg" title="Multiple Signatures with Top-Level &quot;alg&quot; Header Parameter">
+     <t>
+     <figure align="center">
+        <artwork><![CDATA[{
+  "iss": "joe",
+  "exp": 1300819380,
+  "__cleartext_signature": {
+    "alg": "ES512",
+    "signers": [{
+      "kid": "example.com:p256",
+      "signature": "zjf2MzEesdIudTk0k9osa0um5ffzU-oM_8Z-mKHFmZxCRvpl4
+                    1lX2KUt5a742px_cTsG7sw-Kh8_xJuUMX97Kg"
+    },{
+      "kid": "example.com:p384",
+      "signature": "jTWnzmAcC34zOpTvvg7vuqLECUOqS6UMQcjwM24w7DwHz7nXQ
+                    e17eFYTjJWE-w_Nnw3sosYM6c6J9ABFOGoKx70cRPNQQ8WHfT
+                    zAyfTBxMBWtUR5PKWi5hJWUDeMnRS0"
+    }]
+  }
+}]]></artwork>
+    </figure>
+     </t><t>
+       The first signature can be verified using the key in <xref target="example.com:p256"/>
+       and the second signature can be verified using the key in <xref target="example.com:p384"/>.
+     </t>
+   </section>
+
+   <section anchor="multipleglobalcrit" title="Multiple Signatures with Top-Level &quot;crit&quot; Header Parameter">
+     <t>
+     <figure align="center">
+        <artwork><![CDATA[{
+  "iss": "joe",
+  "exp": 1300819380,
+  "__cleartext_signature": {
+    "crit": ["otherExt","https://example.com/extension"],
+    "signers": [{
+      "alg": "ES256",
+      "kid": "example.com:p256",
+      "otherExt": "Other Data",
+      "signature": "S9PqQU5z5zThIGUvErzf7oo8EetiUFEI1v8flisWJzw0HqqY-
+                    OuT_pDq1rG4gsSRAFjrazurl4NGyyxcPfeXzw"
+    },{
+      "alg": "RS256",
+      "kid": "example.com:r2048",
+      "otherExt": "Cool Stuff",
+      "https://example.com/extension": {
+        "life-is-great": true
+      },
+      "signature": "O-cnYTtgvyGmgX1YMQkcnRE0lnBw1EduMNVpdblKP-Iy0S143
+                    BBvXrCQoEW9oTkQm7X9wkJoohWQyU4qvojoxQxmf6GQ0tEXEI
+                    HqN7ixkPh_3ySXTl-gKTPiA5UL-GV44AS-k6N71qp8XhLORmU
+                    m68UlTWBZaOXL0JTGjsCyGpuwNiAQbx39ZbjabvGq4NfpPIQC
+                    2yjx_SKoPMiia54Mp0hz8U_S3oyAmHrG2mKFYrJ7k43aeDHK1
+                    RNRu8XrW2w-Ffh4KigpClAq4q272ZSsjizfYPPjW3gqInjMZz
+                    Qd8yZj5Bi5vCDcBOEKZMDoog-UzIy8SbZNl85TlkhK70oNRQ"
+    }]
+  }
+}]]></artwork>
+    </figure>
+     </t>
+     <t>
+       The first signature can be verified using the key in <xref target="example.com:p256"/>
+       and the second signature can be verified using the key in <xref target="example.com:r2048"/>.
+   </t>
+   </section>
+
+   <section anchor="example.com:p256" title="Elliptic Curve Key &quot;example.com:p256&quot;">
+     <t>Elliptic Curve private key, represented as a JWK:</t>
+     <t>
+     <figure align="center">
+        <artwork><![CDATA[{
+  "kid": "example.com:p256",
+  "kty": "EC",
+  "crv": "P-256",
+  "x": "censDzcMEkgiePz6DXB7cDuwFemshAFR90UNVQFCg8Q",
+  "y": "xq8rze6ewG0-eVcSF72J77gKiD0IHnzpwHaU7t6nVeY",
+  "d": "nEsftLbi5u9pI8B0-drEjIuJzQgZie3yeqUR3BwWDl4"
+}]]></artwork>
+    </figure>
+     </t>
+   </section>
+
+   <section anchor="example.com:p384" title="Elliptic Curve Key &quot;example.com:p384&quot;">
+     <t>Elliptic Curve private key, represented as a JWK:</t>
+     <t>
+     <figure align="center">
+        <artwork><![CDATA[{
+  "kid": "example.com:p384",
+  "kty": "EC",
+  "crv": "P-384",
+  "x": "GLfdsvEwphRzS_twup7UFPVOk7_CKgHZ7dt_fJ2QHPBdJa1c5pfJcRIWTfT0l
+        pg9",
+  "y": "ovA5_QXmFbj9U4pjZ1AX_ZdVyIRZUBWW9cuZda_tupKfWQfmcQHzDmHGHbxl9
+        Xxl",
+  "d": "Qsgq80kMs40sAn1gB7gLxAk1se37Kmh9AG18wWZ3SqgcPPRq1wwidNTi866Gt
+        4_0"
+}]]></artwork>
+    </figure>
+     </t>
+   </section>
+     <section anchor="example.com:r2048" title="RSA Key &quot;example.com:r2048&quot;">
+     <t>RSA private key, represented as a JWK:</t>
+     <t>
+     <figure align="center">
+        <artwork><![CDATA[{
+  "kid": "example.com:r2048",
+  "kty": "RSA",
+  "n": "hFWEXArvaZEpSP5qNX7x4C4Hl28GJQTNvnDwkfqiWs63kXbdyPeS06bz6GnY3
+        tfQ_093nGauWsimqKBmGAGMPtsV83Qxw1OIeO4ujbIIb9pema0qtVqs0MWlHx
+        klZGFkYfAmbuEUFxYDeLDHe0bkkXbSlB7_t8pCSvc8HLgHjEQjYOlFRwjR0D-
+        uLo-xgsCbpmCtYkB5lcT_zFgpRgY4zJNLSv7GZiz2S4Fc5ArGjd34lL47-L8b
+        ozuYjqNOv9sqX0Zgll5XaJ1ndvr7UqZu1xQFgm38reoM3IarBP_SkEFbt_v9i
+        ak602VO3k28fQhMaocP7JWR2YLT3kZM0-WTFw",
+  "e": "AQAB",
+  "d": "Q6iBYpnIrB2mkQZagP1lZuvBv9_osVaSZpLRvKD7DxhvbDTs0coaTJIoVCSB1
+        _VZip8zlUg-TnYWF1Liv9VSwfQ7ddxrcOUtej60mId0ntNz2HhbxJsWjiru8E
+        ZoArl0nEovLDNxlRgRMEyZwOKPC_xHT6nFrk7_s9pR5pEEcubGLAVBKnLCoPd
+        Lr-CBjCvWfJo73W5AZxoSb8MdWQOi5viXHURpr1Y_uBRsMuclovM56Vt05etM
+        sB1AbcTLUDwAuYrZWa1c08ql60ft7b3v6Q_rCL7EHtFU3PHAuP0mV7tM5BfAP
+        f4T0g9pbr4GOw7eqQCiYgPFE7gmCR_PDxv5YQ",
+  "p": "6DIM343hAtj1hQprJaVQ3T8YeIytIQ7Ma544C0A8BX-irjJfARy4fAlTSyBFe
+        auZ0WdbMGtKpAIgNVmfCfuP7W1bXw7UaxpqsQlbw54K1VtBs8xG-lee_2YQ3l
+        UlIiC1at6L0jxWYNkvp-LIfU2F5ZQir5ZWVXwgdMcgoNBABMc",
+  "q": "keacq0goV7pAtG2h33OAk-XOSclIF1agvEMMOKuud5V-vGQ6OaYldlYqZmSGg
+        F7RVlX0GZO70nPqatjd2G-tI8wEq5K_xmLQurUPFW8g___z0CTgJ62KbjFxCt
+        Gny5rsObX9im6cCc_EOtWZRaApzO8ykxfo1QcEjT4k1na7DzE",
+  "dp": "nPmJPnFal2Q5x_GdMlwq6QhI8OaZ_OlWRcM3PFP2v_jj8ERZehUCm8hqKTXu
+         Ai2C1dC8E2XVlj9hqu-l10fcq7Tsurz52laHnpwnD35-8HK7XmRR79jgwuUr
+         rkN90S6vt0ow2La15s-tqiBlTmDkjqqxMGfAghZiktA0PMPNI-0",
+  "dq": "D3c1lkZw2FPK9hVE-m3A7GyIwHOQq8CoCyzER-GS_eQf6hJpxaCiCfg6SF5R
+         j5v9brxvwqJRX46gA7F3WrED1m6S9Cj7ISlqXNBCiBAenGRiUOcHx8zyhpnB
+         FNeChOeoMLnk5V6yNawLbf0kYSgIJkwYvVTkfmhfCCXVO9KcI5E",
+  "qi": "wV0NzfCakfog1NFjtPzcga1MtkpizgPkxcP9LjNdvXW2YQZhM6GIEGjsu3iv
+         TrHrrM-4_bTQHOoTtfIY7wdqBKlwQTJOI0dH9FbNJ4ecGojRwgv83TN8aNKh
+         17Tt44jI5oibs2P-31B_VW9R1wwhnnOuCYpABfoSbtHIoCRme5I"
+}]]></artwork>
+    </figure>
+     </t>
+   </section>
+ </section>
+
+  <section anchor="Acknowledgements" title="Acknowledgements">
+    <t>
+      This document builds on the work done in the JOSE working group, so a big thanks goes out
+      to all involved in that work. It is specifically inspired by JWS,
+      so special thanks are due to the authors of that document, Michael B. Jones, John Bradley,
+      and Nat Sakimura.
+      </t><t>
+      Building on ES6 number normalization was originally
+      proposed by James Manger. This ultimately led to the
+      creation of the JCS specification underpinning cleartext JWS.
+    </t>
+  </section>
+
+    <section anchor="TBD" title="Open Issues">
+      <t>
+	The following open issues remain to be addressed in this specification.
+      </t>
+      <t>
+	<list style="symbols">
+	  <t>
+	    The signature creation and validation steps for the multiple signatures case needs to be added to
+	    <xref target="MessageSignatureMACComputation"/> and <xref target="MessageSignatureMACValidation"/>.
+	  </t>
+	  <t>
+	    We need to choose consistent wording between "signature construct" and "signature object".
+	    Defining terms at the top of the document would probably help.
+	  </t>
+        </list>
+      </t>
+    </section>
+
+    <section anchor="History" title="Document History">
+      <t>[[ to be removed by the RFC Editor before publication as an RFC ]]</t>
+
+      <t>
+	-00
+        <list style="symbols">
+	  <t>
+	    Initial version.
+	  </t>
+	</list>
+      </t>
+
+    </section>
+
+ </back>
+</rfc>
