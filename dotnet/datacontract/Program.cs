@@ -31,55 +31,63 @@ namespace datacontract
             }
         }
 
+        static byte[] SerializeObject(MyObject myObject)
+        {
+            using (MemoryStream stream = new MemoryStream())
+            {
+                DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(MyObject));
+                ser.WriteObject(stream, myObject);
+                return stream.ToArray();
+            }
+        }
+
+        static void LogData(string what, byte[] utf8)
+        {
+            using (MemoryStream stream = new MemoryStream(utf8))
+            {
+                using (StreamReader reader = new StreamReader(stream))
+                {
+                    Console.OutputEncoding = System.Text.Encoding.Unicode;
+                    Console.WriteLine(what);
+                    Console.WriteLine(reader.ReadToEnd());
+                }
+            }
+        }
+
         static byte[] SignAndSend(MyObject myObject)
         {
-            MemoryStream stream1 = new MemoryStream();
-            DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(MyObject));
-            // Use the WriteObject method to write JSON data to the stream.
-            ser.WriteObject(stream1, myObject);
-            // Show the JSON output.
-            stream1.Position = 0;
-            StreamReader sr = new StreamReader(stream1);
-            Console.OutputEncoding = System.Text.Encoding.Unicode;
-            Console.WriteLine("JSON DataContractJsonSerializer write:");
-            Console.WriteLine(sr.ReadToEnd());
-            stream1.Position = 0;
-            byte[] dataToBeCanonicalized = new JSONCanonicalizer(sr).GetEncodedUTF8();
-            Console.WriteLine("Canonicalizer write:");
-            Console.WriteLine(new UTF8Encoding().GetString(dataToBeCanonicalized));
-            myObject.hmac = Convert.ToBase64String(HmacObject(dataToBeCanonicalized));
-            stream1.Position = 0;
-            ser.WriteObject(stream1, myObject);
-            stream1.Position = 0;
-            sr = new StreamReader(stream1);
-            Console.OutputEncoding = System.Text.Encoding.Unicode;
-            Console.WriteLine("JSON DataContractJsonSerializer updated write:");
-            Console.WriteLine(sr.ReadToEnd());
-            stream1.Position = 0;
-            StreamWriter sw = new StreamWriter(stream1);
-            return stream1.ToArray();
+            byte[] originalData = SerializeObject(myObject);
+
+            LogData("Raw JSON data:", originalData);
+
+            byte[] canonicalizedData = new JSONCanonicalizer(originalData).GetEncodedUTF8();
+
+            LogData("Canonicalized data", canonicalizedData);
+
+            myObject.hmac = Convert.ToBase64String(HmacObject(canonicalizedData));
+
+            byte[] dataToBeSent = SerializeObject(myObject);
+
+            LogData("Signed JSON Data", dataToBeSent);
+
+            return dataToBeSent;
         }
 
         static void OneRoundTrip(MyObject myObject)
         {
-            byte[] receivedJsonData = SignAndSend(myObject);
+            byte[] receivedData = SignAndSend(myObject);
 
             // Now deserialize and verify
-            MemoryStream stream1 = new MemoryStream();
             DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(MyObject));
-            MyObject readObject = (MyObject)ser.ReadObject(new MemoryStream(receivedJsonData));
+            MyObject readObject = (MyObject)ser.ReadObject(new MemoryStream(receivedData));
             byte[] hmac = Convert.FromBase64String(readObject.hmac);
             readObject.hmac = null;
-            stream1.Position = 0;
-            ser.WriteObject(stream1, readObject);
-            // Show the JSON output.
-            stream1.Position = 0;
-            StreamReader sr = new StreamReader(stream1);
-            Console.OutputEncoding = System.Text.Encoding.Unicode;
-            Console.WriteLine("JSON DataContractJsonSerializer read:");
-            Console.WriteLine(sr.ReadToEnd());
-            stream1.Position = 0;
-            if (hmac.SequenceEqual(HmacObject(new JSONCanonicalizer(sr).GetEncodedUTF8())))
+
+            byte[] originalData = SerializeObject(readObject);
+
+            LogData("Received raw JSON data", originalData);
+
+            if (hmac.SequenceEqual(HmacObject(new JSONCanonicalizer(originalData).GetEncodedUTF8())))
             {
                 Console.WriteLine("SUCCESS");
             }
