@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 namespace datacontract
 {
     [DataContract]
-    public class MyObject : IEquatable<MyObject>
+    public class MyObject
     {
         [DataMember]
         public string escaping;
 
-        [DataMember]
+        [DataMember(Order = 3)]
         public double aDouble;
 
         [DataMember]
@@ -28,12 +28,8 @@ namespace datacontract
         [DataMember(Name = "interoperableLong")]
         private string interoperableLongAsString;
 
-        public bool Equals(MyObject other)
-        {
-            return escaping.Equals(other.escaping) &&
-                   aDouble == other.aDouble &&
-                   nonInteroperableLong == other.nonInteroperableLong &&
-                   interoperableLong == other.interoperableLong;
-        }
+        // Holds the optional HMAC signature
+        [DataMember(EmitDefaultValue = false)]
+        public string hmac = null;
     }
 }
