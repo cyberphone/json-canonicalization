@@ -100,11 +100,13 @@ namespace datacontract
 
         static void Main(string[] args)
         {
-            MyObject myObject = new MyObject();
-            myObject.escaping = "\u20ac$\u000F\u000aA'\u0042\u0022\u005c\\\"";
-            myObject.aDouble = 1.5e+33;
-            myObject.interoperableLong = 9223372036854775807;     // Is treated as a "string" on the wire
-            myObject.nonInteroperableLong = 9007199254740991;     // Max integer fitting an IEEE-754 double
+            MyObject myObject = new MyObject()
+            {
+                escaping = "\u20ac$\u000F\u000aA'\u0042\u0022\u005c\\\"",
+                aDouble = 1.5e+33,
+                interoperableLong = 9223372036854775807,    // Is treated as a "string" on the wire
+                nonInteroperableLong = 9007199254740991     // Max integer fitting an IEEE-754 double
+            };
             OneRoundTrip(myObject);
 
             myObject.nonInteroperableLong = 9223372036854775807;  // Max "long" doesn't fit an IEEE-754 double
