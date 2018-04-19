@@ -1,11 +1,12 @@
 using System;
 using System.IO;
-using System.Text;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Runtime.Serialization.Json;
 
 using Org.Webpki.Json;
+
+// Ultra-simple "Signed JSON" based on Canonicalization
 
 namespace datacontract
 {
@@ -107,7 +108,7 @@ namespace datacontract
             OneRoundTrip(myObject);
 
             myObject.nonInteroperableLong = 9223372036854775807;  // Max "long" doesn't fit an IEEE-754 double
-            // ***Throws an exception because the value is expressed in scientific notation***
+            // Signature-wise fails due to incompatible JSON number handling 
             OneRoundTrip(myObject);
         }
     }
