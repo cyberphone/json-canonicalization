@@ -78,7 +78,7 @@
       </t>
       <t>
         Seasoned XML developers recalling difficulties getting signatures
-        to validate (due to different interpretations of the quite intricate
+        to validate (usually due to different interpretations of the quite intricate
         XML canonicalization rules as well as of the equally extensive
         Web Services security standards), may rightfully wonder why this
         particular effort would succeed. The reasons are twofold:
