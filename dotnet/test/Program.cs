@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-using Org.Webpki.Es6Numbers;
+using Org.Webpki.Json;
 
 // Test program for verifying the JSON canonicalizer
 

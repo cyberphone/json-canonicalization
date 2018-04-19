@@ -12,7 +12,7 @@ using System.Collections.Generic;
 // Simple JSON parser for .NET
 // It uses OrderedDictionary for Object and List for Array
 
-namespace Org.Webpki.Es6Numbers
+namespace Org.Webpki.Json
 {
     public class JSONReader
     {
