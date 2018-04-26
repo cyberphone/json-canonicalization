@@ -1,8 +1,8 @@
-*** Miniscule Clear Text Signature Solution
+### Miniscule Clear Text Signature Solution
 
 Expected printout:
 ```json
-
+{
   "id": "johndoe",
   "counter": 3,
   "list": [
