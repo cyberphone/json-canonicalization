@@ -1,0 +1,13 @@
+Remove policy
+ - unknown headers
+ - non-verifiable signatures
+
+Remove or change JKU X5U
+ - No valid use case, quirky design
+ 
+Remove "__cleartext_signature"
+
+Reinstate "val"
+
+Restrict syntax
+  - JWK can only contain public keys
