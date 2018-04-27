@@ -551,7 +551,7 @@
     <section anchor="json.ieee754.test" title="Number Serialization Samples">
       <t>
         The following table holds a set of ES6 <spanx style="verb">Number</spanx> serialization samples,
-        including some edge cases.  The field  &quot;ES6&nbsp;Internal&quot; refers to the internal
+        including some edge cases.  The column &quot;ES6&nbsp;Internal&quot; refers to the internal
         ES6 representation of the <spanx style="verb">Number</spanx> data type which is based on the
         IEEE-754 <xref target="IEEE754"/> standard using 64-bit (double precision) values,
         here expressed in hexadecimal.
