@@ -7,7 +7,7 @@ with respect to the cryptographic part (using a hard-coded algorithm and key),
 while the rest is pretty universal.
 
 For creating "signable" JSON objects, developers only need adding a `SignatureObject` property
-with a JSON property name of their preference:
+with a JSON property name of their liking:
 ```c#
 [JsonProperty("signature", Required = Required.Always)]
 public SignatureObject Signature { get; set; }
