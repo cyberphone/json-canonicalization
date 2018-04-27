@@ -1,6 +1,19 @@
-### Miniscule Clear Text Signature Solution
+## Clear Text Signature Sample Solution
 
-Expected printout:
+The sample is based on Newtonsoft's Json.NET library.  
+
+The code is (deliberately) simplistic
+with respect to the cryptographic part (using a hard-coded algorithm and key),
+while the rest is pretty universal.
+
+For creating "signable" JSON objects, developers only need adding a `SignatureObject` property
+with a JSON property name of their preference:
+```c#
+[JsonProperty("signature", Required = Required.Always)]
+public SignatureObject Signature { get; set; }
+```
+
+Expected printout from the sample program:
 ```json
 {
   "id": "johndoe",
@@ -17,7 +30,7 @@ Expected printout:
   }
 }
 ```
-Result line:
+Expected result line:
 ```code
 Signature verified=True
 ```
