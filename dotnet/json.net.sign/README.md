@@ -1,8 +1,8 @@
 ## Clear Text Signature Sample Solution
 
-The sample is based on Newtonsoft's Json.NET library.  
+The sample is based on Newtonsoft's Json.NET API (nowadays recommended by Microsoft).  
 
-The code is (deliberately) simplistic
+The code is _deliberately_ simplistic
 with respect to the cryptographic part (using a hard-coded algorithm and key),
 while the rest is pretty universal.
 
