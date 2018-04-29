@@ -69,7 +69,7 @@ namespace json.net.sign
             List<object> receivedObject = JsonConvert.DeserializeObject<List<object>>(json);
 
             // Verify signature
-            Console.WriteLine("Signature verified=" + Signature.Verify(receivedObject));
+            Console.WriteLine("Signature verified=" + (Signature.Verify(receivedObject) != null));
         }
     }
 }
