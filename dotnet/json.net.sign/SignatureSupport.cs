@@ -120,7 +120,7 @@ namespace json.net.signaturesupport
                                             new JsonSerializerSettings { ContractResolver = new Canonicalizer() }));
         }
 
-        public static object Sign(object obj)
+        public static SignatureObject Sign(object obj)
         {
             // Create and initialize an empty signature object
             SignatureObject signatureObject = new SignatureObject
@@ -145,10 +145,10 @@ namespace json.net.signaturesupport
 
             // Finally add the signature value to the signature object
             signatureObject.SignatureValue = HmacObject(canonicalizedUtf8);
-            return obj;
+            return signatureObject;
         }
 
-        public static bool Verify(object obj)
+        public static SignatureObject Verify(object obj)
         {
             SignatureObject signatureObject;
             if (obj is List<object>)
@@ -190,7 +190,7 @@ namespace json.net.signaturesupport
             signatureObject.SignatureValue = signatureValue;
 
             // Verify signature value
-            return signatureValue.SequenceEqual(HmacObject(canonicalizedUtf8));
+            return signatureValue.SequenceEqual(HmacObject(canonicalizedUtf8)) ? signatureObject : null;
         }
     }
 }

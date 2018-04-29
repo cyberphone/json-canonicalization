@@ -53,7 +53,7 @@ namespace json.net.sign
             });
 
             // Verify signature
-            Console.WriteLine("Signature verified=" + Signature.Verify(receivedObject));
+            Console.WriteLine("Signature verified=" + (Signature.Verify(receivedObject) != null));
         }
     }
 }
