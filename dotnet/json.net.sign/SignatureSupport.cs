@@ -157,7 +157,7 @@ namespace json.net.signaturesupport
                 JObject jobject = (JObject)((List<object>)obj).Last();
 
                 // Since the deserializer does not know what a SignatureObject is,
-                // it returs a generic object which we map to SignatureObject.
+                // it returs a generic object which we remap to a SignatureObject.
                 signatureObject = jobject.ToObject<SignatureObject>();
 
                 // Finally, the last element is replaced by the true SignatureObject.
@@ -166,7 +166,7 @@ namespace json.net.signaturesupport
             }
             else
             {
-                // We are verifying a signed array, get the signature object
+                // We are verifying a signed object, get the signature object
                 signatureObject = (SignatureObject)GetSignatureProperty(obj).GetValue(obj);
             }
 
