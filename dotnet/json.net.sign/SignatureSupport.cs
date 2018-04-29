@@ -7,6 +7,7 @@ using System.Security.Cryptography;
 using System.Collections.Generic;
 
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 
 // Ultra-simple "Signed JSON" based on Canonicalization
@@ -120,7 +121,7 @@ namespace json.net.signaturesupport
         }
 
         public static object Sign(object obj)
-        { 
+        {
             // Create and initialize an empty signature object
             SignatureObject signatureObject = new SignatureObject
             {
@@ -128,8 +129,16 @@ namespace json.net.signaturesupport
                 KeyId = KEY_ID
             };
 
-            // Assign it to our object to be sign
-            GetSignatureProperty(obj).SetValue(obj, signatureObject);
+            if (obj is List<object>)
+            {
+                // We are signing an array, append signature
+                ((List<object>)obj).Add(signatureObject);
+            }
+            else
+            {
+                // We are signing an object, assign signature to it
+                GetSignatureProperty(obj).SetValue(obj, signatureObject);
+            }
 
             // Canonicalize the completed object
             byte[] canonicalizedUtf8 = CanonicalizeObject(obj);
@@ -141,8 +150,25 @@ namespace json.net.signaturesupport
 
         public static bool Verify(object obj)
         {
-            // Get the signature object
-            SignatureObject signatureObject = (SignatureObject)GetSignatureProperty(obj).GetValue(obj);
+            SignatureObject signatureObject;
+            if (obj is List<object>)
+            {
+                // We are verifying a signed array, fetch the last element
+                JObject jobject = (JObject)((List<object>)obj).Last();
+
+                // Since the deserializer does not know what a SignatureObject is,
+                // it returs a generic object which we map to SignatureObject.
+                signatureObject = jobject.ToObject<SignatureObject>();
+
+                // Finally, the last element is replaced by the true SignatureObject.
+                ((List<object>)obj).Remove(jobject);
+                ((List<object>)obj).Add(signatureObject);
+            }
+            else
+            {
+                // We are verifying a signed array, get the signature object
+                signatureObject = (SignatureObject)GetSignatureProperty(obj).GetValue(obj);
+            }
 
             // Verify correctness of container
             if (!signatureObject.Algorithm.Equals(ALGORITHM) || !signatureObject.KeyId.Equals(KEY_ID))
