@@ -173,9 +173,9 @@
           </t>
           <t>
             <figure align="center"><artwork><![CDATA[  {
-    "numbers": [1E30, 4.50, 333333333.33333329,
+    "numbers": [333333333.33333329, 1E30, 4.50,
                 2e-3, 0.000000000000000000000000001],
-    "escaping": "\u20ac$\u000F\u000aA'\u0042\u0022\u005c\\\"\/",
+    "string": "\u20ac$\u000F\u000aA'\u0042\u0022\u005c\\\"\/",
     "literals": [null, true, false]
   }]]></artwork></figure>
           </t>
@@ -183,10 +183,10 @@
             If you subsequently serialize the object created by the operation above
             using an serializer compliant with ES6's <spanx style="verb">JSON.stringify()</spanx>,
             the result would (with a line wrap added for display purposes only),
-            be rather divergent with respect to data representation:
+            be rather divergent with respect to representation of data:
           </t>
           <t>
-            <figure align="center"><artwork><![CDATA[  {"numbers":[1e+30,4.5,333333333.3333333,0.002,1e-27],"escaping":
+            <figure align="center"><artwork><![CDATA[  {"numbers":[333333333.3333333,1e+30,4.5,0.002,1e-27],"string":
   "\u20ac$\u000f\nA'B\"\\\\\"/","literals":[null,true,false]}]]></artwork></figure>
           </t>
           <t>
@@ -199,7 +199,7 @@
             </list> 
           </t>
           <t>
-            The reason for the huge difference between the parsed data and its
+            The reason for the notable difference between the parsed data and its
             serialized counterpart, is due to a wide tolerance on input data (as defined
             by <xref target="RFC8259"/>), while output data (as defined by ES6),
             has a fixed representation.  As can be seen by the example,
@@ -208,16 +208,16 @@
             The following sub sections describe serialization of primitive JSON data types
             according to JCS.  This part is identical to that of ES6.
           </t>
-          <section anchor="json.ser.literals" title="Serialization of Null and Boolean">
+          <section anchor="json.ser.literals" title="Serialization of Literals">
             <t>
-              The literals <spanx style="verb">null</spanx>, <spanx style="verb">true</spanx>,
+              The JSON literals <spanx style="verb">null</spanx>, <spanx style="verb">true</spanx>,
               and <spanx style="verb">false</spanx> present no challenge since they already have a
               fixed definition in JSON <xref target="RFC8259"/>.
             </t>
           </section>
-          <section anchor="json.ser.string" title="Serialization of String">
+          <section anchor="json.ser.string" title="Serialization of Strings">
             <t>
-              For data of the type <spanx style="verb">String</spanx> (which includes
+              For JSON data of the type <spanx style="verb">String</spanx> (which includes
               <spanx style="verb">Object</spanx> property names as well), each character MUST be serialized as
               described in Section <xref target="ES6" format="none">24.3.2.2</xref> of ES6.
               <vspace blankLines="1"/>
@@ -245,9 +245,9 @@
               which already is the case for most other uses of JSON.
             </t>
           </section>
-          <section anchor="json.ser.number" title="Serialization of Number">
+          <section anchor="json.ser.number" title="Serialization of Numbers">
             <t>
-              Data of the type <spanx style="verb">Number</spanx> MUST be serialized according to
+              JSON data of the type <spanx style="verb">Number</spanx> MUST be serialized according to
               Section <xref target="ES6" format="none">7.1.12.1</xref> of ES6; for
               maximum interoperability preferably including the "Note 2" enhancement as well.
               The latter is implemented by for example Google's V8 <xref target="V8"/>.
@@ -278,8 +278,8 @@
             line wrap added for display purposes only), read as:
           </t>
           <t>
-            <figure align="center"><artwork><![CDATA[  {"escaping":"\u20ac$\u000f\nA'B\"\\\\\"/","literals":[null,true,
-  false],"numbers":[1e+30,4.5,333333333.3333333,0.002,1e-27]}]]></artwork></figure>
+            <figure align="center"><artwork><![CDATA[  {"literals":[null,true,false],"numbers":[333333333.3333333,
+  1e+30,4.5,0.002,1e-27],"string":"\u20ac$\u000f\nA'B\"\\\\\"/"}]]></artwork></figure>
           </t>
           <t>
             <list style="empty">
@@ -350,12 +350,12 @@
             should yield the following bytes here shown in hexadecimal notation:
           </t>
           <t>
-            <figure align="center"><artwork><![CDATA[  7b 22 65 73 63 61 70 69 6e 67 22 3a 22 e2 82 ac 24 5c 75 30
-  30 30 66 5c 6e 41 27 42 5c 22 5c 5c 5c 5c 5c 22 2f 22 2c 22
-  6c 69 74 65 72 61 6c 73 22 3a 5b 6e 75 6c 6c 2c 74 72 75 65
-  2c 66 61 6c 73 65 5d 2c 22 6e 75 6d 62 65 72 73 22 3a 5b 31
-  65 2b 33 30 2c 34 2e 35 2c 33 33 33 33 33 33 33 33 33 2e 33
-  33 33 33 33 33 33 2c 30 2e 30 30 32 2c 31 65 2d 32 37 5d 7d]]></artwork></figure>
+            <figure align="center"><artwork><![CDATA[  7b 22 6c 69 74 65 72 61 6c 73 22 3a 5b 6e 75 6c 6c 2c 74 72
+  75 65 2c 66 61 6c 73 65 5d 2c 22 6e 75 6d 62 65 72 73 22 3a
+  5b 33 33 33 33 33 33 33 33 33 2e 33 33 33 33 33 33 33 2c 31
+  65 2b 33 30 2c 34 2e 35 2c 30 2e 30 30 32 2c 31 65 2d 32 37
+  5d 2c 22 73 74 72 69 6e 67 22 3a 22 e2 82 ac 24 5c 75 30 30
+  30 66 5c 6e 41 27 42 5c 22 5c 5c 5c 5c 5c 22 2f 22 7d]]></artwork></figure>
           </t>
           <t>
             This data is intended to be usable as input to cryptographic functions.
