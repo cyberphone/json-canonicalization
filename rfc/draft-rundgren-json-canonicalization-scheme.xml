@@ -157,7 +157,7 @@
           </list>
         </t>
       </section>
-      <section anchor="json.canonicalization" title="JSON Canonicalization">
+      <section anchor="json.canonicalization" title="Canonicalization of JSON Data">
         <t>
           The following sub sections describe all the steps needed in order to create a canonicalized
           version of internal JSON data elaborated on in the previous section.
