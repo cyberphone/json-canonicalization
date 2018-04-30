@@ -484,7 +484,7 @@
         Below is a functionally complete example of a JCS compliant canonicalizer
         for usage with ES6 based systems.
         <vspace blankLines="1"/>
-        Note: The primary purpose of this code is highlighting the sorting algorithm.
+        Note: The primary purpose of this code is highlighting the canonicalization algorithm.
         Using the full power of ES6 would reduce the code size considerably
         but would also be more difficult to follow by non-experts.
       </t>
