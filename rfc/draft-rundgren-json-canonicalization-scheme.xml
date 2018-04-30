@@ -162,6 +162,10 @@
           The following sub sections describe all the steps needed in order to create a canonicalized
           version of internal JSON data elaborated on in the previous section.
         </t>
+        <t>
+          <xref target="canonicalize.js"/> shows sample code for an ES6 based canonicalizer,
+          matching the JCS specification.
+        </t>
         <section anchor="json.whitespace" title="Whitespace Handling">
           <t>
             Whitespace between JSON elements MUST NOT be emitted.
@@ -335,10 +339,6 @@
             Note: for the purpose obtaining a deterministic property order, sorting on
             UTF-8 or UTF-32 encoded data would also work, but the result would differ
             (and thus be incompatible with this specification).
-          </t>
-          <t>
-            <xref target="canonicalize.js"/> shows the code for an ES6 based canonicalizer,
-            matching JCS.
           </t>
         </section>
         <section anchor="json.utf8" title="UTF-8 Generation">
