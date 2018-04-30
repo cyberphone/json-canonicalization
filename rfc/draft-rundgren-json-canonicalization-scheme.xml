@@ -201,7 +201,7 @@
           <t>
             The reason for the notable difference between the parsed data and its
             serialized counterpart, is due to a wide tolerance on input data (as defined
-            by <xref target="RFC8259"/>), while output data (as defined by ES6),
+            by JSON <xref target="RFC8259"/>), while output data (as defined by ES6),
             has a fixed representation.  As can be seen by the example,
             numbers are subject to rounding as well.
             <vspace blankLines="1"/>
