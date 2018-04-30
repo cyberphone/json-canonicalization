@@ -1,7 +1,7 @@
 import java.util.Scanner;
 
-import org.webpki.json.JSONObjectWriter;
 import org.webpki.json.JSONParser;
+import org.webpki.json.NumberToJSON;
 
 public class ES6InterActive {
 	
@@ -35,7 +35,7 @@ public class ES6InterActive {
         	ieeeBin = ieeeBin.substring(0,1) + ' ' + 
         			  ieeeBin.substring(1,12) + ' ' +
         			  ieeeBin.substring(12);
-        	String outputFp = JSONObjectWriter.es6JsonNumberSerialization(d);
+        	String outputFp = NumberToJSON.serializeNumber(d);
         	System.out.println("\nInput floating point: " + inputFp);
         	System.out.println("Output floating point: " + outputFp);
         	System.out.println("Hex value: " + ieeeHex);
