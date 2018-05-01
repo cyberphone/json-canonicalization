@@ -26,7 +26,7 @@ namespace Org.Webpki.Json
         }
 
         public JSONCanonicalizer(byte[] jsonData)
-            : this(new UTF8Encoding().GetString(jsonData))
+            : this(new UTF8Encoding(false, true).GetString(jsonData))
         {
 
         }
@@ -154,7 +154,7 @@ namespace Org.Webpki.Json
 
         public byte[] GetEncodedUTF8()
         {
-            return new UTF8Encoding().GetBytes(GetEncodedString());
+            return new UTF8Encoding(false, true).GetBytes(GetEncodedString());
         }
     }
 }
