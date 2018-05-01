@@ -159,7 +159,7 @@
       </section>
       <section anchor="json.canonicalization" title="Canonicalization of JSON Data">
         <t>
-          The following sub sections describe all the steps needed in order to create a canonicalized
+          The following sub sections describe the steps required for creating a canonicalized
           version of internal JSON data elaborated on in the previous section.
         </t>
         <t>
