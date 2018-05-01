@@ -50,12 +50,7 @@ namespace json.net.signaturesupport
     {
         protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
         {
-            SortedList<string, JsonProperty> newList = new SortedList<string, JsonProperty>(StringComparer.Ordinal);
-            foreach (JsonProperty jsonProperty in base.CreateProperties(type, memberSerialization))
-            {
-                newList.Add(jsonProperty.PropertyName, jsonProperty);
-            }
-            return newList.Values;
+            return base.CreateProperties(type, memberSerialization).OrderBy(p => p.PropertyName, StringComparer.Ordinal).ToList();
         }
     }
 

@@ -11,6 +11,7 @@ namespace newtonsoft
 
         public long counter;
 
+        [JsonProperty("\ud83d\ude02")]
         public string[] list;
 
         [JsonProperty("\u20ac")]
