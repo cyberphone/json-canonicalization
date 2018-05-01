@@ -168,7 +168,7 @@
         </t>
         <section anchor="json.whitespace" title="Whitespace Handling">
           <t>
-            Whitespace between JSON elements MUST NOT be emitted.
+            Possible whitespace between JSON elements MUST be ignored (not emitted).
           </t>
         </section>
         <section anchor="json.serialization.data" title="Serialization of Primitive Data Types">
@@ -203,7 +203,7 @@
             </list> 
           </t>
           <t>
-            The reason for the notable difference between the parsed data and its
+            The reason for the difference between the parsed data and its
             serialized counterpart, is due to a wide tolerance on input data (as defined
             by JSON <xref target="RFC8259"/>), while output data (as defined by ES6),
             has a fixed representation.  As can be seen by the example,
@@ -644,8 +644,8 @@
         operations.
       </t>
       <t>
-        Note that if message size is not a concern, you may even "Pretty&nbsp;Print"
-        JSON data on the wire, since whitespace is ignored regardless of format chosen.
+        Note that if message size is not a concern, you may even send "Pretty&nbsp;Printed"
+        JSON data on the wire (since whitespace always is ignored by the canonicalization process).
       </t>
     </section>
 
