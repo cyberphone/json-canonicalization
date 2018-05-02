@@ -43,6 +43,11 @@ border-style:solid;border-color: #a9a9a9;text-align:center;font-family:arial,ver
         flags="g"/>
 
   	<replaceregexp file="${rfc.file}"
+        match="&lt;title&gt;"
+        replace="&lt;link rel=&quot;icon&quot; href=&quot;../webpkiorg.png&quot; sizes=&quot;192x192&quot;&gt;&lt;title&gt;"
+        flags="g"/>
+
+  	<replaceregexp file="${rfc.file}"
         match="(&lt;pre)(&gt;.*\n?.*&quot;numbers&quot;)"
         replace="\1 style=&quot;padding:1em 0.5em&quot;\2"
         flags="g"/>
