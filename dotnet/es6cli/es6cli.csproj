@@ -48,11 +48,5 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\org.webpki.es6numbers\org.webpki.es6numbers.csproj">
-      <Project>{88d7bb00-9591-4e52-968a-64925c9615c7}</Project>
-      <Name>org.webpki.es6numbers</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
