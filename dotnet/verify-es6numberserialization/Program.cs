@@ -5,6 +5,7 @@ using Org.Webpki.Es6NumberSerialization;
 
 namespace verify_es6numberserialization
 {
+    // Test program for a .NET ES6 Number Serializer
     class Program
     {
         static void Main(string[] args)
@@ -12,11 +13,15 @@ namespace verify_es6numberserialization
             using (StreamReader sr = new StreamReader("c:\\es6\\numbers\\es6testfile100m.txt"))
             {
                 string line;
-                // Read and display lines from the file until the end of 
-                // the file is reached.
+                // Read test lines from the file until EOF is reached
                 long counter = 0;
+                long fails = 0;
                 while ((line = sr.ReadLine()) != null)
                 {
+                    // Each line contains
+                    //    Hexadecimal,Number\n
+                    // where Hexadecimal is the IEEE-754 double precision
+                    // equivalent of an optimal (ES6 compliant) Number
                     string origIeeeHex = line.Substring(0, line.IndexOf(','));
                     while (origIeeeHex.Length < 16)
                     {
@@ -32,11 +37,12 @@ namespace verify_es6numberserialization
                     String serializedNumber = NumberToJSON.SerializeNumber(orig);
                     if (!serializedNumber.Equals(es6Representation))
                     {
+                        fails++;
                         Console.WriteLine("ES6={0,-24:S} C#={1,-24:S} Original=" + origIeeeHex,
                                           es6Representation, serializedNumber);
-                        NumberToJSON.SerializeNumber(orig);
                     }
                 }
+                Console.WriteLine("Number of failures: " + fails);
             }
         }
     }
