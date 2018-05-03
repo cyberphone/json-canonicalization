@@ -1,6 +1,6 @@
 ## ES6 Compatible JSON Number Serialization for .NET
 
-This project contains a port from Mozilla's "Rhino" java/js project.
+This project contains a port from Mozilla's JavaScript engine in Java ("Rhino").
 
 It has been verified using a test file with 100 millions random and selected values:
 https://onedrive.live.com/embed?cid=9341770E0D0D5468&resid=9341770E0D0D5468%21222&authkey=ADOClRsuPv3_pTk
