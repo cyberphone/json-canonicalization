@@ -30,10 +30,7 @@ Expected printout from the sample program:
   }
 }
 ```
-Expected result line:
-```code
-Signature verified=True
-```
+
 ## Signing JSON Arrays
 The system also provides support for signing arrays:
 ```c#
