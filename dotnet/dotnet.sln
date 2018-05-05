@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27428.2027
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "org.webpki.json", "org.webpki.json\org.webpki.json.csproj", "{B55A7FF8-A761-4E8C-9794-E0B8D9E11339}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "es6cli", "es6cli\es6cli.csproj", "{9ECB338E-9409-43CD-B209-BE5D7C97A496}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "json.net.sign", "json.net.sign\json.net.sign.csproj", "{7909FF7A-FFB1-4A78-809D-176FC43F3DE7}"
@@ -13,16 +11,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "es6numberserialization", "e
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "verify-es6numberserialization", "verify-es6numberserialization\verify-es6numberserialization.csproj", "{82DF6926-A616-4315-99E6-5FC6F83420D2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "jsoncanonicalizer", "jsoncanonicalizer\jsoncanonicalizer.csproj", "{B55A7FF8-A761-4E8C-9794-E0B8D9E11339}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "verify-jsoncanonicalizer", "verify-jsoncanonicalizer\verify-jsoncanonicalizer.csproj", "{3868FB13-90E9-4476-93FE-EF76B7D3975A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{B55A7FF8-A761-4E8C-9794-E0B8D9E11339}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B55A7FF8-A761-4E8C-9794-E0B8D9E11339}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B55A7FF8-A761-4E8C-9794-E0B8D9E11339}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B55A7FF8-A761-4E8C-9794-E0B8D9E11339}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9ECB338E-9409-43CD-B209-BE5D7C97A496}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9ECB338E-9409-43CD-B209-BE5D7C97A496}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9ECB338E-9409-43CD-B209-BE5D7C97A496}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -39,6 +37,14 @@ Global
 		{82DF6926-A616-4315-99E6-5FC6F83420D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{82DF6926-A616-4315-99E6-5FC6F83420D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{82DF6926-A616-4315-99E6-5FC6F83420D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B55A7FF8-A761-4E8C-9794-E0B8D9E11339}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B55A7FF8-A761-4E8C-9794-E0B8D9E11339}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B55A7FF8-A761-4E8C-9794-E0B8D9E11339}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B55A7FF8-A761-4E8C-9794-E0B8D9E11339}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3868FB13-90E9-4476-93FE-EF76B7D3975A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3868FB13-90E9-4476-93FE-EF76B7D3975A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3868FB13-90E9-4476-93FE-EF76B7D3975A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3868FB13-90E9-4476-93FE-EF76B7D3975A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

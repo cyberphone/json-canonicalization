@@ -7,10 +7,11 @@
     <ProjectGuid>{B55A7FF8-A761-4E8C-9794-E0B8D9E11339}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>org.webpki.json</RootNamespace>
-    <AssemblyName>org.webpki.json</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <RootNamespace>Org.Webpki.JsonCanonicalizer</RootNamespace>
+    <AssemblyName>jsoncanonicalizer</AssemblyName>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -40,9 +41,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="JSONCanonicalizer.cs" />
-    <Compile Include="JSONReader.cs" />
+    <Compile Include="JsonCanonicalizer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\es6numberserialization\es6numberserialization.csproj">
+      <Project>{fe8ff598-09c8-4f1a-9d70-9cc33d2471e0}</Project>
+      <Name>es6numberserialization</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
