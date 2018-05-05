@@ -34,7 +34,7 @@ namespace verify_es6numberserialization
                     {
                         Console.WriteLine("Count=" + counter);
                     }
-                    String serializedNumber = NumberToJSON.SerializeNumber(orig);
+                    String serializedNumber = NumberToJson.SerializeNumber(orig);
                     if (!serializedNumber.Equals(es6Representation))
                     {
                         fails++;
