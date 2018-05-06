@@ -66,7 +66,7 @@ encode_basestring = (c_encode_basestring or py_encode_basestring)
 ##################################################################
 def convert2Es6Format(value):
 # Convert double/float to str using the native Python formatter
-    pyDouble = str(value)
+    pyDouble = str(float(value))
     pySign = ''
     if pyDouble.find('-') == 0:
 #

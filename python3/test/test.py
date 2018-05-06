@@ -23,9 +23,12 @@ def oneTurn(fileName):
     obj = loads(jsonData, object_pairs_hook=OrderedDict)
     canres = canonicalize(obj)
     expected = readFile(os.path.join(outputPath,fileName)).encode()
-    same = canres == expected
+    if canres == expected:
+      result = "Success"
+    else:
+      result = "\nFAILURE\n"
     print(serialize(obj,utf8=False))
-    print(same)
+    print(result)
 
 testData = os.path.join(os.path.split(os.path.split(os.path.dirname(os.path.abspath(__file__)))[0])[0],'testdata')
 inputPath = os.path.join(testData, 'input')
