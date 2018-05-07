@@ -45,9 +45,10 @@ https://cyberphone.github.io/doc/security/browser-json-canonicalization.html
 ### ECMAScript Proposal: JSON.canonicalize()
 [JSON.canonicalize()](https://github.com/cyberphone/json-canonicalization/blob/master/JSON.canonicalize.md)
 
-### Other Canonicalization Efforts
-https://www.npmjs.com/package/canonical-json
+### NPM Compatible With JCS:
+https://www.npmjs.com/package/canonicalize
 
+### Other Canonicalization Efforts
 https://tools.ietf.org/html/draft-staykov-hu-json-canonical-form-00
 
 http://wiki.laptop.org/go/Canonical_JSON
