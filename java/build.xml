@@ -16,7 +16,7 @@
   </path>
 
   <target name="help">
-    <echo message="Targets: help test [-Dfile=filename] browser megatest interactive"/>
+    <echo message="Targets: help test [-Dfile=filename] browser megatest interactive addedgecases"/>
   </target>
 	
   <target name="_compile">
@@ -84,7 +84,21 @@
     </java>
   </target>
 
-  <target name="interactive" depends="_compile">
+  <target name="addedgecases" depends="_compile">
+    <java fork="yes"
+          classname="AddEdgeCases"
+            dir="${temp.dir}"
+          failonerror="true">
+      <classpath>
+        <pathelement path="${temp.dir}"/>
+        <path refid="lib.classpath"/>
+      </classpath>
+      <arg value="${es6test.file}"/>
+      <jvmarg value="-Dfile.encoding=UTF8"/>
+    </java>
+  </target>
+
+	<target name="interactive" depends="_compile">
     <java fork="no"
           classname="ES6InterActive"
           failonerror="true">

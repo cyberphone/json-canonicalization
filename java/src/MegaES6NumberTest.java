@@ -21,7 +21,7 @@ public class MegaES6NumberTest {
     		while (hex.length() < 16) {
     			hex = '0' + hex;
     		}
-    		double d = Double.longBitsToDouble(Long.parseUnsignedLong( hex,16));
+    		double d = Double.longBitsToDouble(Long.parseUnsignedLong(hex,16));
     		String res = NumberToJSON.serializeNumber(d);
     		if (!res.equals(s.substring(s.indexOf(',') + 1))) {
     			System.out.println("FAIL res=" + res + " d=" + d);
