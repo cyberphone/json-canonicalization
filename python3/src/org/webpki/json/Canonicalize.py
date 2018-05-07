@@ -20,6 +20,8 @@
 """
 import re
 
+from org.webpki.json.NumberToJson import convert2Es6Format
+
 try:
     from _json import encode_basestring_ascii as c_encode_basestring_ascii
 except ImportError:
@@ -61,83 +63,6 @@ def py_encode_basestring(s):
 
 
 encode_basestring = (c_encode_basestring or py_encode_basestring)
-
-# Convert a Python double/float into an ES6/V8 compatible string #
-##################################################################
-def convert2Es6Format(value):
-# Convert double/float to str using the native Python formatter
-    pyDouble = str(float(value))
-    pySign = ''
-    if pyDouble.find('-') == 0:
-#
-#     Save sign separately, it doesn't have any role in the rest
-#
-        pySign = '-'
-        pyDouble = pyDouble[1:]
-    pyExpStr = ''
-    pyExpVal = 0
-    q = pyDouble.find('e')
-    if q > 0:
-#
-# Grab the exponent and remove it from the number
-#
-        pyExpStr = pyDouble[q:]
-        if pyExpStr[2:3] == '0':
-#
-# Supress leading zero on exponents
-#
-            pyExpStr = pyExpStr[0:2] + pyExpStr[3:]
-        pyDouble = pyDouble[0:q]
-        pyExpVal = int(pyExpStr[1:])
-#
-# Split number in pyFirst + pyDot + pyLast
-#
-    pyFirst = pyDouble
-    pyDot = ''
-    pyLast = ''
-    q = pyDouble.find('.')
-    if q > 0:
-        pyDot = '.'
-        pyFirst = pyDouble[0:q]
-        pyLast = pyDouble[q + 1:]
-#
-# Now the string is split into: pySign + pyFirst + pyDot + pyLast + pyExpStr
-#
-    if pyLast == '0':
-#
-# Always remove trailing .0
-#
-        pyDot = ''
-        pyLast = ''
-    if pyExpVal > 0 and pyExpVal < 21:
-#
-# Integers are shown as is with up to 21 digits
-#
-        pyFirst += pyLast
-        pyLast = ''
-        pyDot = ''
-        pyExpStr = ''
-        q = pyExpVal - len(pyFirst)
-        while q >= 0:
-            q -= 1;
-            pyFirst += '0'
-    elif pyExpVal < 0 and pyExpVal > -7:
-#
-# Small numbers are shown as 0.etc with e-6 as lower limit
-#
-        pyLast = pyFirst + pyLast
-        pyFirst = '0'
-        pyDot = '.'
-        pyExpStr = ''
-        q = pyExpVal
-        while q < -1:
-            q += 1;
-            pyLast = '0' + pyLast
-#
-# The resulting sub-strings are concatenated
-#
-    return pySign + pyFirst + pyDot + pyLast + pyExpStr
-
 
 def py_encode_basestring_ascii(s):
     """Return an ASCII-only JSON representation of a Python string

@@ -383,11 +383,11 @@
     <section anchor="Acknowledgements" title="Acknowledgements">
       <t>
         Building on ES6 <spanx style="verb">Number</spanx> normalization was
-        originally proposed by James Manger. This ultimately led to
-        the adoption of the entire ES6 JSON processing model.
+        originally proposed by James Manger. This ultimately led to the
+        adoption of the entire ES6 serialization scheme for JSON primitives.
         <vspace blankLines="1"/>
         Other people who have contributed with valuable input to this specification include
-        Mike Samuel, Richard Gibson, Scott Ananian and Michal Wadas.
+        Michal Wadas, Mike Miller, Mike Samuel, Richard Gibson and Scott Ananian.
       </t>
     </section>
   </middle>
