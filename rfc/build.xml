@@ -117,6 +117,10 @@ border-style:solid;border-color: #a9a9a9;text-align:center;font-family:arial,ver
           replace="\1${span.bi}\2&lt;/span&gt;\3"
           flags="g"/>
     <replaceregexp file="${rfc.file}"
+          match="(\ )(BigNumber)(\()"
+          replace="\1${span.bi}\2&lt;/span&gt;\3"
+          flags="g"/>
+    <replaceregexp file="${rfc.file}"
           match="(\= )(true|false)(\;)"
           replace="\1${span.blue}\2&lt;/span&gt;\3"
           flags="g"/>

@@ -699,7 +699,7 @@
       <t>
           <figure align="center">
             <artwork><![CDATA[  var obj = JSON.parse('{"giantNumber": "1.4e+9999"}');
-  var biggie = new BigNum(obj.giantNumber);]]></artwork>
+  var biggie = new BigNumber(obj.giantNumber);]]></artwork>
           </figure>
       </t>
       <t>
