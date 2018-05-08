@@ -39,14 +39,14 @@ as well, here shown in hexadecimal notation:
 5c 75 30 30 30 66 5c 6e 41 27 42 5c 22 5c 5c 5c 5c 5c 22 2f 22 7d
 ```
 
-### On-line Browser Sample
+### On-line Browser JCS Test
 https://cyberphone.github.io/doc/security/browser-json-canonicalization.html
-
-### ECMAScript Proposal: JSON.canonicalize()
-[JSON.canonicalize()](https://github.com/cyberphone/json-canonicalization/blob/master/JSON.canonicalize.md)
 
 ### NPM Compatible With JCS:
 https://www.npmjs.com/package/canonicalize
+
+### ECMAScript Proposal: JSON.canonicalize()
+[JSON.canonicalize()](https://github.com/cyberphone/json-canonicalization/blob/master/JSON.canonicalize.md)
 
 ### Other Canonicalization Efforts
 https://tools.ietf.org/html/draft-staykov-hu-json-canonical-form-00
