@@ -1,3 +1,20 @@
+/*
+ *  Copyright 2006-2018 WebPKI.org (http://webpki.org).
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
+
 using System;
 using System.IO;
 using System.Text;
@@ -8,7 +25,6 @@ using System.Text.RegularExpressions;
 using Org.Webpki.Es6NumberSerialization;
 
 // JSON canonicalizer for .NET
-// Needs an improvment for "Number" to cope with the full spec... 
 
 namespace Org.Webpki.JsonCanonicalizer
 {
@@ -180,12 +196,12 @@ namespace Org.Webpki.JsonCanonicalizer
             if (TestNextNonWhiteSpaceChar() == LEFT_BRACKET)
             {
                 Scan();
-                root = ScanArray();
+                root = ParseArray();
             }
             else
             {
                 ScanFor(LEFT_CURLY_BRACKET);
-                root = ScanObject();
+                root = ParseObject();
             }
             while (index < jsonData.Length)
             {
@@ -196,7 +212,25 @@ namespace Org.Webpki.JsonCanonicalizer
             }
         }
 
-        object ScanObject()
+        object ParseElement()
+        {
+            switch (Scan())
+            {
+                case LEFT_CURLY_BRACKET:
+                    return ParseObject();
+
+                case DOUBLE_QUOTE:
+                    return ParseQuotedString();
+
+                case LEFT_BRACKET:
+                    return ParseArray();
+
+                default:
+                    return ParseSimpleType();
+            }
+        }
+
+        object ParseObject()
         {
             SortedDictionary<string, object> dict =
                 new SortedDictionary<string, object>(StringComparer.Ordinal);
@@ -208,36 +242,16 @@ namespace Org.Webpki.JsonCanonicalizer
                     ScanFor(COMMA_CHARACTER);
                 }
                 next = true;
-
                 ScanFor(DOUBLE_QUOTE);
-                string name = ScanQuotedString();
+                string name = ParseQuotedString();
                 ScanFor(COLON_CHARACTER);
-                object value;
-                switch (Scan())
-                {
-                    case LEFT_CURLY_BRACKET:
-                        value = ScanObject();
-                        break;
-
-                    case DOUBLE_QUOTE:
-                        value = ScanQuotedString();
-                        break;
-
-                    case LEFT_BRACKET:
-                        value = ScanArray();
-                        break;
-
-                    default:
-                        value = ScanSimpleType();
-                        break;
-                }
-                dict.Add(name, value);
+                dict.Add(name, ParseElement());
             }
             Scan();
             return dict;
         }
 
-        object ScanArray()
+        object ParseArray()
         {
             var list = new List<object>();
             bool next = false;
@@ -251,32 +265,13 @@ namespace Org.Webpki.JsonCanonicalizer
                 {
                     next = true;
                 }
-                object value;
-                switch (Scan())
-                {
-                    case LEFT_BRACKET:
-                        value = ScanArray();
-                        break;
-
-                    case LEFT_CURLY_BRACKET:
-                        value = ScanObject();
-                        break;
-
-                    case DOUBLE_QUOTE:
-                        value = ScanQuotedString();
-                        break;
-
-                    default:
-                        value = ScanSimpleType();
-                        break;
-                }
-                list.Add(value);
+                list.Add(ParseElement());
             }
             Scan();
             return list;
         }
 
-        object ScanSimpleType()
+        object ParseSimpleType()
         {
             index--;
             StringBuilder tempBuffer = new StringBuilder();
@@ -309,7 +304,7 @@ namespace Org.Webpki.JsonCanonicalizer
             throw new IOException("Unrecognized or malformed JSON token: " + token);
         }
 
-        String ScanQuotedString()
+        String ParseQuotedString()
         {
             StringBuilder result = new StringBuilder();
             while (true)
