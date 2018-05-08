@@ -11,4 +11,4 @@ On Windows perform "CHCP 65001" to set the console in UTF-8 mode
 2. Running
 ----------
 $ cd test
-$ python test.py
+$ python canonicalization.py
