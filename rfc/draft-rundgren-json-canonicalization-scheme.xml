@@ -713,8 +713,8 @@
       <t>
         The optimal solution is integrating support for JCS directly
         in JSON parsers and serializers.  However, this is not always realistic.
-        Fortunately JCS support can be performed through an external process,
-        enabling signature creation schemes like the following:
+        Fortunately JCS support can be performed through externally supplied
+        canonicalizer software, enabling signature creation schemes like the following:
         <list style="numbers">
           <t>
             Create data to be signed. Serialize the data using existing JSON tools.
