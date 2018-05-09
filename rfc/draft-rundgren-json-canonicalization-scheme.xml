@@ -717,7 +717,10 @@
         canonicalizer software, enabling signature creation schemes like the following:
         <list style="numbers">
           <t>
-            Create data to be signed. Serialize the data using existing JSON tools.
+            Create data to be signed.
+          </t>
+          <t>
+            Serialize the data using existing JSON tools.
           </t>
           <t>
             Let the external canonicalizer process the serialized data and return canonicalized result data.
@@ -754,8 +757,13 @@
             using the algorithm and key used for creating the signature.
           </t>
         </list>
+      </t>
+      <t>
         A canonicalizer like above is effectively only a &quot;filter&quot;, potentially usable with
         a multitude of quite different cryptographic schemes.
+        <vspace blankLines="1"/>
+        Using an integrated canonicalizer, you would eliminate the serialization and
+        parsing step before the canonicalization, for both processes.
       </t>
     </section>
 
