@@ -269,7 +269,10 @@ border-style:solid;border-color: #a9a9a9;text-align:center;font-family:arial,ver
         match="(and in fact)(.*?)(software)"
         replace="&lt;i&gt;\1\2\3&lt;/i&gt;"
         flags="gs"/>
-
+    <replaceregexp file="${rfc.file}"
+        match="(using )(existing)( JSON tools)"
+        replace="\1&lt;i&gt;\2&lt;/i&gt;\3"
+        flags="gs"/>
   	<fixcrlf file="${rfc.file}" eol="crlf"/>
 
   </target>

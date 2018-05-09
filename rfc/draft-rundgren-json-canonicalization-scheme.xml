@@ -717,7 +717,7 @@
         enabling signature creation schemes like the following:
         <list style="numbers">
           <t>
-            Create data to be signed using existing JSON tools.  Serialize the data.
+            Create data to be signed. Serialize the data using existing JSON tools.
           </t>
           <t>
             Let the external canonicalizer process the serialized data and return canonicalized result data.
@@ -729,7 +729,7 @@
             Add the resulting signature value to the original JSON data through a designated signature property.
           </t>
           <t>
-            Serialize the completed (now signed) JSON object.
+            Serialize the completed (now signed) JSON object using existing JSON tools.
           </t>
         </list>
         A compatible signature verification scheme would then be as follows:
