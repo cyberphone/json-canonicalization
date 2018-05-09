@@ -16,7 +16,16 @@
   </path>
 
   <target name="help">
-    <echo message="Targets: help test [-Dfile=filename] browser megatest interactive addedgecases"/>
+    <echo message="Targets: help test [-Dfile=filename] browser megatest interactive addedgecases fixtext"/>
+  </target>
+	
+  <target name="fixtext">
+    <fixcrlf srcdir="../"
+       tab="remove"
+       tablength="4"
+       eol="lf"
+       eof="remove"
+       includes="**/*.java, **/*.js, **/*.cs, **/*.py"/>
   </target>
 	
   <target name="_compile">
