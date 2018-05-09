@@ -717,7 +717,7 @@
         canonicalizer software, enabling signature creation schemes like the following:
         <list style="numbers">
           <t>
-            Create data to be signed.
+            Create the data to be signed.
           </t>
           <t>
             Serialize the data using existing JSON tools.
