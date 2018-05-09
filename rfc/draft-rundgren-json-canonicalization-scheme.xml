@@ -47,7 +47,7 @@
         By applying the rules defined by JCS (JSON Canonicalization Scheme),
         data provided in the JSON <xref target="RFC8259"/> format can be exchanged "as is",
         while still being subject to secure cryptographic operations.
-        JCS achieves this by combining the strict serialization of JSON data
+        JCS achieves this by combining the strict serialization of JSON primitives
         defined in ECMAScript <xref target="ES6"/> with a platform independent
         sorting scheme.
       </t>
@@ -72,7 +72,7 @@
       <t>
         Since the objective was keeping the data "as is", the canonicalization
         method was selected.  For avoiding "reinventing the wheel",
-        JCS relies on serialization of JSON data compatible with
+        JCS relies on serialization of JSON primitives compatible with
         ECMAScript (aka JavaScript) beginning with version 6 <xref target="ES6"/>,
         from now on simply referred to as "ES6".
       </t>
@@ -92,6 +92,7 @@
             Web browsers, Node.js <xref target="NODEJS"/>,
             as well as by third party libraries like Open&nbsp;Keystore <xref target="OPENKEY"/>,
             giving the proposed canonicalization scheme a head start.
+            Also see <xref target="impl.guidelines"/>.
           </t>
         </list>
       </t>
@@ -387,7 +388,7 @@
         adoption of the entire ES6 serialization scheme for JSON primitives.
         <vspace blankLines="1"/>
         Other people who have contributed with valuable input to this specification include
-        Michal Wadas, Mike Miller, Mike Samuel, Richard Gibson and Scott Ananian.
+        Mike Jones, Mike Miller, Mike Samuel, Michal Wadas, Richard Gibson and Scott Ananian.
       </t>
     </section>
   </middle>
@@ -705,6 +706,56 @@
       <t>
         or declarative schemes like OpenAPI <xref target="OPENAPI"/>,
         there are no real limits, not even when using ES6.
+      </t>
+    </section>
+
+    <section anchor="impl.guidelines" title="Implementation Guidelines">
+      <t>
+        The optimal solution is integrating support for JCS directly
+        in JSON parsers and serializers.  However, this is not always realistic.
+        Fortunately JCS support can be performed through an external process,
+        enabling signature creation schemes like the following:
+        <list style="numbers">
+          <t>
+            Create data to be signed using existing JSON tools.  Serialize the data.
+          </t>
+          <t>
+            Let the external canonicalizer process the serialized data and return canonicalized result data.
+          </t>
+          <t>
+            Sign the canonicalized data.
+          </t>
+          <t>
+            Add the resulting signature value to the original JSON data through a designated signature property.
+          </t>
+          <t>
+            Serialize the completed (now signed) JSON object.
+          </t>
+        </list>
+        A compatible signature verification scheme would then be as follows:
+        <list style="numbers">
+          <t>
+            Parse the signed JSON data using existing JSON tools.
+          </t>
+          <t>
+            Read and save the signature value from the designated signature property.
+          </t>
+          <t>
+            Remove the signature property from the parsed JSON object.
+          </t>
+          <t>
+            Serialize the remaining JSON data using existing JSON tools.
+          </t>
+          <t>
+            Let the external canonicalizer process the serialized data and return canonicalized result data.
+          </t>
+          <t>
+            Verify that the canonicalized data matches the saved signature value
+            using the algorithm and key used for creating the signature.
+          </t>
+        </list>
+        A canonicalizer like above is effectively only a &quot;filter&quot;, potentially usable with
+        a multitude of quite different cryptographic schemes.
       </t>
     </section>
 
