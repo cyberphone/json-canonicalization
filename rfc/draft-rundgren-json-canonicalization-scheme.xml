@@ -764,7 +764,7 @@
         <vspace blankLines="1"/>
         Using an integrated canonicalizer, you would eliminate the serialization and
         parsing step before the canonicalization, for both processes.  That is,
-        canonicalization would typically only be an additional &quot;mode&quot;
+        canonicalization would typically be an additional &quot;mode&quot;
         for a JSON serializer.
       </t>
     </section>
