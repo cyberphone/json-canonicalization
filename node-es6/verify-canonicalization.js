@@ -1,10 +1,14 @@
-// JavaScript source code
+// JavaScript source code for testing the canonicalizer
+
 'use strict';
 const Fs = require('fs');
 const canonicalize = require('./canonicalize.js');
 
-const inputData = '../testdata/input';
-const outputData = '../testdata/output';
+const pathSeparator = __dirname.indexOf('\\') >= 0 ? '\\' : '/';
+const rootPath = __dirname.substring(0, __dirname.lastIndexOf(pathSeparator))
+
+const inputData = rootPath + '/testdata/input';
+const outputData = rootPath + '/testdata/output';
 
 function readFile(path) {
     return Fs.readFileSync(path);
