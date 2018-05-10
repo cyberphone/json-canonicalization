@@ -4,7 +4,6 @@
   <property name="src.dir" location="src"/>
   <property name="test.dir" location="../testdata"/>
   <property name="browser.file" location="../browsers/browser-json-canonicalization.html"/>
-  <property name="es6test.file" location="c:/es6/numbers/es6testfile100m.txt"/>
   <property name="temp.dir" location=".tmp"/>
   <property file="webpki.properties"/>
   <property name="logotype.file" location="${webpki.openkeystore}/library/generators/org/webpki/json/webpki-logo.svg"/>
