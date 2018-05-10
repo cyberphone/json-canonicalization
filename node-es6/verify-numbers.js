@@ -1,3 +1,5 @@
+// JavaScript source code for testing number parsing and serialization
+
 'use strict';
 const Fs = require('fs');
 
