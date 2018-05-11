@@ -49,12 +49,11 @@ namespace VerifyJsonCanonicalizer
             if (args.Length == 0)
             {
                 // This code is based on the directory structure of the repository
-                int i;
                 int q = 3;
                 string path = new Uri(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().CodeBase)).LocalPath;
                 while (--q > 0)
                 {
-                    i = Path.GetDirectoryName(path).LastIndexOf(Path.DirectorySeparatorChar);
+                    int i = Path.GetDirectoryName(path).LastIndexOf(Path.DirectorySeparatorChar);
                     if (i <= 0)
                     {
                         throw new Exception("Strange file path");
