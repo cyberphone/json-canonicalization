@@ -608,7 +608,12 @@
 |-------------------------------------------------------------------|]]></artwork>
         </figure>
       </t>
-     </section>
+      <t>
+        Note: for maximum compliance with ECMAScript's JSON object, values that are
+        to be interpreted as true integers,
+        SHOULD be in the range -9007199254740991 to 9007199254740991.
+      </t>
+    </section>
     
     <section anchor="json.wireformat" title="Canonicalized JSON as &quot;Wire Format&quot;">
       <t>
