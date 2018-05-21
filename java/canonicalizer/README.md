@@ -26,5 +26,5 @@ The JSON canonicalizer only accepts a JSON _Object_ or _Array_ as the top level 
 For formatting the JSON Number data type in an ES6 compliant way, there is a static utility method
 (which is also used internally by the JSON canonicalizer):
 ```java
-public String org.webpki.jcs.NumberToJSON.serializeNumber(double value) throws IOException;
+public static String NumberToJSON.serializeNumber(double value) throws IOException;
 ```
