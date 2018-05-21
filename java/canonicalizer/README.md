@@ -5,7 +5,7 @@ as well as in the [core](../../../) of this repository.
 
 A compiled JAR is available in the  [dist](dist) sub directory while the source is available in the [src](src) sub directory.
 
-Using the JSON canonicalizer:
+### Using the JSON canonicalizer
 
 ```java
 import org.webpki.jcs.JsonCanonicalizer;
@@ -19,7 +19,12 @@ The `JsonCanonicalizer()` may also be invoked with a `byte[]` array holding JSON
 In addition to `getEncodedString()` there is a method `getEncodedUTF8()` returning canonicalized data as
 a `byte[]` array.
 
-For formatting the JSON Number data type in an ES6 compliant way, there is a static utility method:
+### Constraints
+The JSON canonicalizer only accepts JSON _Objects_ and _Arrays_ as top level data.
+
+### ES6 Number Formatting
+For formatting the JSON Number data type in an ES6 compliant way, there is a static utility method
+(which is also used internally by the JSON canonicalizer):
 ```java
 public String org.webpki.jcs.NumberToJSON.serializeNumber(double value) throws IOException;
 ```
