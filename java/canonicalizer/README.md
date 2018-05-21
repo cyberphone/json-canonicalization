@@ -15,10 +15,11 @@ import org.webpki.jcs.JsonCanonicalizer;
 
 ```
 The `JsonCanonicalizer()` may also be invoked with a `byte[]` array holding JSON data in UTF-8 format.
+
 In addition to `getEncodedString()` there is a method `getEncodedUTF8()` returning canonicalized data as
 a `byte[]` array.
 
 For formatting the JSON Number data type in an ES6 compliant way, there is a static utility method:
 ```java
-String org.webpki.jcs.NumberToJSON.serializeNumber(double value) throws IOException
+public String org.webpki.jcs.NumberToJSON.serializeNumber(double value) throws IOException;
 ```
