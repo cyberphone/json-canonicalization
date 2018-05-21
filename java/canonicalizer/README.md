@@ -20,7 +20,7 @@ In addition to `getEncodedString()` there is a method `getEncodedUTF8()` returni
 a `byte[]` array.
 
 ### Constraints
-The JSON canonicalizer only accepts JSON _Objects_ and _Arrays_ as top level data.
+The JSON canonicalizer only accepts a JSON _Object_ or _Array_ as the top level data type.
 
 ### ES6 Number Formatting
 For formatting the JSON Number data type in an ES6 compliant way, there is a static utility method
