@@ -1,4 +1,4 @@
-## .NET Canonicalizer
+## JSON Canonicalizer for .NET
 
 The [jsoncanonicalizer](jsoncanonicalizer)
 folder contains a JCS compliant canonicalizer written in C# for .NET.
