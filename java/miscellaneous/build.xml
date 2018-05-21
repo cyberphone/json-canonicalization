@@ -9,7 +9,7 @@
   <property name="logotype.file" location="${webpki.openkeystore}/library/generators/org/webpki/json/webpki-logo.svg"/>
 
   <path id="lib.classpath">
-    <fileset dir="${webpki.openkeystore}/library/dist">
+    <fileset dir="../canonicalizer/dist">
        <include name="*.jar"/>
     </fileset>
   </path>

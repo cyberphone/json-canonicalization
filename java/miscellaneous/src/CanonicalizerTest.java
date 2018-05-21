@@ -1,10 +1,9 @@
 import java.io.File;
 
-import org.webpki.json.JSONParser;
-import org.webpki.json.JSONOutputFormats;
-
 import org.webpki.util.ArrayUtil;
 import org.webpki.util.DebugFormatter;
+
+import org.webpki.jcs.JsonCanonicalizer;
 
 public class CanonicalizerTest {
 
@@ -14,7 +13,7 @@ public class CanonicalizerTest {
     static void performOneTest(String fileName) throws Exception {
         byte[] rawInput = ArrayUtil.readFile(inputDirectory + File.separator + fileName);
         byte[] expected = ArrayUtil.readFile(outputDirectory + File.separator + fileName);
-        byte[] actual = JSONParser.parse(rawInput).serializeToBytes(JSONOutputFormats.CANONICALIZED);
+        byte[] actual = new JsonCanonicalizer(rawInput).getEncodedUTF8();
         StringBuilder utf8InHex = new StringBuilder("\nFile: ");
         utf8InHex.append(fileName).append("\n");
         int byteCount = 0;
@@ -39,7 +38,6 @@ public class CanonicalizerTest {
     public static void main(String[] args) throws Exception {
         inputDirectory = args[0] + File.separator + "input";
         outputDirectory = args[0] + File.separator + "output";
-        JSONParser.setStrictNumericMode(false);
         if (args.length == 1) {
             File[] files = new File(inputDirectory).listFiles();
             for (File f : files) {

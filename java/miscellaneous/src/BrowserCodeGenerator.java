@@ -1,8 +1,5 @@
 import java.io.File;
 
-import org.webpki.json.JSONParser;
-import org.webpki.json.JSONOutputFormats;
-
 import org.webpki.util.ArrayUtil;
 import org.webpki.util.DebugFormatter;
 
@@ -138,7 +135,6 @@ public class BrowserCodeGenerator {
     public static void main(String[] args) throws Exception {
         inputDirectory = args[0] + File.separator + "input";
         outputDirectory = args[0] + File.separator + "output";
-        JSONParser.setStrictNumericMode(false);
         File[] files = new File(inputDirectory).listFiles();
         for (File f : files) {
             createOneTest(f.getName());

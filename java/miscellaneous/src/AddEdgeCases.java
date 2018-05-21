@@ -4,7 +4,7 @@ import java.io.BufferedReader;
 
 import java.util.LinkedHashMap;
 
-import org.webpki.json.NumberToJSON;
+import org.webpki.jcs.NumberToJSON;
 
 public class AddEdgeCases {
     

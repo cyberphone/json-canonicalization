@@ -1,13 +1,11 @@
 import java.util.Scanner;
 
-import org.webpki.json.JSONParser;
-import org.webpki.json.NumberToJSON;
+import org.webpki.jcs.NumberToJSON;
 
 public class ES6InterActive {
     
     public static void main(String[] args) throws Exception {
         Scanner input = new Scanner(System.in);
-        JSONParser.setStrictNumericMode(false);
         while (true) {
             System.out.println("\nEnter xhhhhhhhhh or floating point number: ");
             String line = input.next();
@@ -21,7 +19,7 @@ public class ES6InterActive {
                 d = Double.longBitsToDouble(Long.parseUnsignedLong(hex,16));            
             } else {
                 inputFp = line;
-                d = JSONParser.parse("[" + inputFp + "]").getJSONArrayReader().getDouble();
+                d = new Double(inputFp);
             }
             long ieee = Double.doubleToRawLongBits(d);
             String ieeeHex = Long.toHexString(ieee);

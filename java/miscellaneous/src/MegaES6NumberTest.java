@@ -1,7 +1,7 @@
 import java.io.FileReader;
 import java.io.BufferedReader;
 
-import org.webpki.json.NumberToJSON;
+import org.webpki.jcs.NumberToJSON;
 
 public class MegaES6NumberTest {
     
@@ -9,7 +9,6 @@ public class MegaES6NumberTest {
 
     public static void main(String[] args) throws Exception {
         BufferedReader in = new BufferedReader(new FileReader(args[0]));
-        int q = 0;
         long total = 0;
         while (true) {
             String s = in.readLine();
@@ -27,10 +26,8 @@ public class MegaES6NumberTest {
                 System.out.println("FAIL res=" + res + " d=" + d);
                 return;
             }
-            total++;
-            if (q++ == TURNS) {
+            if (++total % TURNS == 0) {
                 System.out.println("TURN:" + total + " " + s + " d=" + d);
-                q = 0;
             }
         }
     }
