@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="Java based JSON canonicalizer" default="help" basedir=".">
+
+  <property name="src.dir" location="src"/>
+  <property name="temp.dir" location=".tmp"/>
+  <property name="dist.dir" location="dist"/>
+  <property name="application" value="json-canonicalizer"/>
+
+  <target name="help">
+    <echo message="Targets: help build"/>
+  </target>
+	
+  <target name="build">
+  	<!-- Create temp directory -->
+    <delete dir="${temp.dir}"/>
+    <mkdir dir="${temp.dir}"/>
+
+    <!-- Create distribution directory -->
+	<mkdir dir="${dist.dir}"/>
+
+  	<!-- Compile -->
+    <javac debug="on"
+           srcdir="${src.dir}"
+           destdir="${temp.dir}" 
+           includeAntRuntime="false">
+       <compilerarg value="-Xlint:all,-path"/>
+    </javac>
+
+   	<!-- Build JAR -->
+    <jar jarfile="${dist.dir}/${application}.jar">
+      <fileset dir="${temp.dir}"/>
+    </jar>
+   
+  </target>
+
+</project>
