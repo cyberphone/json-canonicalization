@@ -9,12 +9,13 @@ JCS achieves this by combining the JSON serialization
 methods defined in ECMAScript [[ES6](https://www.ecma-international.org/ecma-262/6.0/index.html)],
 with an elementary sorting scheme.
 
-Specification: https://cyberphone.github.io/doc/security/draft-rundgren-json-canonicalization-scheme.html
+Specification: https://cyberphone.github.io/doc/security/draft-rundgren-json-canonicalization-scheme.html<br>
+IETF Draft: https://tools.ietf.org/html/draft-rundgren-json-canonicalization-scheme-00
 
 The JSON Canonicalization Scheme concept in a nutshell:
 - Serialization of primitive JSON data types using methods compatible with ECMAScript's `JSON.stringify()`
-- Lexicographic sorting of `Object` properties in a *recursive* process
-- Array data is also subject to canonicalization, *but element order remains untouched*
+- Lexicographic sorting of JSON `Object` properties in a *recursive* process
+- JSON `Array` data is also subject to canonicalization, *but element order remains untouched*
 
 ### Sample Input:
 ```code
