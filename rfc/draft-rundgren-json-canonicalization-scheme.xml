@@ -10,7 +10,7 @@
 <?rfc compact="yes" ?>
 <?rfc subcompact="no" ?>
 
-<rfc category="std" docName="draft-rundgren-json-canonicalization-scheme-00" ipr="trust200902">
+<rfc category="info" docName="draft-rundgren-json-canonicalization-scheme-01" ipr="trust200902">
   <front>
     <title abbrev="draft-rundgren-json-canonicalization-scheme">
       JSON Canonicalization Scheme (JCS)
@@ -311,11 +311,15 @@
           </t>
           <t>
             When a JSON <spanx style="verb">Object</spanx> is about to have its properties
-            sorted, the following measures MUST be performed:
+            sorted, the following measures MUST be adhered to:
             <list style="symbols">
               <t>
-                Property strings to be sorted depend on that strings are represented
-                as arrays of 16-bit unsigned integers where each integer holds a
+                The sorting process is applied to the internal representation of
+                property strings.  That is, their state before serialization.
+              </t>
+              <t>
+                Property strings to be sorted depend on that strings are internally represented
+                as arrays of 16&#x2011;bit unsigned integers where each integer holds a
                 single UCS2/UTF-16 <xref target="UNICODE"/> code unit.  The sorting is
                 based on pure value comparisons, independent of locale settings.
               </t>
