@@ -10,7 +10,7 @@ methods defined in ECMAScript [[ES6](https://www.ecma-international.org/ecma-262
 with an elementary sorting scheme.
 
 Specification: https://cyberphone.github.io/doc/security/draft-rundgren-json-canonicalization-scheme.html<br>
-IETF Draft: https://tools.ietf.org/html/draft-rundgren-json-canonicalization-scheme-00
+IETF Draft: https://tools.ietf.org/html/draft-rundgren-json-canonicalization-scheme-01
 
 The JSON Canonicalization Scheme concept in a nutshell:
 - Serialization of primitive JSON data types using methods compatible with ECMAScript's `JSON.stringify()`
