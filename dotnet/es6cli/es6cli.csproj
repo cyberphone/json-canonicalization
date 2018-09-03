@@ -48,5 +48,11 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\es6numberserialization\es6numberserialization.csproj">
+      <Project>{fe8ff598-09c8-4f1a-9d70-9cc33d2471e0}</Project>
+      <Name>es6numberserialization</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

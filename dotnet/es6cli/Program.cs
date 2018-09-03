@@ -1,37 +1,48 @@
 using System;
-
-using Org.Webpki.Es6Numbers;
+using Org.Webpki.Es6NumberSerialization;
 
 namespace test
 {
     class Program
     {
-        static void ShowDouble(string j)
-        {
-            double d = double.Parse(j);
-            String res = ES6NumberFormatter.Format(d);
-            Console.WriteLine("d=" + d.ToString("G17") + " orig=" + j + " res=" + (res == j) + " es6=" + res);
-        }
-
         static void Main(string[] args)
         {
-            ShowDouble("4.3413853813852797e+192");
-            ShowDouble("4.34138538138528e+192");
-            ShowDouble("6.894058331974955e-160");
-            ShowDouble("-3333333.3333333335");
-            ShowDouble("-0.3333333333333333");
-            ShowDouble("-996809979449669.2");
-            ShowDouble("1e+23");
-            ShowDouble("9.999999999999997e+22");
-            ShowDouble("-5e-324");
-            ShowDouble("9007199254740991");
-            ShowDouble("999999999999999700000");
-            ShowDouble("333333333.33333325");
-            ShowDouble("1.7976931348623157e+308");
-            ShowDouble("1.0000000000000001e+23");
-            ShowDouble("10");
-            ShowDouble("1");
-            ShowDouble("1.0000000000000002");
+            if (args.Length != 1)
+            {
+                Console.WriteLine("es6cli {xhhhhhhhhh | floating point number}");
+                Environment.Exit(0);
+            }
+            string inData = args[0];
+            double value;
+            if (inData.StartsWith("x"))
+            {
+                string origIeeeHex = inData.Substring(1);
+                while (origIeeeHex.Length < 16)
+                {
+                    origIeeeHex = '0' + origIeeeHex;
+                }
+                ulong origBin = Convert.ToUInt64(origIeeeHex, 16);
+                value = BitConverter.Int64BitsToDouble((long)origBin);
+            }
+            else
+            {
+                value = double.Parse(inData);
+            }
+            string es6 = NumberToJson.SerializeNumber(value);
+            ulong ieeeLong = (ulong)BitConverter.DoubleToInt64Bits(value);
+            ulong ulongMask = 0x8000000000000000L;
+            string binary = "";
+            for (int counter = 0; counter < 64; counter++)
+            {
+                binary += (ulongMask & ieeeLong) == 0 ? '0' : '1';
+                ulongMask >>= 1;
+                if (counter == 0 || counter == 11)
+                {
+                    binary += ' ';
+                }
+            }
+            string hex = ieeeLong.ToString("x16");
+            Console.WriteLine("G17=" + value.ToString("G17") + " Hex=" + hex + " ES6=" + es6 + "\nBinary=" + binary);
         }
     }
 }
