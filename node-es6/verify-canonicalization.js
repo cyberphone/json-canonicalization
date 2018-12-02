@@ -16,7 +16,7 @@ function readFile(path) {
 
 Fs.readdirSync(inputData).forEach((fileName) => {
     var expected = readFile(outputData + '/' + fileName);
-    var actual = new Buffer(canonicalize(JSON.parse(readFile(inputData + '/' + fileName))));
+    var actual = Buffer.from(canonicalize(JSON.parse(readFile(inputData + '/' + fileName))));
     var next = false;
     var byteCount = 0;
     var utf8 = '\n\nFile: ' + fileName + '\n';
