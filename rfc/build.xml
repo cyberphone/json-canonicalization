@@ -174,7 +174,7 @@ border-style:solid;border-color: #a9a9a9;text-align:center;font-family:arial,ver
           flags="g"/>
  
   	<replaceregexp file="${rfc.file}"
-          match="(\|\=\=.*)(ES6 Internal)(.*)(JSON Representation)(.*)(Comment)(.*\=\=\|)"
+          match="(\|\=\=.*)(IEEE-754)(.*)(JSON Representation)(.*)(Comment)(.*\=\=\|)"
           replace="&lt;tr&gt;&lt;th&gt;\2&lt;/th&gt;&lt;th&gt;\4&lt;/th&gt;&lt;th&gt;\6&lt;/th&gt;&lt;/tr&gt;"
           flags="gs"/>
     <replaceregexp file="${rfc.file}"
