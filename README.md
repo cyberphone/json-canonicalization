@@ -40,7 +40,7 @@ as well, here shown in hexadecimal notation:
 5c 75 30 30 30 66 5c 6e 41 27 42 5c 22 5c 5c 5c 5c 5c 22 2f 22 7d
 ```
 ### Combining JCS and JWS (RFC7515)
-[JWS-JCS](https://github.com/cyberphone/jws-jcs)
+[JWS-JCS](https://github.com/cyberphone/jws-jcs#combining-detached-jws-with-jcs-json-canonicalization-scheme)
 
 ### On-line Browser JCS Test
 https://cyberphone.github.io/doc/security/browser-json-canonicalization.html
