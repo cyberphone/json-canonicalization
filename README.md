@@ -5,12 +5,12 @@ data does not change during serialization, transport, or parsing.
 By applying the rules defined by JCS (JSON Canonicalization Scheme), 
 data provided in the JSON [[RFC8259](https://tools.ietf.org/html/rfc8259)]
 format can be exchanged "as is", while still being subject to secure cryptographic operations.
-JCS achieves this by combining the JSON serialization
-methods defined in ECMAScript [[ES6](https://www.ecma-international.org/ecma-262/6.0/index.html)],
+JCS achieves this by combining the serialization
+methods for JSON primitives defined in ECMAScript [[ES6](https://www.ecma-international.org/ecma-262/6.0/index.html)],
 with an elementary sorting scheme.
 
 Specification: https://cyberphone.github.io/doc/security/draft-rundgren-json-canonicalization-scheme.html<br>
-IETF Draft: https://tools.ietf.org/html/draft-rundgren-json-canonicalization-scheme-01
+IETF Draft: https://tools.ietf.org/html/draft-rundgren-json-canonicalization-scheme-02
 
 The JSON Canonicalization Scheme concept in a nutshell:
 - Serialization of primitive JSON data types using methods compatible with ECMAScript's `JSON.stringify()`
@@ -39,6 +39,8 @@ as well, here shown in hexadecimal notation:
 2c 34 2e 35 2c 30 2e 30 30 32 2c 31 65 2d 32 37 5d 2c 22 73 74 72 69 6e 67 22 3a 22 e2 82 ac 24
 5c 75 30 30 30 66 5c 6e 41 27 42 5c 22 5c 5c 5c 5c 5c 22 2f 22 7d
 ```
+### Combining JCS and JWS (RFC7515)
+[JWS-JCS](https://github.com/cyberphone/jws-jcs#combining-detached-jws-with-jcs-json-canonicalization-scheme)
 
 ### On-line Browser JCS Test
 https://cyberphone.github.io/doc/security/browser-json-canonicalization.html
