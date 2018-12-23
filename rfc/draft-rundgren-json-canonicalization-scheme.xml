@@ -333,8 +333,8 @@
               </t>
               <t>
                 Property strings to be sorted depend on that such strings are formatted
-                as arrays of UTF-16 <xref target="UNICODE"/> code units. The sorting is
-                based on pure value comparisons, where code units are treated as
+                as arrays of big endian UTF-16 <xref target="UNICODE"/> code units.
+                The sorting is based on pure value comparisons, where code units are treated as
                 unsigned integers, independent of locale settings.
               </t>
               <t>
@@ -353,7 +353,7 @@
             The rationale for basing the sort algorithm on UTF-16 code units is that
             it maps directly to the string type in ECMAScript, Java and .NET.
             Systems using another internal representation of string data will need to convert
-            JSON property strings into arrays of UTF-16 code units before sorting.
+            JSON property strings into arrays of big endian UTF-16 code units before sorting.
             <vspace blankLines="1"/>
             Note: for the purpose obtaining a deterministic property order, sorting on
             UTF-8 or UTF-32 encoded data would also work, but the result would differ
