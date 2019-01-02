@@ -1,3 +1,23 @@
+//
+//  Copyright 2006-2019 WebPKI.org (http://webpki.org).
+//
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
+//
+//      https://www.apache.org/licenses/LICENSE-2.0
+//
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
+//
+//
+ 
+// This program tests the JSON number serializer using both a few discrete
+// values as well as the 100 million value test suite
+
 package main
 
 import (
@@ -17,7 +37,33 @@ func check(e error) {
     }
 }
 
+func verify(hex string, expected string) {
+    for len(hex) < 16 {
+        hex = "0" + hex
+    }
+    ieeeU64, err := strconv.ParseUint(hex, 16, 64)
+    check(err);
+    ieeeF64 := math.Float64frombits(ieeeU64)
+    es6Created := es6numfmt.Convert(ieeeF64)
+    esParsed, err := strconv.ParseFloat(expected, 64)
+    check(err)
+    if esParsed != ieeeF64 {
+        fmt.Println("\n" + hex)
+        fmt.Println(expected)
+    }
+    if es6Created != expected {
+        fmt.Println("\n" + hex)
+        fmt.Println(es6Created)
+        fmt.Println(expected)
+    }
+}
+
 func main() {
+    verify("4340000000000001", "9007199254740994")
+    verify("4340000000000002", "9007199254740996")
+    verify("444b1ae4d6e2ef50", "1e+21")
+    verify("3eb0c6f7a0b5ed8d", "0.000001")
+    verify("3eb0c6f7a0b5ed8c", "9.999999999999997e-7")
     var count int = 0
     file, err := os.Open("c:\\es6\\numbers\\es6testfile100m.txt")
     check(err)
@@ -33,26 +79,7 @@ func main() {
         if comma <= 0 {
             panic("Missing comma!")
         }
-        hex := line[0:comma]
-        for len(hex) < 16 {
-            hex = "0" + hex
-        }
-        ieeeU64, err := strconv.ParseUint(hex, 16, 64)
-        check(err);
-        ieeeF64 := math.Float64frombits(ieeeU64)
-        es6Created := es6numfmt.Convert(ieeeF64)
-        es6Original := line[comma + 1:]
-        esParsed, err := strconv.ParseFloat(es6Original, 64)
-        check(err)
-        if esParsed != ieeeF64 {
-            fmt.Println("\n" + hex)
-            fmt.Println(es6Original)
-        }
-        if es6Created != es6Original {
-            fmt.Println("\n" + hex)
-            fmt.Println(es6Created)
-            fmt.Println(es6Original)
-        }
+        verify(line[0:comma], line[comma + 1:])
     }
     check(scanner.Err())
 }

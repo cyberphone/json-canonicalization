@@ -28,15 +28,17 @@ import (
 )
 
 func Convert(ieeeF64 float64) string {
+    // ES6 has a unique "g" format
     var format byte = 'g'
     ieeePos := ieeeF64;
     if ieeePos < 0 {
         ieeePos =-ieeePos
     }
-    if ieeePos < 1e+21 && ieeePos > 1e-6 {
+    if ieeePos < 1e+21 && ieeePos >= 1e-6 {
         format = 'f'
     }
-    // The following should (in "theory") do the trick.
+
+    // The following should (in "theory") do the trick:
     es6Formatted := strconv.FormatFloat(ieeeF64, format, -1, 64)
 
     // Unfortunately Go version 1.14.4 is a bit buggy with respect to

@@ -26,16 +26,11 @@ public class AddEdgeCases {
     }
 
     public static void main(String[] args) throws Exception {
-        for (int exponent = 0; exponent < 2048; exponent++) {
-            add(exponent, 0L);
-            add(exponent, 0xfffffffffffffL);
-        }
-        for (int q = 0; q < 52; q++) {
-            add(0, 1l << q);
-        }
-        for (int q = 2; q < 250; q++) {
-            add(0, q);
-        }
+// Add something
+/*
+        ieeeValues.put("3eb0c6f7a0b5ed8d", "0.000001");
+        add(5, 70l);
+*/
         BufferedReader in = new BufferedReader(new FileReader(args[0]));
         int q = 0;
         long total = 0;

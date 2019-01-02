@@ -5,7 +5,7 @@ const Fs = require('fs');
 
 var file = Fs.openSync("c:\\es6\\numbers\\es6testfile100m.txt", "r");
 var count = 0;
-var fileBuffer = new Buffer(1024);
+var fileBuffer = Buffer.alloc(1024);
 var line = "";
 var length = 0;
 while (length = Fs.readSync(file, fileBuffer, 0, 1024, null)) {
@@ -16,7 +16,7 @@ while (length = Fs.readSync(file, fileBuffer, 0, 1024, null)) {
             while (ieeeHex.length < 16) {
                 ieeeHex = '0' + ieeeHex;
             }
-            var ieeeDouble = Buffer(ieeeHex, 'hex').readDoubleBE();
+            var ieeeDouble = Buffer.from(ieeeHex, 'hex').readDoubleBE();
             var es6Format = line.substring(line.indexOf(',') + 1);
             if (Number(es6Format) != ieeeDouble || String(ieeeDouble) != es6Format) {
                 throw new Exception("V=" + es6Format);
