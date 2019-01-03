@@ -36,47 +36,49 @@ func check(e error) {
     }
 }
 
+const invalidNumber = "null"
+
 var conversionErrors int = 0
 
-func verify(hex string, expected string, pass bool) {
-    for len(hex) < 16 {
-        hex = "0" + hex
+func verify(ieeeHex string, expected string) {
+    for len(ieeeHex) < 16 {
+        ieeeHex = "0" + ieeeHex
     }
-    ieeeU64, err := strconv.ParseUint(hex, 16, 64)
+    ieeeU64, err := strconv.ParseUint(ieeeHex, 16, 64)
     check(err)
     ieeeF64 := math.Float64frombits(ieeeU64)
     es6Created, err := es6numfmt.Convert(ieeeF64)
-    if pass {
-        check(err);
-    } else {
+    if expected == invalidNumber {
         if err == nil {
             panic("Missing error")
         }
         return
+    } else {
+        check(err);
+    }
+    if es6Created != expected {
+        conversionErrors++
+        fmt.Println("\n" + ieeeHex)
+        fmt.Println(es6Created)
+        fmt.Println(expected)
     }
     esParsed, err := strconv.ParseFloat(expected, 64)
     check(err)
     if esParsed != ieeeF64 {
-        panic("Parsing error hex: " + hex + " expected: " + expected)
-    }
-    if es6Created != expected {
-        conversionErrors++
-        fmt.Println("\n" + hex)
-        fmt.Println(es6Created)
-        fmt.Println(expected)
+        panic("Parsing error ieeeHex: " + ieeeHex + " expected: " + expected)
     }
 }
 
 func main() {
-    verify("4340000000000001", "9007199254740994", true)
-    verify("4340000000000002", "9007199254740996", true)
-    verify("444b1ae4d6e2ef50", "1e+21", true)
-    verify("3eb0c6f7a0b5ed8d", "0.000001", true)
-    verify("3eb0c6f7a0b5ed8c", "9.999999999999997e-7", true)
-    verify("8000000000000000", "0", true)
-    verify("7fffffffffffffff", "0", false)
-    verify("7ff0000000000000", "0", false)
-    verify("fff0000000000000", "0", false)
+    verify("4340000000000001", "9007199254740994")
+    verify("4340000000000002", "9007199254740996")
+    verify("444b1ae4d6e2ef50", "1e+21")
+    verify("3eb0c6f7a0b5ed8d", "0.000001")
+    verify("3eb0c6f7a0b5ed8c", "9.999999999999997e-7")
+    verify("8000000000000000", "0")
+    verify("7fffffffffffffff", invalidNumber)
+    verify("7ff0000000000000", invalidNumber)
+    verify("fff0000000000000", invalidNumber)
     var lineCount int = 0
     file, err := os.Open("c:\\es6\\numbers\\es6testfile100m.txt")
     check(err)
@@ -92,13 +94,13 @@ func main() {
         if comma <= 0 {
             panic("Missing comma!")
         }
-        verify(line[0:comma], line[comma + 1:], true)
+        verify(line[0:comma], line[comma + 1:])
     }
     check(scanner.Err())
     if conversionErrors == 0 {
-        fmt.Printf("\nSuccessful Operation. Lines read: %d", lineCount)
+        fmt.Printf("\nSuccessful Operation. Lines read: %d\n", lineCount)
     } else {
-        fmt.Printf("\n****** ERRORS: %d *******", conversionErrors)
+        fmt.Printf("\n****** ERRORS: %d *******\n", conversionErrors)
     }
 }
 
