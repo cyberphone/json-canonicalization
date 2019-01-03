@@ -30,12 +30,13 @@ import (
     "webpki.org/es6numfmt"
 )
 
-    
 func check(e error) {
     if e != nil {
         panic(e)
     }
 }
+
+var conversionErrors int = 0
 
 func verify(hex string, expected string, pass bool) {
     for len(hex) < 16 {
@@ -56,10 +57,10 @@ func verify(hex string, expected string, pass bool) {
     esParsed, err := strconv.ParseFloat(expected, 64)
     check(err)
     if esParsed != ieeeF64 {
-        fmt.Println("\n" + hex)
-        fmt.Println(expected)
+        panic("Parsing error hex: " + hex + " expected: " + expected)
     }
     if es6Created != expected {
+        conversionErrors++
         fmt.Println("\n" + hex)
         fmt.Println(es6Created)
         fmt.Println(expected)
@@ -76,15 +77,15 @@ func main() {
     verify("7fffffffffffffff", "0", false)
     verify("7ff0000000000000", "0", false)
     verify("fff0000000000000", "0", false)
-    var count int = 0
+    var lineCount int = 0
     file, err := os.Open("c:\\es6\\numbers\\es6testfile100m.txt")
     check(err)
     defer file.Close()
     scanner := bufio.NewScanner(file)
     for scanner.Scan() {
-        count++
-        if count % 1000000 == 0 {
-            fmt.Printf("line: %d\n", count)
+        lineCount++
+        if lineCount % 1000000 == 0 {
+            fmt.Printf("line: %d\n", lineCount)
         }
         line := scanner.Text()
         comma := strings.IndexByte(line, ',')
@@ -94,5 +95,10 @@ func main() {
         verify(line[0:comma], line[comma + 1:], true)
     }
     check(scanner.Err())
+    if conversionErrors == 0 {
+        fmt.Printf("\nSuccessful Operation. Lines read: %d", lineCount)
+    } else {
+        fmt.Printf("\n****** ERRORS: %d *******", conversionErrors)
+    }
 }
 
