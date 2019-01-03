@@ -23,18 +23,40 @@
 package es6numfmt
 
 import (
+    "errors"
+    "math"
     "strconv"
     "strings"
 )
 
-func Convert(ieeeF64 float64) string {
+const (
+    allButSign uint64 = 0x7fffffffffffffff
+    invalidNumber uint64 = 0x7ff0000000000000
+)
+
+func Convert(ieeeF64 float64) (res string, err error) {
+    ieeeU64 := math.Float64bits(ieeeF64)
+
+    // Special case: NaN and Infinity are invalid in JSON
+    if (ieeeU64 & invalidNumber) == invalidNumber {
+        return "", errors.New("Invalid JSON number: " + strconv.FormatUint(ieeeU64, 16))
+    }
+
+    // Special case: eliminate "-0" which does not exist in JSON.  Takes "0" as well
+    if (ieeeU64 & allButSign) == 0 {
+        return "0", nil
+    }
+
+    // Deal with the sign separately
+    var sign string = ""
+    if ieeeF64 < 0 {
+        ieeeF64 =-ieeeF64
+        sign = "-"
+    }
+
     // ES6 has a unique "g" format
     var format byte = 'g'
-    ieeePos := ieeeF64;
-    if ieeePos < 0 {
-        ieeePos =-ieeePos
-    }
-    if ieeePos < 1e+21 && ieeePos >= 1e-6 {
+    if ieeeF64 < 1e+21 && ieeeF64 >= 1e-6 {
         format = 'f'
     }
 
@@ -67,5 +89,5 @@ func Convert(ieeeF64 float64) string {
             }
         }
     }
-    return es6Formatted
+    return sign + es6Formatted, nil
 }
