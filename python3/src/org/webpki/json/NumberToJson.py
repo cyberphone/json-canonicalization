@@ -22,7 +22,10 @@
 ##################################################################
 def convert2Es6Format(value):
 # Convert double/float to str using the native Python formatter
-    pyDouble = str(float(value))
+    fvalue = float(value)
+    if fvalue == 0:
+        return '0'
+    pyDouble = str(fvalue)
     pySign = ''
     if pyDouble.find('-') == 0:
 #
@@ -30,6 +33,9 @@ def convert2Es6Format(value):
 #
         pySign = '-'
         pyDouble = pyDouble[1:]
+# The following line catches the "inf" and "nan" values returned by str(fvalue)
+    if pyDouble.find('n') >= 0:
+        raise ValueError("Invalid JSON number: " + pyDouble)
     pyExpStr = ''
     pyExpVal = 0
     q = pyDouble.find('e')
