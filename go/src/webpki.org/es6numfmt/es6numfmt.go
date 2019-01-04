@@ -30,20 +30,20 @@ import (
 )
 
 const (
-    allButSign uint64 = 0x7fffffffffffffff
-    invalidNumber uint64 = 0x7ff0000000000000
+    minusZero      uint64 = 0x8000000000000000
+    invalidPattern uint64 = 0x7ff0000000000000
 )
 
 func Convert(ieeeF64 float64) (res string, err error) {
     ieeeU64 := math.Float64bits(ieeeF64)
 
     // Special case: NaN and Infinity are invalid in JSON
-    if (ieeeU64 & invalidNumber) == invalidNumber {
+    if (ieeeU64 & invalidPattern) == invalidPattern {
         return "null", errors.New("Invalid JSON number: " + strconv.FormatUint(ieeeU64, 16))
     }
 
-    // Special case: eliminate "-0" which does not exist in JSON.  Takes "0" as well
-    if (ieeeU64 & allButSign) == 0 {
+    // Special case: eliminate "-0" which does not exist in JSON
+    if ieeeU64 == minusZero {
         return "0", nil
     }
 
