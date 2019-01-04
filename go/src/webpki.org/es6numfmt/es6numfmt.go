@@ -70,7 +70,7 @@ func Convert(ieeeF64 float64) (res string, err error) {
     if exponent > 0 {
         gform := strconv.FormatFloat(ieeeF64, 'g', 17, 64)
         if len(gform) == len(es6Formatted) {
-           // "g" gives another result which also is the correct one
+           // "g" occasionally produces another result which also is the correct one
            es6Formatted = gform
         }
         // Go outputs "1e+09" which must be rewritten as "1e+9"
@@ -85,8 +85,9 @@ func Convert(ieeeF64 float64) (res string, err error) {
         if i != len(es6Formatted) {
             fix := strconv.FormatFloat(ieeeF64, 'f', 0, 64)
             if fix[i] >= '5' {
-                // "f" gives another result which also is the correct one
-                // although it must be rounded to match the -1 precision
+                // "f" with precision 0 occasionally produces another result which also is
+                // the correct one although it must be rounded to match the -1 precision
+                // (which fortunately seems to be correct with respect to trailing zeroes)
                 es6Formatted = fix[:i - 1] + string(fix[i - 1] + 1) + es6Formatted[i:]
             }
         }
