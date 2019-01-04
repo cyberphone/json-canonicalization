@@ -70,11 +70,12 @@ func Convert(ieeeF64 float64) (res string, err error) {
     if exponent > 0 {
         gform := strconv.FormatFloat(ieeeF64, 'g', 17, 64)
         if len(gform) == len(es6Formatted) {
+           // "g" gives another result which also is the correct one
            es6Formatted = gform
         }
         // Go outputs "1e+09" which must be rewritten as "1e+9"
         if es6Formatted[exponent + 2] == '0' {
-            es6Formatted = es6Formatted[0:exponent + 2] + es6Formatted[exponent + 3:]
+            es6Formatted = es6Formatted[:exponent + 2] + es6Formatted[exponent + 3:]
         }
     } else if strings.IndexByte(es6Formatted, '.') < 0 && len(es6Formatted) >= 12 {
         i := len(es6Formatted)
@@ -84,8 +85,9 @@ func Convert(ieeeF64 float64) (res string, err error) {
         if i != len(es6Formatted) {
             fix := strconv.FormatFloat(ieeeF64, 'f', 0, 64)
             if fix[i] >= '5' {
-                var adj byte = fix[i - 1] + 1
-                es6Formatted = fix[:i - 1] + string(adj) + es6Formatted[i:]
+                // "f" gives another result which also is the correct one
+                // although it must be rounded to match the -1 precision
+                es6Formatted = fix[:i - 1] + string(fix[i - 1] + 1) + es6Formatted[i:]
             }
         }
     }
