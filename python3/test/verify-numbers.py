@@ -53,24 +53,19 @@ verify('7fffffffffffffff', INVALID_NUMBER)
 verify('7ff0000000000000', INVALID_NUMBER)
 verify('fff0000000000000', INVALID_NUMBER)
 
-file = open('c:\\es6\\numbers\\es6testfile100m.txt','rb')
+file = open('c:\\es6\\numbers\\es6testfile100m.txt','r')
 lineCount = 0;
-line = '';
 while True:
-    byte = file.read(1);
-    if len(byte) == 0:
+    line = file.readline();
+    if not line:
         print('Successful Operation. Lines read: ' + str(lineCount))
         exit(0)
-    if byte == b'\n':
-        lineCount = lineCount + 1;
-        i = line.find(',')
-        if i <= 0 or i >= len(line) - 1:
-            print('Bad line: ' + str(i))
-            exit(0)
-        verify(line[:i], line[i + 1:])
-        line = ''
-        if lineCount % 1000000 == 0:
-            print('Line: ' + str(lineCount))
-    else:
-        line += byte.decode(encoding='UTF-8')
+    lineCount = lineCount + 1;
+    i = line.find(',')
+    if i <= 0 or i >= len(line) - 1:
+        print('Bad line: ' + str(i))
+        exit(0)
+    verify(line[:i], line[i + 1:len(line) - 1])
+    if lineCount % 1000000 == 0:
+        print('Line: ' + str(lineCount))
 
