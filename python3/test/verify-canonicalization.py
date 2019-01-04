@@ -69,9 +69,3 @@ if len(sys.argv) == 1:
         oneTurn(fileName)
 else:
     oneTurn(sys.argv[1])
-
-
-
-
-
-
