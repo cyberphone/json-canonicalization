@@ -39,7 +39,7 @@ func Convert(ieeeF64 float64) (res string, err error) {
 
     // Special case: NaN and Infinity are invalid in JSON
     if (ieeeU64 & invalidNumber) == invalidNumber {
-        return "", errors.New("Invalid JSON number: " + strconv.FormatUint(ieeeU64, 16))
+        return "null", errors.New("Invalid JSON number: " + strconv.FormatUint(ieeeU64, 16))
     }
 
     // Special case: eliminate "-0" which does not exist in JSON.  Takes "0" as well
