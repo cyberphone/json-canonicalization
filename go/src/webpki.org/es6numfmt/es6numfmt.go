@@ -42,7 +42,7 @@ func Convert(ieeeF64 float64) (res string, err error) {
         return "null", errors.New("Invalid JSON number: " + strconv.FormatUint(ieeeU64, 16))
     }
 
-    // Special case: eliminate "-0" which is not considered by JSON
+    // Special case: eliminate "-0" as mandated by the ES6-JSON/JCS specifications
     if ieeeU64 == minusZero {
         ieeeF64 = 0
     }
