@@ -63,7 +63,7 @@ while True:
     lineCount = lineCount + 1;
     i = line.find(',')
     if i <= 0 or i >= len(line) - 1:
-        print('Bad line: ' + str(i))
+        print('Bad line: ' + line)
         exit(0)
     verify(line[:i], line[i + 1:len(line) - 1])
     if lineCount % 1000000 == 0:
