@@ -5,10 +5,8 @@ JCS support for Python
 --------
 Set PYTHONPATH to the src sub-directory
 
-On Windows perform "CHCP 65001" to set the console in UTF-8 mode
-
-
 2. Running
 ----------
 $ cd test
-$ python canonicalization.py
+$ python verify-canonicalization.py
+$ python verify-numbers.py
