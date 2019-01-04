@@ -32,18 +32,18 @@ def convert2Es6Format(value):
 # The rest of the algorithm works on the textual representation only
 #
     pyDouble = str(fvalue)
-    pySign = ''
-    if pyDouble.find('-') == 0:
-#
-# Save sign separately, it doesn't have any role in the algorithm
-#
-        pySign = '-'
-        pyDouble = pyDouble[1:]
 #
 # The following line catches the "inf" and "nan" values returned by str(fvalue)
 #
     if pyDouble.find('n') >= 0:
         raise ValueError("Invalid JSON number: " + pyDouble)
+#
+# Save sign separately, it doesn't have any role in the algorithm
+#
+    pySign = ''
+    if pyDouble.find('-') == 0:
+        pySign = '-'
+        pyDouble = pyDouble[1:]
 #
 # Now we should only have valid non-zero values
 #
