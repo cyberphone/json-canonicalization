@@ -68,4 +68,3 @@ while True:
     verify(line[:i], line[i + 1:len(line) - 1])
     if lineCount % 1000000 == 0:
         print('Line: ' + str(lineCount))
-
