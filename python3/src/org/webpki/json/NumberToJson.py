@@ -1,6 +1,6 @@
 ##############################################################################
 #                                                                            #
-#  Copyright 2006-2018 WebPKI.org (http://webpki.org).                       #
+#  Copyright 2006-2019 WebPKI.org (http://webpki.org).                       #
 #                                                                            #
 #  Licensed under the Apache License, Version 2.0 (the "License");           #
 #  you may not use this file except in compliance with the License.          #
@@ -23,19 +23,30 @@
 def convert2Es6Format(value):
 # Convert double/float to str using the native Python formatter
     fvalue = float(value)
+#
+# Zero is a special case.  The following line takes "-0" case as well
+#
     if fvalue == 0:
         return '0'
+#
+# The rest of the algorithm works on the textual representation only
+#
     pyDouble = str(fvalue)
     pySign = ''
     if pyDouble.find('-') == 0:
 #
-#     Save sign separately, it doesn't have any role in the rest
+# Save sign separately, it doesn't have any role in the algorithm
 #
         pySign = '-'
         pyDouble = pyDouble[1:]
+#
 # The following line catches the "inf" and "nan" values returned by str(fvalue)
+#
     if pyDouble.find('n') >= 0:
         raise ValueError("Invalid JSON number: " + pyDouble)
+#
+# Now we should only have valid non-zero values
+#
     pyExpStr = ''
     pyExpVal = 0
     q = pyDouble.find('e')
@@ -48,7 +59,7 @@ def convert2Es6Format(value):
 #
 # Supress leading zero on exponents
 #
-            pyExpStr = pyExpStr[0:2] + pyExpStr[3:]
+            pyExpStr = pyExpStr[:2] + pyExpStr[3:]
         pyDouble = pyDouble[0:q]
         pyExpVal = int(pyExpStr[1:])
 #
@@ -60,7 +71,7 @@ def convert2Es6Format(value):
     q = pyDouble.find('.')
     if q > 0:
         pyDot = '.'
-        pyFirst = pyDouble[0:q]
+        pyFirst = pyDouble[:q]
         pyLast = pyDouble[q + 1:]
 #
 # Now the string is split into: pySign + pyFirst + pyDot + pyLast + pyExpStr
@@ -99,5 +110,3 @@ def convert2Es6Format(value):
 # The resulting sub-strings are concatenated
 #
     return pySign + pyFirst + pyDot + pyLast + pyExpStr
-
-    
