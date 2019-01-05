@@ -5,9 +5,9 @@ JCS support for Python
 --------
 Set PYTHONPATH to the src sub-directory
 
-For running verify-numbers.py you need to download a 3Gb testfile described
-at https://github.com/cyberphone/json-canonicalization/tree/master/testdata
-to any suitable directory as well as updating the file path
+For running verify-numbers.py you need to download a 3Gb+ file with test
+data described in the root directory testdata.  This file can be stored in
+any directory and requires updating the file path in verify-numbers.py
 
 2. Running
 ----------
