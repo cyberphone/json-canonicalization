@@ -5,7 +5,9 @@ JCS support for Go
 --------
 Set GOPATH to this directory
 
-On Windows perform "CHCP 65001" to set the console in UTF-8 mode
+For running verify-numbers.go you need to download a 3Gb+ file with test
+data described in the root directory testdata.  This file can be stored in
+any directory and requires updating the file path in verify-numbers.go
 
 
 2. Running
