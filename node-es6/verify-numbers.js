@@ -32,6 +32,7 @@ verify("7fffffffffffffff", INVALID_NUMBER);
 verify("7ff0000000000000", INVALID_NUMBER);
 verify("fff0000000000000", INVALID_NUMBER);
 
+// Change the file name below to fit your environment
 var file = Fs.openSync("c:\\es6\\numbers\\es6testfile100m.txt", "r");
 var lineCount = 0;
 var fileBuffer = Buffer.alloc(1024);
@@ -42,7 +43,7 @@ while (length = Fs.readSync(file, fileBuffer, 0, 1024, null)) {
         var c = fileBuffer[q]; 
         if (c == 0x0a) {
             if (++lineCount % 1000000 == 0) {
-                console.log("line: " + lineCount);
+                console.log("Line: " + lineCount);
             }
             let comma = line.indexOf(',');
             verify(line.substring(0, comma), line.substring(comma + 1));
