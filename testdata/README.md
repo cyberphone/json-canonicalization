@@ -6,6 +6,13 @@ supposed be transformed as specified by the corresponding file in the
 
 For testing ES6 number serialization there is a file on 
 https://onedrive.live.com/embed?cid=9341770E0D0D5468&resid=9341770E0D0D5468%21222&authkey=ADOClRsuPv3_pTk
-containing about a 100 million of random and edge-case values.  The test file 
-[../node-es6/verify-numbers.js](../node-es6/verify-numbers.js)
-shows how to decode and use this sample data.
+containing about a 100 million of random and edge-case values.  The test file consists of lines
+```code
+hex-ieee,expected\n
+```
+where `hex-ieee` holds 1-16 hexadecimal characters representing an IEEE-754 double precision value
+while `expected` holds the expected serialized value.  The lines are terminated by a new-line.
+Sample line:
+```code
+3eb0c6f7a0b5ed8c,9.999999999999997e-7
+```
