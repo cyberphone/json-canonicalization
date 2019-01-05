@@ -79,11 +79,13 @@ func main() {
     verify("7fffffffffffffff", invalidNumber)
     verify("7ff0000000000000", invalidNumber)
     verify("fff0000000000000", invalidNumber)
-    var lineCount int = 0
+
+    // Change the file name to suit your environment
     file, err := os.Open("c:\\es6\\numbers\\es6testfile100m.txt")
     check(err)
     defer file.Close()
     scanner := bufio.NewScanner(file)
+    var lineCount int = 0
     for scanner.Scan() {
         lineCount++
         if lineCount % 1000000 == 0 {
