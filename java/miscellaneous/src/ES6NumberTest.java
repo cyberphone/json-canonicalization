@@ -80,7 +80,7 @@ public class ES6NumberTest {
             int comma = line.indexOf(',');
             verify(line.substring(0, comma), line.substring(comma + 1));
             if (++lineCount % TURNS == 0) {
-                System.out.println("Line:" + lineCount);
+                System.out.println("Line: " + lineCount);
             }
         }
     }
