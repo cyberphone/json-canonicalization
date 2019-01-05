@@ -1,7 +1,7 @@
 # JSON Canonicalizer for Java
 This library implements the canonicalization scheme described in
 https://tools.ietf.org/html/draft-rundgren-json-canonicalization-scheme-00
-as well as in the [core](https://github.com/cyberphone/json-canonicalization) of this repository.
+as well as in the [core](https://github.com/cyberphone/json-canonicalization#json-canonicalization) of this repository.
 
 A compiled JAR is available in the  [dist](dist) sub directory while the source is available in the [src](src) sub directory.
 
