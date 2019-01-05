@@ -55,13 +55,9 @@ public class CanonicalizerTest {
     public static void main(String[] args) throws Exception {
         inputDirectory = args[0] + File.separator + "input";
         outputDirectory = args[0] + File.separator + "output";
-        if (args.length == 1) {
-            File[] files = new File(inputDirectory).listFiles();
-            for (File f : files) {
-                performOneTest(f.getName());
-            }
-        } else {
-            performOneTest(args[1]);
+        File[] files = new File(inputDirectory).listFiles();
+        for (File f : files) {
+            performOneTest(f.getName());
         }
     }
 }

@@ -15,7 +15,7 @@
   </path>
 
   <target name="help">
-    <echo message="Targets: verify-canonicalization [-Dfile=filename] verify-numbers es6interactive browser addedgecases fixtext"/>
+    <echo message="Targets: verify-canonicalization verify-numbers es6interactive browser addedgecases fixtext"/>
   </target>
 	
   <target name="fixtext">
@@ -54,7 +54,6 @@
        	    <path refid="lib.classpath"/>
     	</classpath>
         <arg value="${test.dir}"/>
-        <arg value="${file}"/>
         <jvmarg value="-Dfile.encoding=UTF8"/>
         <!-- Forcing a locale that could screw up sorting -->
         <jvmarg value="-Duser.language=fr"/>
