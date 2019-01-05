@@ -14,7 +14,12 @@ hex-ieee,expected\n
 ```
 where `hex-ieee` holds 1-16 hexadecimal characters representing an IEEE-754 double precision value
 while `expected` holds the expected serialized value.  The lines are terminated by a new-line.
-Sample line:
+Sample lines:
 ```code
+4340000000000001,9007199254740994
+4340000000000002,9007199254740996
+444b1ae4d6e2ef50,1e+21
+3eb0c6f7a0b5ed8d,0.000001
 3eb0c6f7a0b5ed8c,9.999999999999997e-7
+8000000000000000,0
 ```
