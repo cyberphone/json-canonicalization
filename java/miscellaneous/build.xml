@@ -15,7 +15,7 @@
   </path>
 
   <target name="help">
-    <echo message="Targets: help test [-Dfile=filename] browser megatest interactive addedgecases fixtext"/>
+    <echo message="Targets: verify-canonicalization [-Dfile=filename] verify-numbers es6interactive browser addedgecases fixtext"/>
   </target>
 	
   <target name="fixtext">
@@ -43,7 +43,7 @@
 
   </target>
 
-  <target name="test" depends="_compile">
+  <target name="verify-canonicalization" depends="_compile">
     <property name="file" value=""/>
     <java fork="yes"
           classname="CanonicalizerTest"
@@ -78,9 +78,9 @@
     </java>
   </target>
 
-  <target name="megatest" depends="_compile">
+  <target name="verify-numbers" depends="_compile">
     <java fork="yes"
-          classname="MegaES6NumberTest"
+          classname="ES6NumberTest"
             dir="${temp.dir}"
           failonerror="true">
       <classpath>
@@ -106,7 +106,7 @@
     </java>
   </target>
 
-	<target name="interactive" depends="_compile">
+	<target name="es6interactive" depends="_compile">
     <java fork="no"
           classname="ES6InterActive"
           failonerror="true">
