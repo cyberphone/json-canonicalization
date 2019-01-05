@@ -42,8 +42,16 @@ namespace verify_es6numberserialization
                 if (!es6Created.Equals(expected))
                 {
                     conversionErrors++;
-                    Console.WriteLine("ES6={0,-24:S} C#={1,-24:S} Original=" + ieeeHex,
-                                      expected, es6Created);
+                    Console.WriteLine("ES6={0,-24:S} C#={1,-24:S} Original=" + ieeeHex, expected, es6Created);
+                }
+                else
+                {
+                    if (ieeeF64 != double.Parse(expected, System.Globalization.CultureInfo.InvariantCulture))
+                    {
+// The following line was removed due to a .NET parser bug which affects some values
+// https://github.com/dotnet/coreclr/issues/17467
+//                        Console.WriteLine("ES6={0,-24:S} C#={1,-24:S} Original=" + ieeeHex, expected, es6Created);
+                    }
                 }
             }
             catch (ArgumentException)
@@ -51,8 +59,7 @@ namespace verify_es6numberserialization
                 if (!expected.Equals(INVALID_NUMBER))
                 {
                     conversionErrors++;
-                    Console.WriteLine("ES6={0,-24:S} Original=" + ieeeHex,
-                                      expected);
+                    Console.WriteLine("ES6={0,-24:S} Original=" + ieeeHex, expected);
                 }
             }
         }
