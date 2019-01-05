@@ -22,6 +22,12 @@ function verify(ieeeHex, expected) {
     console.log("Hex=" + ieeeHex + " Expected=" + expected + " Created=" + es6Created);
 }
 
+verify("4340000000000001", "9007199254740994");
+verify("4340000000000002", "9007199254740996");
+verify("444b1ae4d6e2ef50", "1e+21");
+verify("3eb0c6f7a0b5ed8d", "0.000001");
+verify("3eb0c6f7a0b5ed8c", "9.999999999999997e-7");
+verify("8000000000000000", "0");
 verify("7fffffffffffffff", INVALID_NUMBER);
 verify("7ff0000000000000", INVALID_NUMBER);
 verify("fff0000000000000", INVALID_NUMBER);
