@@ -12,7 +12,7 @@ containing about a 100 million of random and edge-case values.  The test file co
 ```code
 hex-ieee,expected\n
 ```
-where `hex-ieee` holds 1-16 hexadecimal characters representing an IEEE-754 double precision value
+where `hex-ieee` holds 1-16 ASCII hexadecimal characters representing an IEEE-754 double precision value
 while `expected` holds the expected serialized value.  Each line is terminated by a single new-line character.
 Sample lines:
 ```code
