@@ -27,6 +27,8 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 
+using Org.Webpki.JsonCanonicalizer;
+
 // Ultra-simple "Signed JSON" based on Canonicalization
 
 namespace json.net.signaturesupport
@@ -60,14 +62,6 @@ namespace json.net.signaturesupport
             output = output.Replace('+', '-');
             output = output.Replace('/', '_');
             writer.WriteValue(output);
-        }
-    }
-
-    public class Canonicalizer : DefaultContractResolver
-    {
-        protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
-        {
-            return base.CreateProperties(type, memberSerialization).OrderBy(p => p.PropertyName, StringComparer.Ordinal).ToList();
         }
     }
 
@@ -126,10 +120,7 @@ namespace json.net.signaturesupport
 
         private static byte[] CanonicalizeObject(object obj)
         {
-            return new UTF8Encoding(false).GetBytes(
-                JsonConvert.SerializeObject(obj,
-                                            Formatting.None,
-                                            new JsonSerializerSettings { ContractResolver = new Canonicalizer() }));
+            return new JsonCanonicalizer(JsonConvert.SerializeObject(obj)).GetEncodedUTF8();
         }
 
         public static SignatureObject Sign(object obj)
