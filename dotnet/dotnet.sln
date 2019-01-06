@@ -7,11 +7,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "es6numberserializer", "es6n
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "verify-numbers", "verify-numbers\verify-numbers.csproj", "{E1F29F69-75F5-4105-B1F6-70D09B594107}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "es6numbercli", "es6numbercli\es6numbercli.csproj", "{4A849B2C-9AAD-49D4-A97F-A789D2CD7BBD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "es6numbercli", "es6numbercli\es6numbercli.csproj", "{4A849B2C-9AAD-49D4-A97F-A789D2CD7BBD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "jsoncanonicalizer", "jsoncanonicalizer\jsoncanonicalizer.csproj", "{CCD2E620-4712-4E63-8E4B-F6D6BD21D368}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "jsoncanonicalizer", "jsoncanonicalizer\jsoncanonicalizer.csproj", "{CCD2E620-4712-4E63-8E4B-F6D6BD21D368}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "verify-canonicalization", "verify-canonicalization\verify-canonicalization.csproj", "{83C0B330-05FC-430B-83D8-9F9D7F6A1575}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "verify-canonicalization", "verify-canonicalization\verify-canonicalization.csproj", "{83C0B330-05FC-430B-83D8-9F9D7F6A1575}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "json.net.sign", "json.net.sign\json.net.sign.csproj", "{172E7B1E-0BF3-470A-BAE6-BD6E451BE0CA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{83C0B330-05FC-430B-83D8-9F9D7F6A1575}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{83C0B330-05FC-430B-83D8-9F9D7F6A1575}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{83C0B330-05FC-430B-83D8-9F9D7F6A1575}.Release|Any CPU.Build.0 = Release|Any CPU
+		{172E7B1E-0BF3-470A-BAE6-BD6E451BE0CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{172E7B1E-0BF3-470A-BAE6-BD6E451BE0CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{172E7B1E-0BF3-470A-BAE6-BD6E451BE0CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{172E7B1E-0BF3-470A-BAE6-BD6E451BE0CA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
