@@ -1,5 +1,5 @@
 /*
- *  Copyright 2006-2018 WebPKI.org (http://webpki.org).
+ *  Copyright 2006-2019 WebPKI.org (http://webpki.org).
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ using System.Text.RegularExpressions;
 
 using Org.Webpki.Es6NumberSerialization;
 
-// JSON canonicalizer for .NET
+// JSON canonicalizer for .NET Core
 
 namespace Org.Webpki.JsonCanonicalizer
 {

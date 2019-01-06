@@ -43,7 +43,7 @@ namespace test
             }
             else
             {
-                value = double.Parse(inData);
+                value = double.Parse(inData, System.Globalization.CultureInfo.InvariantCulture);
             }
             string es6 = NumberToJson.SerializeNumber(value);
             ulong ieeeLong = (ulong)BitConverter.DoubleToInt64Bits(value);

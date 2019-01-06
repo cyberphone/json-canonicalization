@@ -20,7 +20,7 @@ using System.IO;
 
 using Org.Webpki.Es6NumberSerialization;
 
-namespace verify_es6numberserialization
+namespace verify_numbers
 {
     // Test program for a .NET ES6 Number Serializer
     class Program
@@ -48,9 +48,7 @@ namespace verify_es6numberserialization
                 {
                     if (ieeeF64 != double.Parse(expected, System.Globalization.CultureInfo.InvariantCulture))
                     {
-// The following line was removed due to a .NET parser bug which affects some values
-// https://github.com/dotnet/coreclr/issues/17467
-//                        Console.WriteLine("ES6={0,-24:S} C#={1,-24:S} Original=" + ieeeHex, expected, es6Created);
+                        Console.WriteLine("ES6={0,-24:S} C#={1,-24:S} Original=" + ieeeHex, expected, es6Created);
                     }
                 }
             }
