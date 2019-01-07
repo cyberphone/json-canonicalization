@@ -58,7 +58,7 @@ lineCount = 0;
 while True:
     line = file.readline();
     if not line:
-        print('Successful Operation. Lines read: ' + str(lineCount))
+        print('\nSuccessful Operation. Lines read: ' + str(lineCount))
         exit(0)
     lineCount = lineCount + 1;
     i = line.find(',')
