@@ -41,7 +41,7 @@ Fs.readdirSync(inputData).forEach((fileName) => {
 });
 
 if (failures == 0) {
-	console.log('All tests succeeded!\n');
+	console.log('All tests succeeded!');
 } else {
 	console.log('\n****** ERRORS: ' + failures + ' *******\n');
 }
