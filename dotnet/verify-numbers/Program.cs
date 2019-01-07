@@ -93,11 +93,11 @@ namespace verify_numbers
                 }
                 if (conversionErrors == 0)
                 {
-                    Console.WriteLine("Successful Operation. Lines read: " + lineCount);
+                    Console.WriteLine("\nSuccessful Operation. Lines read: " + lineCount);
                 }
                 else
                 {
-                    Console.WriteLine("Number of failures: " + conversionErrors);
+                    Console.WriteLine("\nNumber of failures: " + conversionErrors);
                 }
             }
         }
