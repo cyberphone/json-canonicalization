@@ -57,5 +57,5 @@ Fs.closeSync(file);
 if (conversionErrors) {
     console.log("\n****** ERRORS: " + conversionErrors + " *******");
 } else {
-    console.log("Successful Operation.  Lines read: " + lineCount);
+    console.log("\nSuccessful Operation.  Lines read: " + lineCount);
 }
