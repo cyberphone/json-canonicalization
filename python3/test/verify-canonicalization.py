@@ -34,24 +34,27 @@ if not len(sys.argv) in (1,2):
     print ('[JSON-in-file]')
     sys.exit(1)
 
+failures = 0
+
 def readFile(name):
   return codecs.open(name, "r", "utf-8").read()
 
 def oneTurn(fileName):
-    print("\nFile: " + fileName)
+    global failures
     jsonData = readFile(os.path.join(inputPath,fileName))
-    obj = loads(jsonData, object_pairs_hook=OrderedDict)
+    obj = loads(jsonData)
     canres = canonicalize(obj)
     expected = readFile(os.path.join(outputPath,fileName)).encode()
     if canres == expected:
-      result = "\nSuccess"
+      result = "\n"
     else:
-      result = "\nFAILURE\n"
+      failures += 1
+      result = "\n\nTHE TEST ABOVE FAILED!"
     byteCount = 0
     next = False
-    utf8InHex = ''
+    utf8InHex = "\nFile: " + fileName
     for c in canres:
-      if byteCount > 0 and byteCount % 32 == 0:
+      if byteCount % 32 == 0:
         utf8InHex += '\n'
         next = False
       byteCount += 1
@@ -69,3 +72,7 @@ if len(sys.argv) == 1:
         oneTurn(fileName)
 else:
     oneTurn(sys.argv[1])
+if failures == 0:
+    print("All tests succeeded!");
+else:
+    print("\n****** ERRORS: " + str(failures) + " *******");
