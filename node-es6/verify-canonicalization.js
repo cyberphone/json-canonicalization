@@ -1,4 +1,4 @@
-// JavaScript source code for testing the canonicalizer
+// JavaScript source code for testing the JSON canonicalizer
 
 'use strict';
 const Fs = require('fs');
@@ -14,12 +14,14 @@ function readFile(path) {
     return Fs.readFileSync(path);
 }
 
+var failures = 0;
+
 Fs.readdirSync(inputData).forEach((fileName) => {
     var expected = readFile(outputData + '/' + fileName);
     var actual = Buffer.from(canonicalize(JSON.parse(readFile(inputData + '/' + fileName))));
     var next = false;
     var byteCount = 0;
-    var utf8 = '\n\nFile: ' + fileName + '\n';
+    var utf8 = '\nFile: ' + fileName;
     for (let i = 0; i < actual.length; i++) {
         if (byteCount++ % 32 == 0) {
             utf8 += '\n';
@@ -31,8 +33,15 @@ Fs.readdirSync(inputData).forEach((fileName) => {
         next = true;
         utf8 += actual[i].toString(16);
     }
-    console.log(utf8);
+    console.log(utf8 + '\n');
     if (expected.compare(actual)) {
-        throw new Error(fileName);
+    	failures++;
+    	console.log('THE TEST ABOVE FAILED!');
     }
 });
+
+if (failures == 0) {
+	console.log('All tests succeeded!\n');
+} else {
+	console.log('\n****** ERRORS: ' + failures + ' *******\n');
+}
