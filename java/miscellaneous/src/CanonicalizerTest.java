@@ -26,13 +26,15 @@ public class CanonicalizerTest {
 
     static String inputDirectory;
     static String outputDirectory;
+    
+    static int failures = 0;
 
     static void performOneTest(String fileName) throws Exception {
         byte[] rawInput = ArrayUtil.readFile(inputDirectory + File.separator + fileName);
         byte[] expected = ArrayUtil.readFile(outputDirectory + File.separator + fileName);
         byte[] actual = new JsonCanonicalizer(rawInput).getEncodedUTF8();
         StringBuilder utf8InHex = new StringBuilder("\nFile: ");
-        utf8InHex.append(fileName).append("\n");
+        utf8InHex.append(fileName);
         int byteCount = 0;
         boolean next = false;
         for (byte b : actual) {
@@ -48,7 +50,8 @@ public class CanonicalizerTest {
         }
         System.out.println(utf8InHex.append("\n").toString());
         if (!ArrayUtil.compare(expected, actual)) {
-            throw new RuntimeException("Failed for file: " + fileName);
+            failures++;
+            System.out.println("THE TEST ABOVE FAILED!");
         }
     }
 
@@ -58,6 +61,11 @@ public class CanonicalizerTest {
         File[] files = new File(inputDirectory).listFiles();
         for (File f : files) {
             performOneTest(f.getName());
+        }
+        if (failures == 0) {
+        	System.out.println("All tests succeeded!\n");
+        } else {
+        	System.out.println("\n****** ERRORS: " + failures + " *******\n");
         }
     }
 }
