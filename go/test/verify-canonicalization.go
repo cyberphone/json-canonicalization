@@ -15,8 +15,8 @@
 //
 //
  
-// This program tests the JSON number serializer using both a few discrete
-// values as well as the 100 million value test suite
+// This program verifies the JSON canonicalizer using a test suite
+// containing sample data and expected output
 
 package main
 
@@ -25,6 +25,8 @@ import (
     "io/ioutil"
     "runtime"
     "path/filepath"
+    "bytes"
+    "webpki.org/jsoncanonicalizer"
 )
 
 func check(e error) {
@@ -35,6 +37,8 @@ func check(e error) {
 
 var testdata string
 
+var failures = 0
+
 func read(fileName string, directory string) []byte {
     data, err := ioutil.ReadFile(filepath.Join(filepath.Join(testdata, directory), fileName))
     check(err)
@@ -42,15 +46,13 @@ func read(fileName string, directory string) []byte {
 }
 
 func verify(fileName string) {
-    fmt.Println(fileName)
-    inputData := read(fileName, "input")
-    fmt.Println(string(inputData))
-    outputData := read(fileName, "output")
-    fmt.Println(string(outputData))
+    actual, err := jsoncanonicalizer.Transform(read(fileName, "input"))
+    check(err)
+    expected := read(fileName, "output")
     var utf8InHex = "\nFile: " + fileName
     var byteCount = 0
     var next = false
-    for _, b := range outputData {
+    for _, b := range actual {
         if byteCount % 32 == 0 {
             utf8InHex = utf8InHex + "\n"
             next = false
@@ -63,6 +65,10 @@ func verify(fileName string) {
         utf8InHex = utf8InHex + fmt.Sprintf("%02x", b)
     }
     fmt.Println(utf8InHex + "\n")
+    if !bytes.Equal(actual, expected) {
+        failures++
+        fmt.Println("THE TEST ABOVE FAILED!");
+    }
 }
  
 func main() {
@@ -73,5 +79,10 @@ func main() {
     check(err)
     for _, file := range files {
         verify(file.Name())
+    }
+    if failures == 0 {
+        fmt.Println("All tests succeeded!\n")
+    } else {
+        fmt.Printf("\n****** ERRORS: %d *******\n", failures)
     }
 }
