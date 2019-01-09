@@ -50,6 +50,7 @@ func Transform(jsonData []byte) (res string, e error) {
 
     var ASC_ESCAPES = []byte{'\\', '"', 'b',  'f',  'n',  'r',  't'}
     var BIN_ESCAPES = []byte{'\\', '"', '\b', '\f', '\n', '\r', '\t'}
+    var LITERALS    = []string{"true", "false", "null"}
 
     var globalError error = nil
     var result string
@@ -108,7 +109,7 @@ func Transform(jsonData []byte) (res string, e error) {
         }
     }
 
-    getU4 := func() rune {
+    getUEscape := func() rune {
         start :=index
         nextChar()
         nextChar()
@@ -133,13 +134,10 @@ func Transform(jsonData []byte) (res string, e error) {
         switch scan() {
             case LEFT_CURLY_BRACKET:
                 return parseObject()
-
             case DOUBLE_QUOTE:
                 return parseQuotedString()
-
             case LEFT_BRACKET:
                 return parseArray()
-
             default:
                 return parseSimpleType()
         }
@@ -163,22 +161,31 @@ func Transform(jsonData []byte) (res string, e error) {
             if c < ' ' {
                 setError("Unterminated string literal")
             } else if c > 127 {
+                // Quoted strings are the only tokens that may contain non-ASCII characters
                 index--;
                 r, size := utf8.DecodeRune(jsonData[index:])
                 quotedString.WriteRune(r)
                 index += size;
             } else if c == BACK_SLASH {
+                // Escape sequence
                 c = nextChar()
                 if c == 'u' {
-                    firstUTF16 := getU4()
+                    // The \u escape
+                    firstUTF16 := getUEscape()
                     if utf16.IsSurrogate(firstUTF16) {
+                        // If the first UTF16 code unit has a certain value there must be
+                        // another succeeding UTF16 code unit as well
                         if nextChar() != '\\' || nextChar() != 'u' {
                             setError("Surrogate expected")
                         } else {
-                            quotedString.WriteRune(utf16.DecodeRune(firstUTF16, getU4()))
+                            // Output the UTF-32 code point as UTF-8
+                            quotedString.WriteRune(utf16.DecodeRune(firstUTF16, getUEscape()))
                         }
                     } else {
+                        // Single UTF16 code is identical to UTF32
+                        // Now the value must be checked
                         for i, esc := range BIN_ESCAPES {
+                            // Is this within the JSON standard escapes
                             if rune(esc) == firstUTF16 {
                                 quotedString.WriteByte('\\')
                                 quotedString.WriteByte(ASC_ESCAPES[i])
@@ -186,15 +193,19 @@ func Transform(jsonData []byte) (res string, e error) {
                             }
                         }
                         if firstUTF16 < ' ' {
+                            // Control characters must be escaped
                             quotedString.WriteString(fmt.Sprintf("\\u%04x", firstUTF16))
                         } else {
+                            // Not control, output code unit as is but UTF-8 encoded
                             quotedString.WriteRune(firstUTF16)
                         }
                       DoneWithValueEscaping:
                     }
                 } else if c == '/' {
+                    // Benign but useless escape
                     quotedString.WriteByte('/')
                 } else {
+                    // The JSON standard escapes
                     quotedString.WriteByte('\\')
                     for _, esc := range ASC_ESCAPES {
                         if esc == c {
@@ -202,10 +213,11 @@ func Transform(jsonData []byte) (res string, e error) {
                             goto DoneWithStdEscaping
                         }
                     }
-                    setError("Unsupported escape:" + string(c))
+                    setError("Unexpected escape: " + string(c))
                   DoneWithStdEscaping:
                 }
             } else {
+                // Just an ordinary ASCII character
                 quotedString.WriteByte(c)
             }
         }
@@ -231,7 +243,7 @@ func Transform(jsonData []byte) (res string, e error) {
             setError("Missing argument")
         }
         value := token.String()
-        for _, literal := range []string{"true", "false", "null"} {
+        for _, literal := range LITERALS {
             if literal == value {
                 return literal
             }

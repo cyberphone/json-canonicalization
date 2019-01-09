@@ -47,6 +47,8 @@ func read(fileName string, directory string) []byte {
 func verify(fileName string) {
     actual, err := jsoncanonicalizer.Transform(read(fileName, "input"))
     check(err)
+    recycled, err2 := jsoncanonicalizer.Transform([]byte(actual))
+    check(err2)
     expected := string(read(fileName, "output"))
     var utf8InHex = "\nFile: " + fileName
     var byteCount = 0
@@ -64,7 +66,7 @@ func verify(fileName string) {
         utf8InHex = utf8InHex + fmt.Sprintf("%02x", b)
     }
     fmt.Println(utf8InHex + "\n")
-    if actual != expected {
+    if actual != expected || actual != recycled {
         failures++
         fmt.Println("THE TEST ABOVE FAILED!");
     }
