@@ -14,6 +14,16 @@ any directory and requires updating the file path in verify-numbers.go
 ----------
 $ cd test
 $ go build webpki.org/es6numfmt
-$ go build webpki.org/jcs
+$ go build webpki.org/jsoncanonicalizer
 $ go run verify-canonicalization.go
 $ go run verify-numbers.go
+
+
+3. API
+
+import "webpki.org/jsoncanonicalizer"
+
+func Transform(jsonData []byte) (result string, e error)
+
+jsonData must be UTF-8 encoded
+the resulting string is also UTF-8 encoded
