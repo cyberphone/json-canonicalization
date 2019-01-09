@@ -127,8 +127,46 @@ func Transform(jsonData []byte) (res string, e error) {
     }
 
     ParseQuotedString = func() string {
-        var element strings.Builder
-        return element.String()
+        var quotedString strings.Builder
+        quotedString.WriteByte(DOUBLE_QUOTE)
+        for globalError == nil {
+            var c byte
+            if index < jsonDataLength {
+                c = jsonData[index]
+                index++
+            } else {
+                NextChar()
+                continue
+            }
+            if (c == DOUBLE_QUOTE) {
+                break;
+            }
+            if c < ' ' {
+                setError("Unterminated string literal")
+            } else if c > 127 {
+            
+            } else if c == BACK_SLASH {
+                c = NextChar()
+                if c == 'u' {
+                } else if c == '/' {
+                    quotedString.WriteByte('/')
+                } else {
+                    quotedString.WriteByte('\\')
+                    for _, esc := range []byte{'b', 'f', '\n', 'r', '\t'} {
+                        if esc == c {
+                            quotedString.WriteByte(c)
+                            goto DoneWithEscaping
+                        }
+                    }
+                    setError("Unsupported escape:" + string(c))
+                  DoneWithEscaping:
+                }
+            } else {
+                quotedString.WriteByte(c)
+            }
+        }
+        quotedString.WriteByte(DOUBLE_QUOTE)
+        return quotedString.String()
     }
 
     ParseSimpleType = func() string {
@@ -164,7 +202,7 @@ func Transform(jsonData []byte) (res string, e error) {
         var arrayData strings.Builder
         arrayData.WriteByte(LEFT_BRACKET)
         var next bool = false
-        for TestNextNonWhiteSpaceChar() != RIGHT_BRACKET {
+        for globalError == nil && TestNextNonWhiteSpaceChar() != RIGHT_BRACKET {
             if next {
                 ScanFor(COMMA_CHARACTER)
                 arrayData.WriteByte(COMMA_CHARACTER)
@@ -181,7 +219,7 @@ func Transform(jsonData []byte) (res string, e error) {
     ParseObject = func() string {
         values :=list.New()
         var next bool = false
-        for TestNextNonWhiteSpaceChar() != RIGHT_CURLY_BRACKET {
+        for globalError == nil && TestNextNonWhiteSpaceChar() != RIGHT_CURLY_BRACKET {
             if next {
                 ScanFor(COMMA_CHARACTER)
             }
