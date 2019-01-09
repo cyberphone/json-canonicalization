@@ -49,6 +49,12 @@ func Transform(jsonData []byte) (res string, e error) {
     var index int = 0
     var jsonDataLength int = len(jsonData)
 
+    var ParseElement func() string
+    var ParseSimpleType func() string
+    var ParseQuotedString func() string
+    var ParseObject func() string
+    var ParseArray func() string
+
     setError := func(msg string) {
         if globalError == nil {
             globalError = errors.New(msg)
@@ -96,17 +102,33 @@ func Transform(jsonData []byte) (res string, e error) {
         return c
     }
 
-    ParseElement := func() string {
+    ParseElement = func() string {
+        switch Scan() {
+            case LEFT_CURLY_BRACKET:
+                return ParseObject()
+
+            case DOUBLE_QUOTE:
+                return ParseQuotedString()
+
+            case LEFT_BRACKET:
+                return ParseArray()
+
+            default:
+                return ParseSimpleType()
+        }
+    }
+
+    ParseQuotedString = func() string {
         var element strings.Builder
         return element.String()
     }
 
-    ParseQuotedString := func() string {
+    ParseSimpleType = func() string {
         var element strings.Builder
         return element.String()
     }
 
-    ParseArray := func() string {
+    ParseArray = func() string {
         var arrayData strings.Builder
         arrayData.WriteByte(LEFT_BRACKET)
         var next bool = false
@@ -124,7 +146,7 @@ func Transform(jsonData []byte) (res string, e error) {
         return arrayData.String()
     }
 
-    ParseObject := func() string {
+    ParseObject = func() string {
         values :=list.New()
         var next bool = false
         for TestNextNonWhiteSpaceChar() != RIGHT_CURLY_BRACKET {
@@ -149,9 +171,14 @@ func Transform(jsonData []byte) (res string, e error) {
                         values.InsertBefore(entry, e)
                         goto DoneSorting
                     } else if diff > 0 {
-                        break
+                        goto NextTurnPlease
                     }
                 }
+                if len(sortKey) < len(oldSortKey) {
+                    values.InsertBefore(entry, e)
+                    goto DoneSorting
+                }
+              NextTurnPlease:
             }
             values.PushBack(entry)
           DoneSorting:
