@@ -243,11 +243,13 @@ func Transform(jsonData []byte) (res string, e error) {
             setError("Missing argument")
         }
         value := token.String()
+        // Is it a JSON literal?
         for _, literal := range LITERALS {
             if literal == value {
                 return literal
             }
         }
+        // Apparently not so we assume that it is a I-JSON number
         ieeeF64, err := strconv.ParseFloat(value, 64)
         checkError(err)
         value, err = es6numfmt.Convert(ieeeF64)
@@ -283,10 +285,12 @@ func Transform(jsonData []byte) (res string, e error) {
             next = true
             scanFor(DOUBLE_QUOTE)
             name := parseQuotedString()
+            // Sort keys on UTF-16 code units
             sortKey := utf16.Encode([]rune(name))
             scanFor(COLON_CHARACTER)
             entry := keyEntry{name, sortKey, parseElement()}
-             for e := values.Front(); e != nil; e = e.Next() {
+            for e := values.Front(); e != nil; e = e.Next() {
+                // Check if the key is smaller than a previous key
                 oldSortKey := e.Value.(keyEntry).sortKey
                 l := len(oldSortKey)
                 if l > len(sortKey) {
@@ -295,22 +299,28 @@ func Transform(jsonData []byte) (res string, e error) {
                 for q := 0; q < l; q++ {
                     diff := int(sortKey[q]) - int(oldSortKey[q])
                     if diff < 0 {
+                        // We found a key which bigger than our new key
                         values.InsertBefore(entry, e)
                         goto DoneSorting
                     } else if diff > 0 {
+                        // The key was actually bigger so we must continue searching
+                        // which is simple since the list is ordered
                         goto NextTurnPlease
                     }
                 }
+                // Shorter => smaller
                 if len(sortKey) < len(oldSortKey) {
                     values.InsertBefore(entry, e)
                     goto DoneSorting
                 }
               NextTurnPlease:
             }
+            // The key is either the first or bigger than any previous key
             values.PushBack(entry)
           DoneSorting:
         }
         scan()
+        // Now everything is sorted so we can create output
         var objectData strings.Builder
         next = false
         objectData.WriteByte(LEFT_CURLY_BRACKET)
