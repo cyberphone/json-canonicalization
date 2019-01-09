@@ -172,6 +172,11 @@ func Transform(jsonData []byte) (res string, e error) {
                 if c == 'u' {
                     firstUTF16 := getU4()
                     if utf16.IsSurrogate(firstUTF16) {
+                        if nextChar() != '\\' || nextChar() != 'u' {
+                            setError("Surrogate expected")
+                        } else {
+                            quotedString.WriteRune(utf16.DecodeRune(firstUTF16, getU4()))
+                        }
                     } else {
                         for i, esc := range BIN_ESCAPES {
                             if rune(esc) == firstUTF16 {
