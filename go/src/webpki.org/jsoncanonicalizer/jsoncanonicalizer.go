@@ -213,7 +213,7 @@ func Transform(jsonData []byte) (res string, e error) {
                             goto DoneWithStdEscaping
                         }
                     }
-                    setError("Unexpected escape: " + string(c))
+                    setError("Unexpected escape: \\" + string(c))
                   DoneWithStdEscaping:
                 }
             } else {
@@ -285,8 +285,11 @@ func Transform(jsonData []byte) (res string, e error) {
             next = true
             scanFor(DOUBLE_QUOTE)
             name := parseQuotedString()
+            if globalError != nil {
+                break;
+            }
             // Sort keys on UTF-16 code units
-            sortKey := utf16.Encode([]rune(name))
+            sortKey := utf16.Encode([]rune(name[1:len(name) - 1]))
             scanFor(COLON_CHARACTER)
             entry := keyEntry{name, sortKey, parseElement()}
             for e := values.Front(); e != nil; e = e.Next() {
@@ -312,6 +315,9 @@ func Transform(jsonData []byte) (res string, e error) {
                 if len(sortKey) < len(oldSortKey) {
                     values.InsertBefore(entry, e)
                     goto DoneSorting
+                }
+                if len(sortKey) == len(oldSortKey) {
+                    setError("Duplicate key: " + name)
                 }
               NextTurnPlease:
             }
