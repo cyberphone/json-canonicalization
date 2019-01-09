@@ -23,8 +23,10 @@ package jsoncanonicalizer
 import (
     "errors"
     "container/list"
+    "strconv"
     "strings"
     "unicode/utf16"
+    "webpki.org/es6numfmt"
 )
 
 type keyEntry struct {
@@ -58,6 +60,12 @@ func Transform(jsonData []byte) (res string, e error) {
     setError := func(msg string) {
         if globalError == nil {
             globalError = errors.New(msg)
+        }
+    }
+
+    checkError := func(e error) {
+        if globalError == nil {
+            globalError = e
         }
     }
 
@@ -124,8 +132,32 @@ func Transform(jsonData []byte) (res string, e error) {
     }
 
     ParseSimpleType = func() string {
-        var element strings.Builder
-        return element.String()
+        var token strings.Builder
+        for globalError == nil {
+            c := TestNextNonWhiteSpaceChar()
+            if c == COMMA_CHARACTER || c == RIGHT_BRACKET || c == RIGHT_CURLY_BRACKET {
+                break;
+            }
+            c = NextChar()
+            if IsWhiteSpace(c) {
+                break
+            }
+            token.WriteByte(c)
+        }
+        if token.Len() == 0 {
+            setError("Missing argument")
+        }
+        value := token.String()
+        for _, literal := range []string{"true", "false", "null"} {
+            if literal == value {
+                return literal
+            }
+        }
+        ieeeF64, err := strconv.ParseFloat(value, 64)
+        checkError(err)
+        value, err = es6numfmt.Convert(ieeeF64)
+        checkError(err)
+        return value
     }
 
     ParseArray = func() string {
