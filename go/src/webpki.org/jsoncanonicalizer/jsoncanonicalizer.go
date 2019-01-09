@@ -23,8 +23,10 @@ package jsoncanonicalizer
 import (
     "errors"
     "container/list"
+    "fmt"
     "strconv"
     "strings"
+    "unicode/utf8"
     "unicode/utf16"
     "webpki.org/es6numfmt"
 )
@@ -46,16 +48,19 @@ func Transform(jsonData []byte) (res string, e error) {
     const COMMA_CHARACTER byte     = ','
     const BACK_SLASH byte          = '\\'
 
+    var ASC_ESCAPES = []byte{'\\', '"', 'b',  'f',  'n',  'r',  't'}
+    var BIN_ESCAPES = []byte{'\\', '"', '\b', '\f', '\n', '\r', '\t'}
+
     var globalError error = nil
     var result string
     var index int = 0
     var jsonDataLength int = len(jsonData)
 
-    var ParseElement func() string
-    var ParseSimpleType func() string
-    var ParseQuotedString func() string
-    var ParseObject func() string
-    var ParseArray func() string
+    var parseElement func() string
+    var parseSimpleType func() string
+    var parseQuotedString func() string
+    var parseObject func() string
+    var parseArray func() string
 
     setError := func(msg string) {
         if globalError == nil {
@@ -68,12 +73,12 @@ func Transform(jsonData []byte) (res string, e error) {
             globalError = e
         }
     }
-
-    IsWhiteSpace := func(c byte) bool {
+    
+    isWhiteSpace := func(c byte) bool {
         return c == 0x20 || c == 0x0A || c == 0x0D || c == 0x09
     }
 
-    NextChar := func() byte {
+    nextChar := func() byte {
         if index < jsonDataLength {
             c := jsonData[index]
             if c > 127 {
@@ -86,47 +91,61 @@ func Transform(jsonData []byte) (res string, e error) {
         return DOUBLE_QUOTE
     }
 
-    Scan := func() byte {
+    scan := func() byte {
         for {
-            c := NextChar()
-            if IsWhiteSpace(c) {
+            c := nextChar()
+            if isWhiteSpace(c) {
                 continue;
             }
             return c
         }
     }
 
-    ScanFor := func(expected byte) {
-        c := Scan()
+    scanFor := func(expected byte) {
+        c := scan()
         if c != expected {
             setError("Expected '" + string(expected) + "' but got '" + string(c) + "'")
         }
     }
 
-    TestNextNonWhiteSpaceChar := func() byte {
+    getU4 := func() rune {
+        start :=index
+        nextChar()
+        nextChar()
+        nextChar()
+        nextChar()
+        if globalError != nil {
+            return 0
+        }
+        u16, err := strconv.ParseUint(string(jsonData[start:index]), 16, 64)
+        checkError(err)
+        return rune(u16)
+    }
+
+    testNextNonWhiteSpaceChar := func() byte {
         save := index
-        c := Scan()
+        c := scan()
         index = save
         return c
     }
 
-    ParseElement = func() string {
-        switch Scan() {
+    parseElement = func() string {
+        switch scan() {
             case LEFT_CURLY_BRACKET:
-                return ParseObject()
+                return parseObject()
 
             case DOUBLE_QUOTE:
-                return ParseQuotedString()
+                return parseQuotedString()
 
             case LEFT_BRACKET:
-                return ParseArray()
+                return parseArray()
 
             default:
-                return ParseSimpleType()
+                return parseSimpleType()
         }
     }
 
-    ParseQuotedString = func() string {
+    parseQuotedString = func() string {
         var quotedString strings.Builder
         quotedString.WriteByte(DOUBLE_QUOTE)
         for globalError == nil {
@@ -135,8 +154,8 @@ func Transform(jsonData []byte) (res string, e error) {
                 c = jsonData[index]
                 index++
             } else {
-                NextChar()
-                continue
+                nextChar()
+                break
             }
             if (c == DOUBLE_QUOTE) {
                 break;
@@ -144,22 +163,42 @@ func Transform(jsonData []byte) (res string, e error) {
             if c < ' ' {
                 setError("Unterminated string literal")
             } else if c > 127 {
-            
+                index--;
+                r, size := utf8.DecodeRune(jsonData[index:])
+                quotedString.WriteRune(r)
+                index += size;
             } else if c == BACK_SLASH {
-                c = NextChar()
+                c = nextChar()
                 if c == 'u' {
+                    firstUTF16 := getU4()
+                    if utf16.IsSurrogate(firstUTF16) {
+                    } else {
+                        for i, esc := range BIN_ESCAPES {
+                            if rune(esc) == firstUTF16 {
+                                quotedString.WriteByte('\\')
+                                quotedString.WriteByte(ASC_ESCAPES[i])
+                                goto DoneWithValueEscaping
+                            }
+                        }
+                        if firstUTF16 < ' ' {
+                            quotedString.WriteString(fmt.Sprintf("\\u%04x", firstUTF16))
+                        } else {
+                            quotedString.WriteRune(firstUTF16)
+                        }
+                      DoneWithValueEscaping:
+                    }
                 } else if c == '/' {
                     quotedString.WriteByte('/')
                 } else {
                     quotedString.WriteByte('\\')
-                    for _, esc := range []byte{'b', 'f', '\n', 'r', '\t'} {
+                    for _, esc := range ASC_ESCAPES {
                         if esc == c {
                             quotedString.WriteByte(c)
-                            goto DoneWithEscaping
+                            goto DoneWithStdEscaping
                         }
                     }
                     setError("Unsupported escape:" + string(c))
-                  DoneWithEscaping:
+                  DoneWithStdEscaping:
                 }
             } else {
                 quotedString.WriteByte(c)
@@ -169,15 +208,16 @@ func Transform(jsonData []byte) (res string, e error) {
         return quotedString.String()
     }
 
-    ParseSimpleType = func() string {
+    parseSimpleType = func() string {
         var token strings.Builder
+        index--
         for globalError == nil {
-            c := TestNextNonWhiteSpaceChar()
+            c := testNextNonWhiteSpaceChar()
             if c == COMMA_CHARACTER || c == RIGHT_BRACKET || c == RIGHT_CURLY_BRACKET {
                 break;
             }
-            c = NextChar()
-            if IsWhiteSpace(c) {
+            c = nextChar()
+            if isWhiteSpace(c) {
                 break
             }
             token.WriteByte(c)
@@ -198,37 +238,37 @@ func Transform(jsonData []byte) (res string, e error) {
         return value
     }
 
-    ParseArray = func() string {
+    parseArray = func() string {
         var arrayData strings.Builder
         arrayData.WriteByte(LEFT_BRACKET)
         var next bool = false
-        for globalError == nil && TestNextNonWhiteSpaceChar() != RIGHT_BRACKET {
+        for globalError == nil && testNextNonWhiteSpaceChar() != RIGHT_BRACKET {
             if next {
-                ScanFor(COMMA_CHARACTER)
+                scanFor(COMMA_CHARACTER)
                 arrayData.WriteByte(COMMA_CHARACTER)
             } else {
                 next = true
             }
-            arrayData.WriteString(ParseElement())
+            arrayData.WriteString(parseElement())
         }
-        Scan()
+        scan()
         arrayData.WriteByte(RIGHT_BRACKET)
         return arrayData.String()
     }
 
-    ParseObject = func() string {
+    parseObject = func() string {
         values :=list.New()
         var next bool = false
-        for globalError == nil && TestNextNonWhiteSpaceChar() != RIGHT_CURLY_BRACKET {
+        for globalError == nil && testNextNonWhiteSpaceChar() != RIGHT_CURLY_BRACKET {
             if next {
-                ScanFor(COMMA_CHARACTER)
+                scanFor(COMMA_CHARACTER)
             }
             next = true
-            ScanFor(DOUBLE_QUOTE)
-            name := ParseQuotedString()
+            scanFor(DOUBLE_QUOTE)
+            name := parseQuotedString()
             sortKey := utf16.Encode([]rune(name))
-            ScanFor(COLON_CHARACTER)
-            entry := keyEntry{name, sortKey, ParseElement()}
+            scanFor(COLON_CHARACTER)
+            entry := keyEntry{name, sortKey, parseElement()}
              for e := values.Front(); e != nil; e = e.Next() {
                 oldSortKey := e.Value.(keyEntry).sortKey
                 l := len(oldSortKey)
@@ -253,7 +293,7 @@ func Transform(jsonData []byte) (res string, e error) {
             values.PushBack(entry)
           DoneSorting:
         }
-        Scan()
+        scan()
         var objectData strings.Builder
         next = false
         objectData.WriteByte(LEFT_CURLY_BRACKET)
@@ -271,15 +311,15 @@ func Transform(jsonData []byte) (res string, e error) {
         return objectData.String()
     }
 
-    if TestNextNonWhiteSpaceChar() == LEFT_BRACKET {
-        Scan()
-        result = ParseArray()
+    if testNextNonWhiteSpaceChar() == LEFT_BRACKET {
+        scan()
+        result = parseArray()
     } else {
-        ScanFor(LEFT_CURLY_BRACKET)
-        result = ParseObject()
+        scanFor(LEFT_CURLY_BRACKET)
+        result = parseObject()
     }
     for index < jsonDataLength {
-        if !IsWhiteSpace(jsonData[index]) {
+        if !isWhiteSpace(jsonData[index]) {
             setError("Improperly terminated JSON object")
             break;
         }

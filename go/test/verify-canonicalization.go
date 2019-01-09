@@ -25,7 +25,6 @@ import (
     "io/ioutil"
     "runtime"
     "path/filepath"
-    "bytes"
     "webpki.org/jsoncanonicalizer"
 )
 
@@ -48,11 +47,11 @@ func read(fileName string, directory string) []byte {
 func verify(fileName string) {
     actual, err := jsoncanonicalizer.Transform(read(fileName, "input"))
     check(err)
-    expected := read(fileName, "output")
+    expected := string(read(fileName, "output"))
     var utf8InHex = "\nFile: " + fileName
     var byteCount = 0
     var next = false
-    for _, b := range actual {
+    for _, b := range []byte(actual) {
         if byteCount % 32 == 0 {
             utf8InHex = utf8InHex + "\n"
             next = false
@@ -65,7 +64,7 @@ func verify(fileName string) {
         utf8InHex = utf8InHex + fmt.Sprintf("%02x", b)
     }
     fmt.Println(utf8InHex + "\n")
-    if !bytes.Equal(actual, expected) {
+    if actual != expected {
         failures++
         fmt.Println("THE TEST ABOVE FAILED!");
     }
