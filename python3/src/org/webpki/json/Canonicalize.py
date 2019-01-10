@@ -16,8 +16,10 @@
 #                                                                            #
 ##############################################################################
 
-"""Implementation of JSONEncoder
-"""
+#################################################
+# JCS compatible JSON serializer for Python 3.x #
+#################################################
+
 import re
 
 from org.webpki.json.NumberToJson import convert2Es6Format
