@@ -7,13 +7,13 @@ canonicalizer written in Go.
 
 ### Building and testing
 
-1. Set GOPATH to this directory.
+- Set GOPATH to this directory.
 
-2. For running `verify-numbers.go` you need to download a 3Gb+ file with test
+- For running `verify-numbers.go` you need to download a 3Gb+ file with test
 data described in the root directory [testdata](../testdata).  This file can be stored in
 any directory and requires updating the file path in `verify-numbers.go`.
 
-3. Perform the commands:
+- Perform the commands:
 ```code
 $ cd test
 $ go build webpki.org/es6numfmt
