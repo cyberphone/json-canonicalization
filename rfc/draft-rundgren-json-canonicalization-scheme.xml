@@ -346,8 +346,17 @@
                 the &lt; operator, lexicographically precedes the other string.
                 If there is no index position at which they differ,
                 then the shorter string lexicographically precedes the longer string.
+                <vspace blankLines="1"/>
+                In plain english this means that properties are sorted in ascending order like the following:
               </t>
             </list>
+          </t>
+          <t>
+            <figure align="center"><artwork><![CDATA[        ""
+        "a"
+        "aa"
+        "ab"]]></artwork>
+            </figure>
           </t>
           <t>
             The rationale for basing the sort algorithm on UTF-16 code units is that
@@ -399,11 +408,7 @@
       <t>
         It is vital performing &quot;sanity&quot; checks
         on input data to avoid overflowing buffers and similar things that
-        could affect the integrity of the system.  By doing that
-        an incorrectly implemented JCS algorithm or improperly
-        canonicalized data should not introduce a security problem,
-        but rather make the associated application (preferably gracefully)
-        fail due to a broken signature, hash or comparison.
+        could affect the integrity of the system.
       </t>
     </section>
 
@@ -813,6 +818,9 @@
           </t>
           <t>
             Java: <eref target="https://github.com/erdtman/java-json-canonicalization">https://github.com/erdtman/java-json-canonicalization</eref>
+          </t>
+          <t>
+            Go: <eref target="https://github.com/cyberphone/json-canonicalization/tree/master/go">https://github.com/cyberphone/json-canonicalization/tree/master/go</eref>
           </t>
           <t>
             .NET/C#: <eref target="https://github.com/cyberphone/json-canonicalization/tree/master/dotnet">https://github.com/cyberphone/json-canonicalization/tree/master/dotnet</eref>
