@@ -295,23 +295,26 @@ func Transform(jsonData []byte) (result []byte, e error) {
             for e := values.Front(); e != nil; e = e.Next() {
                 // Check if the key is smaller than a previous key
                 oldSortKey := e.Value.(keyEntry).sortKey
-                l := len(oldSortKey)
-                if l > len(sortKey) {
-                    l = len(sortKey)
+                // Find the minimum length of the sortKeys
+                minLength := len(oldSortKey)
+                if minLength > len(sortKey) {
+                    minLength = len(sortKey)
                 }
-                for q := 0; q < l; q++ {
+                for q := 0; q < minLength; q++ {
                     diff := int(sortKey[q]) - int(oldSortKey[q])
                     if diff < 0 {
-                        // We found a key which bigger than our new key
+                        // Smaller => Insert before and exit sorting
                         values.InsertBefore(entry, e)
                         goto DoneSorting
                     } else if diff > 0 {
-                        // The key was actually bigger so we must continue searching
-                        // which is simple since the list is ordered
+                        // Bigger => Continue searching for a possibly even bigger entry
+                        // (which is straightforward since the list is ordered)
                         goto NextTurnPlease
                     }
+                    // Still equal => Continue
                 }
-                // Shorter => smaller
+                // The strings compared equal up to minLength
+                // Shorter => Smaller => Insert before and exit sorting
                 if len(sortKey) < len(oldSortKey) {
                     values.InsertBefore(entry, e)
                     goto DoneSorting
