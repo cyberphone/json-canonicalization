@@ -36,6 +36,7 @@ namespace VerifyJsonCanonicalizer
         {
             string fileName = Path.GetFileName(inputFilePath);
             byte[] actual = new JsonCanonicalizer(ArrayUtil.ReadFile(inputFilePath)).GetEncodedUTF8();
+            byte[] recycled = new JsonCanonicalizer(actual).GetEncodedUTF8();
             byte[] expected = ArrayUtil.ReadFile(Path.Combine(Path.Combine(testData, "output"), fileName));
             StringBuilder utf8InHex = new StringBuilder("\nFile: ");
             utf8InHex.Append(fileName);
@@ -56,7 +57,7 @@ namespace VerifyJsonCanonicalizer
                 utf8InHex.Append(((int)b).ToString("x02"));
             }
             Console.WriteLine(utf8InHex.Append('\n').ToString());
-            if (!actual.SequenceEqual(expected))
+            if (!actual.SequenceEqual(expected) || !actual.SequenceEqual(recycled))
             {
                 failures++;
                 Console.WriteLine("THE TEST ABOVE FAILED!");
