@@ -37,7 +37,7 @@ type keyEntry struct {
     value string
 }
 
-func Transform(jsonData []byte) (res []byte, e error) {
+func Transform(jsonData []byte) (result []byte, e error) {
 
     const LEFT_CURLY_BRACKET byte  = '{'
     const RIGHT_CURLY_BRACKET byte = '}'
@@ -53,7 +53,7 @@ func Transform(jsonData []byte) (res []byte, e error) {
     var LITERALS    = []string{"true", "false", "null"}
 
     var globalError error = nil
-    var result string
+    var transformed string
     var index int = 0
     var jsonDataLength int = len(jsonData)
 
@@ -346,10 +346,10 @@ func Transform(jsonData []byte) (res []byte, e error) {
 
     if testNextNonWhiteSpaceChar() == LEFT_BRACKET {
         scan()
-        result = parseArray()
+        transformed = parseArray()
     } else {
         scanFor(LEFT_CURLY_BRACKET)
-        result = parseObject()
+        transformed = parseObject()
     }
     for index < jsonDataLength {
         if !isWhiteSpace(jsonData[index]) {
@@ -358,5 +358,5 @@ func Transform(jsonData []byte) (res []byte, e error) {
         }
         index++
     }
-    return []byte(result), globalError
+    return []byte(transformed), globalError
 }
