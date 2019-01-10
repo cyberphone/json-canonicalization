@@ -16,19 +16,17 @@ any directory and requires updating the file path in `verify-numbers.py`.
 - Perform the commands:
 ```code
 $ cd test
-$ go build webpki.org/es6numfmt
-$ go build webpki.org/jsoncanonicalizer
-$ go run verify-canonicalization.go
-$ go run verify-numbers.go
+$ python verify-canonicalization.py
+$ python verify-numbers.py
 ```
 
 
 ### Using the JSON canonicalizer
 
-```go
-import "webpki.org/jsoncanonicalizer"
+``python
+from org.webpki.json.Canonicalize import canonicalize
 
-func Transform(jsonData []byte) (result []byte, e error)
+canonicalize('{"tag":4}')
 ```
 Note that both the input and the result is assumed to be in UTF-8 format.
 
