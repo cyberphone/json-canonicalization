@@ -25,9 +25,6 @@ import os
 from json import loads
 
 from org.webpki.json.Canonicalize import canonicalize
-from org.webpki.json.Canonicalize import serialize
-
-from collections import OrderedDict
 
 # Our test program
 if not len(sys.argv) in (1,2):
@@ -42,10 +39,10 @@ def readFile(name):
 def oneTurn(fileName):
     global failures
     jsonData = readFile(os.path.join(inputPath,fileName))
-    obj = loads(jsonData)
-    canres = canonicalize(obj)
+    actual = canonicalize(loads(jsonData))
+    recycled = canonicalize(loads(actual.decode("utf-8","strict")))
     expected = readFile(os.path.join(outputPath,fileName)).encode()
-    if canres == expected:
+    if actual == expected and actual == recycled:
       result = "\n"
     else:
       failures += 1
@@ -53,7 +50,7 @@ def oneTurn(fileName):
     byteCount = 0
     next = False
     utf8InHex = "\nFile: " + fileName
-    for c in canres:
+    for c in actual:
       if byteCount % 32 == 0:
         utf8InHex += '\n'
         next = False
