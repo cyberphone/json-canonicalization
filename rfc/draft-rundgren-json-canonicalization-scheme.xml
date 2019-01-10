@@ -353,7 +353,9 @@
             The rationale for basing the sort algorithm on UTF-16 code units is that
             it maps directly to the string type in ECMAScript, Java and .NET.
             Systems using another internal representation of string data will need to convert
-            JSON property strings into arrays of big endian UTF-16 code units before sorting.
+            JSON property strings into arrays of UTF-16 code units before sorting.
+            The conversion from UTF-8 or UTF-32 to UTF-16 is defined by the
+            Unicode <xref target="UNICODE"/> standard.
             <vspace blankLines="1"/>
             Note: for the purpose obtaining a deterministic property order, sorting on
             UTF-8 or UTF-32 encoded data would also work, but the result would differ
@@ -412,7 +414,7 @@
         adoption of the entire ES6 serialization scheme for JSON primitives.
         <vspace blankLines="1"/>
         Other people who have contributed with valuable input to this specification include
-        John-Mark Gurney, Mike Jones, Mike Miller, Mike Samuel, Michal Wadas,
+        Bron Gondwana, John-Mark Gurney, Mike Jones, Mike Miller, Mike Samuel, Michal Wadas,
         Richard Gibson, Robert Tupelo-Schneck and Scott Ananian.
       </t>
     </section>
@@ -613,6 +615,10 @@
 | 444b1ae4d6e2ef50 | 1e+21                    |                     |
 |-------------------------------------------------------------------|
 | 444b1ae4d6e2ef51 | 1.0000000000000001e+21   |                     |
+|-------------------------------------------------------------------|
+| 3eb0c6f7a0b5ed8d | 0.000001                 |                     |
+|-------------------------------------------------------------------|
+| 3eb0c6f7a0b5ed8c | 9.999999999999997e-7     |                     |
 |-------------------------------------------------------------------|
 | 41b3de4355555553 | 333333333.3333332        |                     |
 |-------------------------------------------------------------------|
