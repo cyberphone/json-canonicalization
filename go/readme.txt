@@ -23,7 +23,7 @@ $ go run verify-numbers.go
 
 import "webpki.org/jsoncanonicalizer"
 
-func Transform(jsonData []byte) (result string, e error)
+func Transform(jsonData []byte) (result []byte, e error)
 
-jsonData must be UTF-8 encoded
-the resulting string is also UTF-8 encoded
+jsonData must be UTF-8 encoded and
+the result is also UTF-8 encoded

@@ -37,7 +37,7 @@ type keyEntry struct {
     value string
 }
 
-func Transform(jsonData []byte) (res string, e error) {
+func Transform(jsonData []byte) (res []byte, e error) {
 
     const LEFT_CURLY_BRACKET byte  = '{'
     const RIGHT_CURLY_BRACKET byte = '}'
@@ -358,5 +358,5 @@ func Transform(jsonData []byte) (res string, e error) {
         }
         index++
     }
-    return result, globalError
+    return []byte(result), globalError
 }
