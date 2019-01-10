@@ -28,7 +28,4 @@ from org.webpki.json.Canonicalize import canonicalize
 
 canonicalize({"tag":4})
 ```
-Note that both the input is Python data structures while result is an UTF-8 formatted byte array.
-
-### Constraints
-The JSON canonicalizer only accepts a JSON _Object_ or _Array_ as the top level data type.
+Note that the input is Python data structures while result is an UTF-8 formatted byte array.
