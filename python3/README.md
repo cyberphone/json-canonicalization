@@ -26,6 +26,14 @@ $ python verify-numbers.py
 ```python
 from org.webpki.json.Canonicalize import canonicalize
 
-canonicalize({"tag":4})
+data = canonicalize({"tag":4})
 ```
 Note that the input is Python data structures while result is an UTF-8 formatted byte array.
+
+If you rather need a free-standing canonicalizer you can achive that by using standard Python tools:
+```python
+from org.webpki.json.Canonicalize import canonicalize
+from json import loads
+
+data = canonicalize(loads('{"tag":4}'))
+```
