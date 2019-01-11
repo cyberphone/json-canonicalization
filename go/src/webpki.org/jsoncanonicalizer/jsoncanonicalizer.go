@@ -276,7 +276,7 @@ func Transform(jsonData []byte) (result []byte, e error) {
     }
 
     parseObject = func() string {
-        values :=list.New()
+        properties := list.New()
         var next bool = false
         for globalError == nil && testNextNonWhiteSpaceChar() != RIGHT_CURLY_BRACKET {
             if next {
@@ -292,7 +292,7 @@ func Transform(jsonData []byte) (result []byte, e error) {
             sortKey := utf16.Encode([]rune(name[1:len(name) - 1]))
             scanFor(COLON_CHARACTER)
             entry := keyEntry{name, sortKey, parseElement()}
-            for e := values.Front(); e != nil; e = e.Next() {
+            for e := properties.Front(); e != nil; e = e.Next() {
                 // Check if the key is smaller than a previous key
                 oldSortKey := e.Value.(keyEntry).sortKey
                 // Find the minimum length of the sortKeys
@@ -304,7 +304,7 @@ func Transform(jsonData []byte) (result []byte, e error) {
                     diff := int(sortKey[q]) - int(oldSortKey[q])
                     if diff < 0 {
                         // Smaller => Insert before and exit sorting
-                        values.InsertBefore(entry, e)
+                        properties.InsertBefore(entry, e)
                         goto DoneSorting
                     } else if diff > 0 {
                         // Bigger => Continue searching for a possibly even bigger entry
@@ -316,7 +316,7 @@ func Transform(jsonData []byte) (result []byte, e error) {
                 // The strings compared equal up to minLength
                 // Shorter => Smaller => Insert before and exit sorting
                 if len(sortKey) < len(oldSortKey) {
-                    values.InsertBefore(entry, e)
+                    properties.InsertBefore(entry, e)
                     goto DoneSorting
                 }
                 if len(sortKey) == len(oldSortKey) {
@@ -325,7 +325,7 @@ func Transform(jsonData []byte) (result []byte, e error) {
               NextTurnPlease:
             }
             // The key is either the first or bigger than any previous key
-            values.PushBack(entry)
+            properties.PushBack(entry)
           DoneSorting:
         }
         scan()
@@ -333,7 +333,7 @@ func Transform(jsonData []byte) (result []byte, e error) {
         var objectData strings.Builder
         next = false
         objectData.WriteByte(LEFT_CURLY_BRACKET)
-        for e := values.Front(); e != nil; e = e.Next() {
+        for e := properties.Front(); e != nil; e = e.Next() {
             if next {
                 objectData.WriteByte(COMMA_CHARACTER)
             }
