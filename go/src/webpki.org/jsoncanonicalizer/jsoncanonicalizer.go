@@ -292,6 +292,7 @@ func Transform(jsonData []byte) (result []byte, e error) {
             sortKey := utf16.Encode([]rune(name[1:len(name) - 1]))
             scanFor(COLON_CHARACTER)
             entry := keyEntry{name, sortKey, parseElement()}
+          CoreSortingLoop:
             for e := properties.Front(); e != nil; e = e.Next() {
                 // Check if the key is smaller than a previous key
                 oldSortKey := e.Value.(keyEntry).sortKey
@@ -309,7 +310,7 @@ func Transform(jsonData []byte) (result []byte, e error) {
                     } else if diff > 0 {
                         // Bigger => Continue searching for a possibly even bigger entry
                         // (which is straightforward since the list is ordered)
-                        goto NextTurnPlease
+                        continue CoreSortingLoop
                     }
                     // Still equal => Continue
                 }
@@ -322,7 +323,6 @@ func Transform(jsonData []byte) (result []byte, e error) {
                 if len(sortKey) == len(oldSortKey) {
                     setError("Duplicate key: " + name)
                 }
-              NextTurnPlease:
             }
             // The key is either the first or bigger than any previous key
             properties.PushBack(entry)
