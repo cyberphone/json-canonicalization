@@ -347,7 +347,7 @@
                 If there is no index position at which they differ,
                 then the shorter string lexicographically precedes the longer string.
                 <vspace blankLines="1"/>
-                In plain english this means that properties are sorted in ascending order like the following:
+                In plain english this means that property names are sorted in ascending order like the following:
               </t>
             </list>
           </t>
