@@ -288,6 +288,7 @@ func Transform(jsonData []byte) (result []byte, e error) {
                 break;
             }
             // Sort keys on UTF-16 code units
+            // Since UTF-8 doesn't have endianess this is just a value transformation
             sortKey := utf16.Encode([]rune(name[1:len(name) - 1]))
             scanFor(COLON_CHARACTER)
             entry := keyEntry{name, sortKey, parseElement()}
