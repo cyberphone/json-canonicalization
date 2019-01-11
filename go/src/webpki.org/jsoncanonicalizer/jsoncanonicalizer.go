@@ -146,6 +146,7 @@ func Transform(jsonData []byte) (result []byte, e error) {
     parseQuotedString = func() string {
         var quotedString strings.Builder
         quotedString.WriteByte(DOUBLE_QUOTE)
+      CoreLoop:
         for globalError == nil {
             var c byte
             if index < jsonDataLength {
@@ -189,7 +190,7 @@ func Transform(jsonData []byte) (result []byte, e error) {
                             if rune(esc) == firstUTF16 {
                                 quotedString.WriteByte('\\')
                                 quotedString.WriteByte(ASC_ESCAPES[i])
-                                goto DoneWithValueEscaping
+                                continue CoreLoop
                             }
                         }
                         if firstUTF16 < ' ' {
@@ -199,7 +200,6 @@ func Transform(jsonData []byte) (result []byte, e error) {
                             // Not control, output code unit as is but UTF-8 encoded
                             quotedString.WriteRune(firstUTF16)
                         }
-                      DoneWithValueEscaping:
                     }
                 } else if c == '/' {
                     // Benign but useless escape
@@ -210,11 +210,10 @@ func Transform(jsonData []byte) (result []byte, e error) {
                     for _, esc := range ASC_ESCAPES {
                         if esc == c {
                             quotedString.WriteByte(c)
-                            goto DoneWithStdEscaping
+                            continue CoreLoop
                         }
                     }
                     setError("Unexpected escape: \\" + string(c))
-                  DoneWithStdEscaping:
                 }
             } else {
                 // Just an ordinary ASCII character
