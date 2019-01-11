@@ -277,7 +277,7 @@ func Transform(jsonData []byte) (result []byte, e error) {
     parseObject = func() string {
         properties := list.New()
         var next bool = false
-      CoreLoop:
+      ParsingLoop:
         for globalError == nil && testNextNonWhiteSpaceChar() != RIGHT_CURLY_BRACKET {
             if next {
                 scanFor(COMMA_CHARACTER)
@@ -307,7 +307,7 @@ func Transform(jsonData []byte) (result []byte, e error) {
                     if diff < 0 {
                         // Smaller => Insert before and exit sorting
                         properties.InsertBefore(entry, e)
-                        continue CoreLoop
+                        continue ParsingLoop
                     } else if diff > 0 {
                         // Bigger => Continue searching for a possibly even bigger entry
                         // (which is straightforward since the list is ordered)
@@ -319,7 +319,7 @@ func Transform(jsonData []byte) (result []byte, e error) {
                 // Shorter => Smaller => Insert before and exit sorting
                 if len(sortKey) < len(oldSortKey) {
                     properties.InsertBefore(entry, e)
-                    continue CoreLoop
+                    continue ParsingLoop
                 }
                 if len(sortKey) == len(oldSortKey) {
                     setError("Duplicate key: " + name)
