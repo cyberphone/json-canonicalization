@@ -275,7 +275,7 @@ func Transform(jsonData []byte) (result []byte, e error) {
     }
 
     parseObject = func() string {
-        properties := list.New()
+        nameValueList := list.New()
         var next bool = false
       ParsingLoop:
         for globalError == nil && testNextNonWhiteSpaceChar() != RIGHT_CURLY_BRACKET {
@@ -292,9 +292,9 @@ func Transform(jsonData []byte) (result []byte, e error) {
             // Since UTF-8 doesn't have endianess this is just a value transformation
             sortKey := utf16.Encode([]rune(name[1:len(name) - 1]))
             scanFor(COLON_CHARACTER)
-            entry := keyEntry{name, sortKey, parseElement()}
+            nameValue := keyEntry{name, sortKey, parseElement()}
           SortingLoop:
-            for e := properties.Front(); e != nil; e = e.Next() {
+            for e := nameValueList.Front(); e != nil; e = e.Next() {
                 // Check if the key is smaller than a previous key
                 oldSortKey := e.Value.(keyEntry).sortKey
                 // Find the minimum length of the sortKeys
@@ -306,42 +306,42 @@ func Transform(jsonData []byte) (result []byte, e error) {
                     diff := int(sortKey[q]) - int(oldSortKey[q])
                     if diff < 0 {
                         // Smaller => Insert before and exit sorting
-                        properties.InsertBefore(entry, e)
+                        nameValueList.InsertBefore(nameValue, e)
                         continue ParsingLoop
                     } else if diff > 0 {
-                        // Bigger => Continue searching for a possibly even bigger entry
+                        // Bigger => Continue searching for a possibly even bigger sortKey
                         // (which is straightforward since the list is ordered)
                         continue SortingLoop
                     }
                     // Still equal => Continue
                 }
-                // The strings compared equal up to minLength
+                // The sortKeys compared equal up to minLength
                 // Shorter => Smaller => Insert before and exit sorting
                 if len(sortKey) < len(oldSortKey) {
-                    properties.InsertBefore(entry, e)
+                    nameValueList.InsertBefore(nameValue, e)
                     continue ParsingLoop
                 }
                 if len(sortKey) == len(oldSortKey) {
                     setError("Duplicate key: " + name)
                 }
             }
-            // The key is either the first or bigger than any previous key
-            properties.PushBack(entry)
+            // The sortKey is either the first or bigger than any previous sortKey
+            nameValueList.PushBack(nameValue)
         }
         scan()
         // Now everything is sorted so we can properly serialize the object
         var objectData strings.Builder
         next = false
         objectData.WriteByte(LEFT_CURLY_BRACKET)
-        for e := properties.Front(); e != nil; e = e.Next() {
+        for e := nameValueList.Front(); e != nil; e = e.Next() {
             if next {
                 objectData.WriteByte(COMMA_CHARACTER)
             }
             next = true
-            entry := e.Value.(keyEntry)
-            objectData.WriteString(entry.name)
+            nameValue := e.Value.(keyEntry)
+            objectData.WriteString(nameValue.name)
             objectData.WriteByte(COLON_CHARACTER)
-            objectData.WriteString(entry.value)
+            objectData.WriteString(nameValue.value)
         }
         objectData.WriteByte(RIGHT_CURLY_BRACKET)
         return objectData.String()
