@@ -299,6 +299,7 @@ func Transform(jsonData []byte) (result []byte, e error) {
             }
             // Sort keys on UTF-16 code units
             // Since UTF-8 doesn't have endianess this is just a value transformation
+            // In the Go case the transformation is UTF-8 => UTF-32 => UTF-16
             sortKey := utf16.Encode([]rune(rawUTF8))
             scanFor(COLON_CHARACTER)
             nameValue := nameValueType{name, sortKey, parseElement()}
