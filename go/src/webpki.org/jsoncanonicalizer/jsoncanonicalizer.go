@@ -62,7 +62,7 @@ func Transform(jsonData []byte) (result []byte, e error) {
     // "Forward" declarations are needed for closures referring each other
     var parseElement func() string
     var parseSimpleType func() string
-    var parseQuotedString func() string
+    var parseQuotedString func() (quoted string, raw string)
     var parseObject func() string
     var parseArray func() string
 
@@ -137,7 +137,8 @@ func Transform(jsonData []byte) (result []byte, e error) {
             case LEFT_CURLY_BRACKET:
                 return parseObject()
             case DOUBLE_QUOTE:
-                return parseQuotedString()
+                quoted, _ := parseQuotedString()
+                return quoted
             case LEFT_BRACKET:
                 return parseArray()
             default:
@@ -145,8 +146,9 @@ func Transform(jsonData []byte) (result []byte, e error) {
         }
     }
 
-    parseQuotedString = func() string {
+    parseQuotedString = func() (quoted string, raw string) {
         var quotedString strings.Builder
+        var rawString strings.Builder
         quotedString.WriteByte(DOUBLE_QUOTE)
       CoreLoop:
         for globalError == nil {
@@ -176,7 +178,9 @@ func Transform(jsonData []byte) (result []byte, e error) {
                             setError("Surrogate expected")
                         } else {
                             // Output the UTF-32 code point as UTF-8
-                            quotedString.WriteRune(utf16.DecodeRune(firstUTF16, getUEscape()))
+                            codePoint := utf16.DecodeRune(firstUTF16, getUEscape())
+                            quotedString.WriteRune(codePoint)
+                            rawString.WriteRune(codePoint)
                         }
                     } else {
                         // Single UTF16 code is identical to UTF32
@@ -186,6 +190,7 @@ func Transform(jsonData []byte) (result []byte, e error) {
                             if rune(esc) == firstUTF16 {
                                 quotedString.WriteByte('\\')
                                 quotedString.WriteByte(ASC_ESCAPES[i])
+                                rawString.WriteByte(esc)
                                 continue CoreLoop
                             }
                         }
@@ -196,16 +201,19 @@ func Transform(jsonData []byte) (result []byte, e error) {
                             // Not control, output code unit as is but UTF-8 encoded
                             quotedString.WriteRune(firstUTF16)
                         }
+                        rawString.WriteRune(firstUTF16)
                     }
                 } else if c == '/' {
                     // Benign but useless escape
                     quotedString.WriteByte('/')
+                    rawString.WriteByte('/')
                 } else {
                     // The JSON standard escapes
                     quotedString.WriteByte('\\')
-                    for _, esc := range ASC_ESCAPES {
+                    for i, esc := range ASC_ESCAPES {
                         if esc == c {
                             quotedString.WriteByte(c)
+                            rawString.WriteByte(BIN_ESCAPES[i])
                             continue CoreLoop
                         }
                     }
@@ -218,10 +226,11 @@ func Transform(jsonData []byte) (result []byte, e error) {
                 // making byte per byte search for ASCII break characters work
                 // as expected.
                 quotedString.WriteByte(c)
+                rawString.WriteByte(c)
             }
         }
         quotedString.WriteByte(DOUBLE_QUOTE)
-        return quotedString.String()
+        return quotedString.String(), rawString.String()
     }
 
     parseSimpleType = func() string {
@@ -284,13 +293,13 @@ func Transform(jsonData []byte) (result []byte, e error) {
             }
             next = true
             scanFor(DOUBLE_QUOTE)
-            name := parseQuotedString()
+            name, raw := parseQuotedString()
             if globalError != nil {
                 break;
             }
             // Sort keys on UTF-16 code units
             // Since UTF-8 doesn't have endianess this is just a value transformation
-            sortKey := utf16.Encode([]rune(name[1:len(name) - 1]))
+            sortKey := utf16.Encode([]rune(raw))
             scanFor(COLON_CHARACTER)
             nameValue := nameValueType{name, sortKey, parseElement()}
           SortingLoop:

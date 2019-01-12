@@ -1,5 +1,7 @@
 {
   "\u20ac": "Euro Sign",
+  "\r": "Carriage Return",
+  "\u000a": "Newline",
   "1": "One",
   "\u0080": "Control\u007f",
   "\ud83d\ude02": "Smiley",
