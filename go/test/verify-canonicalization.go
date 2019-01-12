@@ -13,7 +13,6 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 //
-//
  
 // This program verifies the JSON canonicalizer using a test suite
 // containing sample data and expected output

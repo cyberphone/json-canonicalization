@@ -13,7 +13,6 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 //
-//
  
 // This program tests the JSON number serializer using both a few discrete
 // values as well as the 100 million value test suite

@@ -13,7 +13,6 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 //
-//
  
 // This package converts numbers in IEEE-754 double precision into the
 // format specified for JSON in EcmaScript Version 6 and forward.

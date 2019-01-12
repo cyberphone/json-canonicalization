@@ -13,7 +13,6 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 //
-//
  
 // This package transforms JSON data in UTF-8 according to:
 // https://tools.ietf.org/html/draft-rundgren-json-canonicalization-scheme-02
@@ -31,7 +30,7 @@ import (
     "webpki.org/es6numfmt"
 )
 
-type keyEntry struct {
+type nameValueType struct {
     name string
     sortKey []uint16
     value string
@@ -292,11 +291,11 @@ func Transform(jsonData []byte) (result []byte, e error) {
             // Since UTF-8 doesn't have endianess this is just a value transformation
             sortKey := utf16.Encode([]rune(name[1:len(name) - 1]))
             scanFor(COLON_CHARACTER)
-            nameValue := keyEntry{name, sortKey, parseElement()}
+            nameValue := nameValueType{name, sortKey, parseElement()}
           SortingLoop:
             for e := nameValueList.Front(); e != nil; e = e.Next() {
                 // Check if the key is smaller than a previous key
-                oldSortKey := e.Value.(keyEntry).sortKey
+                oldSortKey := e.Value.(nameValueType).sortKey
                 // Find the minimum length of the sortKeys
                 minLength := len(oldSortKey)
                 if minLength > len(sortKey) {
@@ -338,7 +337,7 @@ func Transform(jsonData []byte) (result []byte, e error) {
                 objectData.WriteByte(COMMA_CHARACTER)
             }
             next = true
-            nameValue := e.Value.(keyEntry)
+            nameValue := e.Value.(nameValueType)
             objectData.WriteString(nameValue.name)
             objectData.WriteByte(COLON_CHARACTER)
             objectData.WriteString(nameValue.value)
