@@ -56,24 +56,24 @@ func Transform(jsonData []byte) (result []byte, e error) {
     var index int = 0
     var jsonDataLength int = len(jsonData)
 
+    // "Forward" declarations
     var parseElement func() string
     var parseSimpleType func() string
     var parseQuotedString func() string
     var parseObject func() string
     var parseArray func() string
 
-    setError := func(msg string) {
-        if globalError == nil {
-            globalError = errors.New(msg)
-        }
-    }
-
     checkError := func(e error) {
+        // We only honor the first reported error
         if globalError == nil {
             globalError = e
         }
     }
     
+    setError := func(msg string) {
+        checkError(errors.New(msg))
+    }
+
     isWhiteSpace := func(c byte) bool {
         return c == 0x20 || c == 0x0A || c == 0x0D || c == 0x09
     }
