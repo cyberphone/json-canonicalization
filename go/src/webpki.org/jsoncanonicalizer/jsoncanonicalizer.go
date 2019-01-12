@@ -62,7 +62,7 @@ func Transform(jsonData []byte) (result []byte, e error) {
     // "Forward" declarations are needed for closures referring each other
     var parseElement func() string
     var parseSimpleType func() string
-    var parseQuotedString func() (quoted string, raw string)
+    var parseQuotedString func() (quoted string, rawUTF8 string)
     var parseObject func() string
     var parseArray func() string
 
@@ -146,7 +146,7 @@ func Transform(jsonData []byte) (result []byte, e error) {
         }
     }
 
-    parseQuotedString = func() (quoted string, raw string) {
+    parseQuotedString = func() (quoted string, rawUTF8 string) {
         var quotedString strings.Builder
         var rawString strings.Builder
         quotedString.WriteByte(DOUBLE_QUOTE)
@@ -293,13 +293,13 @@ func Transform(jsonData []byte) (result []byte, e error) {
             }
             next = true
             scanFor(DOUBLE_QUOTE)
-            name, raw := parseQuotedString()
+            name, rawUTF8 := parseQuotedString()
             if globalError != nil {
                 break;
             }
             // Sort keys on UTF-16 code units
             // Since UTF-8 doesn't have endianess this is just a value transformation
-            sortKey := utf16.Encode([]rune(raw))
+            sortKey := utf16.Encode([]rune(rawUTF8))
             scanFor(COLON_CHARACTER)
             nameValue := nameValueType{name, sortKey, parseElement()}
           SortingLoop:
