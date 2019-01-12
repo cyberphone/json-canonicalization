@@ -212,8 +212,11 @@ func Transform(jsonData []byte) (result []byte, e error) {
                     setError("Unexpected escape: \\" + string(c))
                 }
             } else {
-                // Just an ordinary ASCII character
-                // alternatively a UTF-8 byte outside of ASCII
+                // Just an ordinary ASCII character alternatively a UTF-8 byte
+                // outside of ASCII.
+                // Note that properly formatted UTF-8 never clashes with ASCII
+                // making byte per byte search for ASCII break characters work
+                // as expected.
                 quotedString.WriteByte(c)
             }
         }
