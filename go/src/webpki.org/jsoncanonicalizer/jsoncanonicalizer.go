@@ -25,7 +25,6 @@ import (
     "fmt"
     "strconv"
     "strings"
-    "unicode/utf8"
     "unicode/utf16"
     "webpki.org/es6numfmt"
 )
@@ -38,6 +37,7 @@ type nameValueType struct {
 
 func Transform(jsonData []byte) (result []byte, e error) {
 
+    // JSON break characters
     const LEFT_CURLY_BRACKET byte  = '{'
     const RIGHT_CURLY_BRACKET byte = '}'
     const DOUBLE_QUOTE byte        = '"'
@@ -47,6 +47,7 @@ func Transform(jsonData []byte) (result []byte, e error) {
     const COMMA_CHARACTER byte     = ','
     const BACK_SLASH byte          = '\\'
 
+    // JSON standard escapes (modulo \u)
     var ASC_ESCAPES = []byte{'\\', '"', 'b',  'f',  'n',  'r',  't'}
     var BIN_ESCAPES = []byte{'\\', '"', '\b', '\f', '\n', '\r', '\t'}
     var LITERALS    = []string{"true", "false", "null"}
@@ -54,9 +55,11 @@ func Transform(jsonData []byte) (result []byte, e error) {
     var globalError error = nil
     var transformed string
     var index int = 0
+
+    // JSON data MUST be UTF-8 encoded
     var jsonDataLength int = len(jsonData)
 
-    // "Forward" declarations
+    // "Forward" declarations are needed for closures referring each other
     var parseElement func() string
     var parseSimpleType func() string
     var parseQuotedString func() string
@@ -160,12 +163,6 @@ func Transform(jsonData []byte) (result []byte, e error) {
             }
             if c < ' ' {
                 setError("Unterminated string literal")
-            } else if c > 127 {
-                // Quoted strings are the only tokens that may contain non-ASCII characters
-                index--;
-                r, size := utf8.DecodeRune(jsonData[index:])
-                quotedString.WriteRune(r)
-                index += size;
             } else if c == BACK_SLASH {
                 // Escape sequence
                 c = nextChar()
@@ -216,6 +213,7 @@ func Transform(jsonData []byte) (result []byte, e error) {
                 }
             } else {
                 // Just an ordinary ASCII character
+                // alternatively a UTF-8 byte outside of ASCII
                 quotedString.WriteByte(c)
             }
         }
