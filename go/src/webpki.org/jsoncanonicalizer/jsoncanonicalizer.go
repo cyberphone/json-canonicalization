@@ -104,7 +104,7 @@ func Transform(jsonData []byte) (result []byte, e error) {
     }
 
     getUEscape := func() rune {
-        start :=index
+        start := index
         nextChar()
         nextChar()
         nextChar()
