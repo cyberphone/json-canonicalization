@@ -29,28 +29,28 @@ import (
     "webpki.org/es6numfmt"
 )
 
-type nameValueType struct {
+type _NameValueType struct {
     name string
     sortKey []uint16
     value string
 }
 
+// JSON break characters
+const _LEFT_CURLY_BRACKET byte  = '{'
+const _RIGHT_CURLY_BRACKET byte = '}'
+const _DOUBLE_QUOTE byte        = '"'
+const _COLON_CHARACTER byte     = ':'
+const _LEFT_BRACKET byte        = '['
+const _RIGHT_BRACKET byte       = ']'
+const _COMMA_CHARACTER byte     = ','
+const _BACK_SLASH byte          = '\\'
+
+// JSON standard escapes (modulo \u)
+var _ASC_ESCAPES = []byte{'\\', '"', 'b',  'f',  'n',  'r',  't'}
+var _BIN_ESCAPES = []byte{'\\', '"', '\b', '\f', '\n', '\r', '\t'}
+var _LITERALS    = []string{"true", "false", "null"}
+    
 func Transform(jsonData []byte) (result []byte, e error) {
-
-    // JSON break characters
-    const LEFT_CURLY_BRACKET byte  = '{'
-    const RIGHT_CURLY_BRACKET byte = '}'
-    const DOUBLE_QUOTE byte        = '"'
-    const COLON_CHARACTER byte     = ':'
-    const LEFT_BRACKET byte        = '['
-    const RIGHT_BRACKET byte       = ']'
-    const COMMA_CHARACTER byte     = ','
-    const BACK_SLASH byte          = '\\'
-
-    // JSON standard escapes (modulo \u)
-    var ASC_ESCAPES = []byte{'\\', '"', 'b',  'f',  'n',  'r',  't'}
-    var BIN_ESCAPES = []byte{'\\', '"', '\b', '\f', '\n', '\r', '\t'}
-    var LITERALS    = []string{"true", "false", "null"}
 
     var globalError error = nil
     var transformed string
@@ -91,7 +91,7 @@ func Transform(jsonData []byte) (result []byte, e error) {
             return c
         }
         setError("Unexpected EOF reached")
-        return DOUBLE_QUOTE
+        return _DOUBLE_QUOTE
     }
 
     scan := func() byte {
@@ -134,12 +134,12 @@ func Transform(jsonData []byte) (result []byte, e error) {
 
     parseElement = func() string {
         switch scan() {
-            case LEFT_CURLY_BRACKET:
+            case _LEFT_CURLY_BRACKET:
                 return parseObject()
-            case DOUBLE_QUOTE:
+            case _DOUBLE_QUOTE:
                 quoted, _ := parseQuotedString()
                 return quoted
-            case LEFT_BRACKET:
+            case _LEFT_BRACKET:
                 return parseArray()
             default:
                 return parseSimpleType()
@@ -149,7 +149,7 @@ func Transform(jsonData []byte) (result []byte, e error) {
     parseQuotedString = func() (quoted string, rawUTF8 string) {
         var quotedString strings.Builder
         var rawString strings.Builder
-        quotedString.WriteByte(DOUBLE_QUOTE)
+        quotedString.WriteByte(_DOUBLE_QUOTE)
       CoreLoop:
         for globalError == nil {
             var c byte
@@ -160,12 +160,12 @@ func Transform(jsonData []byte) (result []byte, e error) {
                 nextChar()
                 break
             }
-            if (c == DOUBLE_QUOTE) {
+            if (c == _DOUBLE_QUOTE) {
                 break;
             }
             if c < ' ' {
                 setError("Unterminated string literal")
-            } else if c == BACK_SLASH {
+            } else if c == _BACK_SLASH {
                 // Escape sequence
                 c = nextChar()
                 if c == 'u' {
@@ -185,11 +185,11 @@ func Transform(jsonData []byte) (result []byte, e error) {
                     } else {
                         // Single UTF16 code is identical to UTF32
                         // Now the value must be checked
-                        for i, esc := range BIN_ESCAPES {
+                        for i, esc := range _BIN_ESCAPES {
                             // Is this within the JSON standard escapes
                             if rune(esc) == firstUTF16 {
                                 quotedString.WriteByte('\\')
-                                quotedString.WriteByte(ASC_ESCAPES[i])
+                                quotedString.WriteByte(_ASC_ESCAPES[i])
                                 rawString.WriteByte(esc)
                                 continue CoreLoop
                             }
@@ -210,10 +210,10 @@ func Transform(jsonData []byte) (result []byte, e error) {
                 } else {
                     // The JSON standard escapes
                     quotedString.WriteByte('\\')
-                    for i, esc := range ASC_ESCAPES {
+                    for i, esc := range _ASC_ESCAPES {
                         if esc == c {
                             quotedString.WriteByte(c)
-                            rawString.WriteByte(BIN_ESCAPES[i])
+                            rawString.WriteByte(_BIN_ESCAPES[i])
                             continue CoreLoop
                         }
                     }
@@ -229,7 +229,7 @@ func Transform(jsonData []byte) (result []byte, e error) {
                 rawString.WriteByte(c)
             }
         }
-        quotedString.WriteByte(DOUBLE_QUOTE)
+        quotedString.WriteByte(_DOUBLE_QUOTE)
         return quotedString.String(), rawString.String()
     }
 
@@ -238,7 +238,7 @@ func Transform(jsonData []byte) (result []byte, e error) {
         index--
         for globalError == nil {
             c := testNextNonWhiteSpaceChar()
-            if c == COMMA_CHARACTER || c == RIGHT_BRACKET || c == RIGHT_CURLY_BRACKET {
+            if c == _COMMA_CHARACTER || c == _RIGHT_BRACKET || c == _RIGHT_CURLY_BRACKET {
                 break;
             }
             c = nextChar()
@@ -252,7 +252,7 @@ func Transform(jsonData []byte) (result []byte, e error) {
         }
         value := token.String()
         // Is it a JSON literal?
-        for _, literal := range LITERALS {
+        for _, literal := range _LITERALS {
             if literal == value {
                 return literal
             }
@@ -267,19 +267,19 @@ func Transform(jsonData []byte) (result []byte, e error) {
 
     parseArray = func() string {
         var arrayData strings.Builder
-        arrayData.WriteByte(LEFT_BRACKET)
+        arrayData.WriteByte(_LEFT_BRACKET)
         var next bool = false
-        for globalError == nil && testNextNonWhiteSpaceChar() != RIGHT_BRACKET {
+        for globalError == nil && testNextNonWhiteSpaceChar() != _RIGHT_BRACKET {
             if next {
-                scanFor(COMMA_CHARACTER)
-                arrayData.WriteByte(COMMA_CHARACTER)
+                scanFor(_COMMA_CHARACTER)
+                arrayData.WriteByte(_COMMA_CHARACTER)
             } else {
                 next = true
             }
             arrayData.WriteString(parseElement())
         }
         scan()
-        arrayData.WriteByte(RIGHT_BRACKET)
+        arrayData.WriteByte(_RIGHT_BRACKET)
         return arrayData.String()
     }
 
@@ -287,12 +287,12 @@ func Transform(jsonData []byte) (result []byte, e error) {
         nameValueList := list.New()
         var next bool = false
       ParsingLoop:
-        for globalError == nil && testNextNonWhiteSpaceChar() != RIGHT_CURLY_BRACKET {
+        for globalError == nil && testNextNonWhiteSpaceChar() != _RIGHT_CURLY_BRACKET {
             if next {
-                scanFor(COMMA_CHARACTER)
+                scanFor(_COMMA_CHARACTER)
             }
             next = true
-            scanFor(DOUBLE_QUOTE)
+            scanFor(_DOUBLE_QUOTE)
             name, rawUTF8 := parseQuotedString()
             if globalError != nil {
                 break;
@@ -301,12 +301,12 @@ func Transform(jsonData []byte) (result []byte, e error) {
             // Since UTF-8 doesn't have endianess this is just a value transformation
             // In the Go case the transformation is UTF-8 => UTF-32 => UTF-16
             sortKey := utf16.Encode([]rune(rawUTF8))
-            scanFor(COLON_CHARACTER)
-            nameValue := nameValueType{name, sortKey, parseElement()}
+            scanFor(_COLON_CHARACTER)
+            nameValue := _NameValueType{name, sortKey, parseElement()}
           SortingLoop:
             for e := nameValueList.Front(); e != nil; e = e.Next() {
                 // Check if the key is smaller than a previous key
-                oldSortKey := e.Value.(nameValueType).sortKey
+                oldSortKey := e.Value.(_NameValueType).sortKey
                 // Find the minimum length of the sortKeys
                 minLength := len(oldSortKey)
                 if minLength > len(sortKey) {
@@ -342,26 +342,26 @@ func Transform(jsonData []byte) (result []byte, e error) {
         // Now everything is sorted so we can properly serialize the object
         var objectData strings.Builder
         next = false
-        objectData.WriteByte(LEFT_CURLY_BRACKET)
+        objectData.WriteByte(_LEFT_CURLY_BRACKET)
         for e := nameValueList.Front(); e != nil; e = e.Next() {
             if next {
-                objectData.WriteByte(COMMA_CHARACTER)
+                objectData.WriteByte(_COMMA_CHARACTER)
             }
             next = true
-            nameValue := e.Value.(nameValueType)
+            nameValue := e.Value.(_NameValueType)
             objectData.WriteString(nameValue.name)
-            objectData.WriteByte(COLON_CHARACTER)
+            objectData.WriteByte(_COLON_CHARACTER)
             objectData.WriteString(nameValue.value)
         }
-        objectData.WriteByte(RIGHT_CURLY_BRACKET)
+        objectData.WriteByte(_RIGHT_CURLY_BRACKET)
         return objectData.String()
     }
 
-    if testNextNonWhiteSpaceChar() == LEFT_BRACKET {
+    if testNextNonWhiteSpaceChar() == _LEFT_BRACKET {
         scan()
         transformed = parseArray()
     } else {
-        scanFor(LEFT_CURLY_BRACKET)
+        scanFor(_LEFT_CURLY_BRACKET)
         transformed = parseObject()
     }
     for index < jsonDataLength {
