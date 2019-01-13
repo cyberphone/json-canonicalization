@@ -328,12 +328,12 @@
             sorted, the following measures MUST be adhered to:
             <list style="symbols">
               <t>
-                The sorting process is applied to the internal representation of
-                property strings.  That is, their state before serialization.
+                The sorting process is applied to property strings in their &quot;raw&quot; (unescaped) form.
+                That is, a newline character is treated as U+000A.
               </t>
               <t>
-                Property strings to be sorted depend on that such strings are formatted
-                as arrays of big endian UTF-16 <xref target="UNICODE"/> code units.
+                Property strings to be sorted are formatted
+                as arrays of UTF-16 <xref target="UNICODE"/> code units.
                 The sorting is based on pure value comparisons, where code units are treated as
                 unsigned integers, independent of locale settings.
               </t>
