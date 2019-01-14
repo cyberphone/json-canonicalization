@@ -44,12 +44,11 @@ var literals      = []string{"true", "false", "null"}
     
 func Transform(jsonData []byte) (result []byte, e error) {
 
-    var globalError error = nil
-    var transformed string
-    var index int = 0
-
     // JSON data MUST be UTF-8 encoded
     var jsonDataLength int = len(jsonData)
+
+    // Current pointer in jsonData
+    var index int = 0
 
     // "Forward" declarations are needed for closures referring each other
     var parseElement func() string
@@ -57,6 +56,8 @@ func Transform(jsonData []byte) (result []byte, e error) {
     var parseQuotedString func() string
     var parseObject func() string
     var parseArray func() string
+
+    var globalError error = nil
 
     checkError := func(e error) {
         // We only honor the first reported error
@@ -70,13 +71,13 @@ func Transform(jsonData []byte) (result []byte, e error) {
     }
 
     isWhiteSpace := func(c byte) bool {
-        return c == 0x20 || c == 0x0A || c == 0x0D || c == 0x09
+        return c == 0x20 || c == 0x0a || c == 0x0d || c == 0x09
     }
 
     nextChar := func() byte {
         if index < jsonDataLength {
             c := jsonData[index]
-            if c > 127 {
+            if c > 0x7f {
                 setError("Unexpected non-ASCII character")
             }
             index++
@@ -335,7 +336,10 @@ func Transform(jsonData []byte) (result []byte, e error) {
             // The sortKey is either the first or is succeeding all previous sortKeys
             nameValueList.PushBack(nameValue)
         }
+        
+        // Scan away '}'
         scan()
+
         // Now everything is sorted so we can properly serialize the object
         var objectData strings.Builder
         objectData.WriteByte('{')
@@ -354,7 +358,11 @@ func Transform(jsonData []byte) (result []byte, e error) {
         return objectData.String()
     }
 
-    // This is where Transform actually begins...
+    /////////////////////////////////////////////////
+    // This is where Transform actually begins...  //
+    /////////////////////////////////////////////////
+    var transformed string
+
     if testNextNonWhiteSpaceChar() == '[' {
         scan()
         transformed = parseArray()
