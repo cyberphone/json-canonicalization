@@ -172,17 +172,16 @@ func Transform(jsonData []byte) (result []byte, e error) {
                     // The \u escape
                     firstUTF16 := getUEscape()
                     if utf16.IsSurrogate(firstUTF16) {
-                        // If the first UTF16 code unit has a certain value there must be
-                        // another succeeding UTF16 code unit as well
+                        // If the first UTF-16 code unit has a certain value there must be
+                        // another succeeding UTF-16 code unit as well
                         if nextChar() != '\\' || nextChar() != 'u' {
-                            setError("Surrogate expected")
+                            setError("Missing surrogate")
                         } else {
                             // Output the UTF-32 code point as UTF-8
-                            codePoint := utf16.DecodeRune(firstUTF16, getUEscape())
-                            rawString.WriteRune(codePoint)
+                            rawString.WriteRune(utf16.DecodeRune(firstUTF16, getUEscape()))
                         }
                     } else {
-                        // Single UTF16 code is identical to UTF32
+                        // Single UTF-16 code identical to UTF-32.  Output as UTF-8
                         rawString.WriteRune(firstUTF16)
                     }
                 } else if c == '/' {
