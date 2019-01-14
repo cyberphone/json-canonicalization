@@ -306,7 +306,7 @@ func Transform(jsonData []byte) (result []byte, e error) {
     parseObject = func() string {
         nameValueList := list.New()
         var next bool = false
-      ParsingLoop:
+      CoreLoop:
         for globalError == nil && testNextNonWhiteSpaceChar() != '}' {
             if next {
                 scanFor(',')
@@ -328,7 +328,7 @@ func Transform(jsonData []byte) (result []byte, e error) {
                 if isSmaller(sortKey, e) {
                     // Smaller => Insert before and exit sorting
                     nameValueList.InsertBefore(nameValue, e)
-                    continue ParsingLoop
+                    continue CoreLoop
                 }
                 // Bigger => Continue searching for a possibly even bigger sortKey
                 // (which is straightforward since the list is ordered)
