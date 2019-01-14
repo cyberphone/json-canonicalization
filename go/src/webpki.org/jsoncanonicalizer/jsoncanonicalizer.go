@@ -273,6 +273,36 @@ func Transform(jsonData []byte) (result []byte, e error) {
         return arrayData.String()
     }
 
+    isSmaller := func(sortKey []uint16, e *list.Element) bool {
+        // Find the minimum length of the sortKeys
+        oldSortKey := e.Value.(nameValueType).sortKey
+        minLength := len(oldSortKey)
+        if minLength > len(sortKey) {
+            minLength = len(sortKey)
+        }
+        for q := 0; q < minLength; q++ {
+            diff := int(sortKey[q]) - int(oldSortKey[q])
+            if diff < 0 {
+                // Smaller
+                return true
+            } else if diff > 0 {
+                // Bigger
+                return false
+            }
+            // Still equal => Continue
+        }
+        // The sortKeys compared equal up to minLength
+        // Shorter => Smaller
+        if len(sortKey) < len(oldSortKey) {
+            return true
+        }
+        if len(sortKey) == len(oldSortKey) {
+            setError("Duplicate key: " + e.Value.(nameValueType).name)
+        }
+        // Bigger
+        return false
+    }
+
     parseObject = func() string {
         nameValueList := list.New()
         var next bool = false
@@ -293,37 +323,15 @@ func Transform(jsonData []byte) (result []byte, e error) {
             sortKey := utf16.Encode([]rune(rawUTF8))
             scanFor(':')
             nameValue := nameValueType{rawUTF8, sortKey, parseElement()}
-          SortingLoop:
             for e := nameValueList.Front(); e != nil; e = e.Next() {
                 // Check if the key is smaller than a previous key
-                oldSortKey := e.Value.(nameValueType).sortKey
-                // Find the minimum length of the sortKeys
-                minLength := len(oldSortKey)
-                if minLength > len(sortKey) {
-                    minLength = len(sortKey)
-                }
-                for q := 0; q < minLength; q++ {
-                    diff := int(sortKey[q]) - int(oldSortKey[q])
-                    if diff < 0 {
-                        // Smaller => Insert before and exit sorting
-                        nameValueList.InsertBefore(nameValue, e)
-                        continue ParsingLoop
-                    } else if diff > 0 {
-                        // Bigger => Continue searching for a possibly even bigger sortKey
-                        // (which is straightforward since the list is ordered)
-                        continue SortingLoop
-                    }
-                    // Still equal => Continue
-                }
-                // The sortKeys compared equal up to minLength
-                // Shorter => Smaller => Insert before and exit sorting
-                if len(sortKey) < len(oldSortKey) {
+                if isSmaller(sortKey, e) {
+                    // Smaller => Insert before and exit sorting
                     nameValueList.InsertBefore(nameValue, e)
                     continue ParsingLoop
                 }
-                if len(sortKey) == len(oldSortKey) {
-                    setError("Duplicate key: " + rawUTF8)
-                }
+                // Bigger => Continue searching for a possibly even bigger sortKey
+                // (which is straightforward since the list is ordered)
             }
             // The sortKey is either the first or bigger than any previous sortKey
             nameValueList.PushBack(nameValue)
