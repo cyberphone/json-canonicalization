@@ -272,7 +272,7 @@ func Transform(jsonData []byte) (result []byte, e error) {
         return arrayData.String()
     }
 
-    precedes := func(sortKey []uint16, e *list.Element) bool {
+    lexicographicallyPreceding := func(sortKey []uint16, e *list.Element) bool {
         // Find the minimum length of the sortKeys
         oldSortKey := e.Value.(nameValueType).sortKey
         minLength := len(oldSortKey)
@@ -324,7 +324,7 @@ func Transform(jsonData []byte) (result []byte, e error) {
             nameValue := nameValueType{rawUTF8, sortKey, parseElement()}
             for e := nameValueList.Front(); e != nil; e = e.Next() {
                 // Check if the key is smaller than a previous key
-                if precedes(sortKey, e) {
+                if lexicographicallyPreceding(sortKey, e) {
                     // Precedes => Insert before and exit sorting
                     nameValueList.InsertBefore(nameValue, e)
                     continue CoreLoop
