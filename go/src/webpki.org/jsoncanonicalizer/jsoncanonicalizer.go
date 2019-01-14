@@ -148,19 +148,6 @@ func Transform(jsonData []byte) (result []byte, e error) {
         return quotedString.String()
     }
 
-    parseElement = func() string {
-        switch scan() {
-            case '{':
-                return parseObject()
-            case '"':
-                return decorateString(parseQuotedString())
-            case '[':
-                return parseArray()
-            default:
-                return parseSimpleType()
-        }
-    }
-
     parseQuotedString = func() string {
         var rawString strings.Builder
       CoreLoop:
@@ -255,6 +242,19 @@ func Transform(jsonData []byte) (result []byte, e error) {
         return value
     }
 
+    parseElement = func() string {
+        switch scan() {
+            case '{':
+                return parseObject()
+            case '"':
+                return decorateString(parseQuotedString())
+            case '[':
+                return parseArray()
+            default:
+                return parseSimpleType()
+        }
+    }
+
     parseArray = func() string {
         var arrayData strings.Builder
         arrayData.WriteByte('[')
@@ -347,6 +347,7 @@ func Transform(jsonData []byte) (result []byte, e error) {
         return objectData.String()
     }
 
+    // This is where Transform actually begins...
     if testNextNonWhiteSpaceChar() == '[' {
         scan()
         transformed = parseArray()
