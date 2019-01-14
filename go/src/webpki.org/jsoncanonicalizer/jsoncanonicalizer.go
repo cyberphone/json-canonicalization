@@ -272,7 +272,7 @@ func Transform(jsonData []byte) (result []byte, e error) {
         return arrayData.String()
     }
 
-    isSmaller := func(sortKey []uint16, e *list.Element) bool {
+    precedes := func(sortKey []uint16, e *list.Element) bool {
         // Find the minimum length of the sortKeys
         oldSortKey := e.Value.(nameValueType).sortKey
         minLength := len(oldSortKey)
@@ -282,23 +282,23 @@ func Transform(jsonData []byte) (result []byte, e error) {
         for q := 0; q < minLength; q++ {
             diff := int(sortKey[q]) - int(oldSortKey[q])
             if diff < 0 {
-                // Smaller
+                // Smaller => Precedes
                 return true
             } else if diff > 0 {
-                // Bigger
+                // Skip
                 return false
             }
             // Still equal => Continue
         }
         // The sortKeys compared equal up to minLength
-        // Shorter => Smaller
         if len(sortKey) < len(oldSortKey) {
+            // Shorter => Precedes
             return true
         }
         if len(sortKey) == len(oldSortKey) {
             setError("Duplicate key: " + e.Value.(nameValueType).name)
         }
-        // Bigger
+        // Skip
         return false
     }
 
@@ -324,15 +324,15 @@ func Transform(jsonData []byte) (result []byte, e error) {
             nameValue := nameValueType{rawUTF8, sortKey, parseElement()}
             for e := nameValueList.Front(); e != nil; e = e.Next() {
                 // Check if the key is smaller than a previous key
-                if isSmaller(sortKey, e) {
-                    // Smaller => Insert before and exit sorting
+                if precedes(sortKey, e) {
+                    // Precedes => Insert before and exit sorting
                     nameValueList.InsertBefore(nameValue, e)
                     continue CoreLoop
                 }
-                // Bigger => Continue searching for a possibly even bigger sortKey
+                // Continue searching for a possibly succeeding sortKey
                 // (which is straightforward since the list is ordered)
             }
-            // The sortKey is either the first or bigger than any previous sortKey
+            // The sortKey is either the first or is succeeding all previous sortKeys
             nameValueList.PushBack(nameValue)
         }
         scan()
