@@ -336,10 +336,8 @@ func Transform(jsonData []byte) (result []byte, e error) {
             // The sortKey is either the first or is succeeding all previous sortKeys
             nameValueList.PushBack(nameValue)
         }
-        
         // Scan away '}'
         scan()
-
         // Now everything is sorted so we can properly serialize the object
         var objectData strings.Builder
         objectData.WriteByte('{')
