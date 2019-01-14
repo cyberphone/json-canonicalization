@@ -338,8 +338,8 @@ func Transform(jsonData []byte) (result []byte, e error) {
         scan()
         // Now everything is sorted so we can properly serialize the object
         var objectData strings.Builder
-        next = false
         objectData.WriteByte('{')
+        next = false
         for e := nameValueList.Front(); e != nil; e = e.Next() {
             if next {
                 objectData.WriteByte(',')
