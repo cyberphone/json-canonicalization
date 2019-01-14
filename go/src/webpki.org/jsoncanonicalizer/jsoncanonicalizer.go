@@ -129,8 +129,8 @@ func Transform(jsonData []byte) (result []byte, e error) {
         quotedString.WriteByte('"')
       CoreLoop:
         for _, c := range []byte(rawUTF8) {
+            // Is this within the JSON standard escapes?
             for i, esc := range binaryEscapes {
-                // Is this within the JSON standard escapes
                 if esc == c {
                     quotedString.WriteByte('\\')
                     quotedString.WriteByte(asciiEscapes[i])
@@ -138,6 +138,7 @@ func Transform(jsonData []byte) (result []byte, e error) {
                 }
             }
             if c < 0x20 {
+                // Other ASCII control characters must be escaped with \uhhhh
                 quotedString.WriteString(fmt.Sprintf("\\u%04x", c))         
             } else {
                 quotedString.WriteByte(c)
