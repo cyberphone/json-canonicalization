@@ -54,7 +54,7 @@ func Transform(jsonData []byte) (result []byte, e error) {
     // "Forward" declarations are needed for closures referring each other
     var parseElement func() string
     var parseSimpleType func() string
-    var parseQuotedString func() (quoted string, rawUTF8 string)
+    var parseQuotedString func() string
     var parseObject func() string
     var parseArray func() string
 
@@ -124,13 +124,35 @@ func Transform(jsonData []byte) (result []byte, e error) {
         return c
     }
 
+    decorateString := func(rawUTF8 string) string {
+        var quotedString strings.Builder
+        quotedString.WriteByte('"')
+      CoreLoop:
+        for _, c := range []byte(rawUTF8) {
+            for i, esc := range binaryEscapes {
+                // Is this within the JSON standard escapes
+                if esc == c {
+                    quotedString.WriteByte('\\')
+                    quotedString.WriteByte(asciiEscapes[i])
+                    continue CoreLoop
+                }
+            }
+            if c < 0x20 {
+                quotedString.WriteString(fmt.Sprintf("\\u%04x", c))         
+            } else {
+                quotedString.WriteByte(c)
+            }
+        }
+        quotedString.WriteByte('"')
+        return quotedString.String()
+    }
+
     parseElement = func() string {
         switch scan() {
             case '{':
                 return parseObject()
             case '"':
-                quoted, _ := parseQuotedString()
-                return quoted
+                return decorateString(parseQuotedString())
             case '[':
                 return parseArray()
             default:
@@ -138,10 +160,8 @@ func Transform(jsonData []byte) (result []byte, e error) {
         }
     }
 
-    parseQuotedString = func() (quoted string, rawUTF8 string) {
-        var quotedString strings.Builder
+    parseQuotedString = func() string {
         var rawString strings.Builder
-        quotedString.WriteByte('"')
       CoreLoop:
         for globalError == nil {
             var c byte
@@ -171,40 +191,19 @@ func Transform(jsonData []byte) (result []byte, e error) {
                         } else {
                             // Output the UTF-32 code point as UTF-8
                             codePoint := utf16.DecodeRune(firstUTF16, getUEscape())
-                            quotedString.WriteRune(codePoint)
                             rawString.WriteRune(codePoint)
                         }
                     } else {
                         // Single UTF16 code is identical to UTF32
-                        // Now the value must be checked
-                        for i, esc := range binaryEscapes {
-                            // Is this within the JSON standard escapes
-                            if rune(esc) == firstUTF16 {
-                                quotedString.WriteByte('\\')
-                                quotedString.WriteByte(asciiEscapes[i])
-                                rawString.WriteByte(esc)
-                                continue CoreLoop
-                            }
-                        }
-                        if firstUTF16 < ' ' {
-                            // Control characters must be escaped
-                            quotedString.WriteString(fmt.Sprintf("\\u%04x", firstUTF16))
-                        } else {
-                            // Not control, output code unit as is but UTF-8 encoded
-                            quotedString.WriteRune(firstUTF16)
-                        }
                         rawString.WriteRune(firstUTF16)
                     }
                 } else if c == '/' {
                     // Benign but useless escape
-                    quotedString.WriteByte('/')
                     rawString.WriteByte('/')
                 } else {
                     // The JSON standard escapes
-                    quotedString.WriteByte('\\')
                     for i, esc := range asciiEscapes {
                         if esc == c {
-                            quotedString.WriteByte(c)
                             rawString.WriteByte(binaryEscapes[i])
                             continue CoreLoop
                         }
@@ -217,12 +216,10 @@ func Transform(jsonData []byte) (result []byte, e error) {
                 // Note that properly formatted UTF-8 never clashes with ASCII
                 // making byte per byte search for ASCII break characters work
                 // as expected.
-                quotedString.WriteByte(c)
                 rawString.WriteByte(c)
             }
         }
-        quotedString.WriteByte('"')
-        return quotedString.String(), rawString.String()
+        return rawString.String()
     }
 
     parseSimpleType = func() string {
@@ -285,7 +282,7 @@ func Transform(jsonData []byte) (result []byte, e error) {
             }
             next = true
             scanFor('"')
-            name, rawUTF8 := parseQuotedString()
+            rawUTF8 := parseQuotedString()
             if globalError != nil {
                 break;
             }
@@ -294,7 +291,7 @@ func Transform(jsonData []byte) (result []byte, e error) {
             // In the Go case the transformation is UTF-8 => UTF-32 => UTF-16
             sortKey := utf16.Encode([]rune(rawUTF8))
             scanFor(':')
-            nameValue := nameValueType{name, sortKey, parseElement()}
+            nameValue := nameValueType{rawUTF8, sortKey, parseElement()}
           SortingLoop:
             for e := nameValueList.Front(); e != nil; e = e.Next() {
                 // Check if the key is smaller than a previous key
@@ -324,7 +321,7 @@ func Transform(jsonData []byte) (result []byte, e error) {
                     continue ParsingLoop
                 }
                 if len(sortKey) == len(oldSortKey) {
-                    setError("Duplicate key: " + name)
+                    setError("Duplicate key: " + rawUTF8)
                 }
             }
             // The sortKey is either the first or bigger than any previous sortKey
@@ -341,7 +338,7 @@ func Transform(jsonData []byte) (result []byte, e error) {
             }
             next = true
             nameValue := e.Value.(nameValueType)
-            objectData.WriteString(nameValue.name)
+            objectData.WriteString(decorateString(nameValue.name))
             objectData.WriteByte(':')
             objectData.WriteString(nameValue.value)
         }
