@@ -273,7 +273,7 @@ func Transform(jsonData []byte) (result []byte, e error) {
         return arrayData.String()
     }
 
-    lexicographicallyPreceding := func(sortKey []uint16, e *list.Element) bool {
+    lexicographicallyPrecedes := func(sortKey []uint16, e *list.Element) bool {
         // Find the minimum length of the sortKeys
         oldSortKey := e.Value.(nameValueType).sortKey
         minLength := len(oldSortKey)
@@ -286,7 +286,7 @@ func Transform(jsonData []byte) (result []byte, e error) {
                 // Smaller => Precedes
                 return true
             } else if diff > 0 {
-                // Skip
+                // Bigger => No match
                 return false
             }
             // Still equal => Continue
@@ -299,7 +299,7 @@ func Transform(jsonData []byte) (result []byte, e error) {
         if len(sortKey) == len(oldSortKey) {
             setError("Duplicate key: " + e.Value.(nameValueType).name)
         }
-        // Skip
+        // Longer => No match
         return false
     }
 
@@ -325,7 +325,7 @@ func Transform(jsonData []byte) (result []byte, e error) {
             nameValue := nameValueType{rawUTF8, sortKey, parseElement()}
             for e := nameValueList.Front(); e != nil; e = e.Next() {
                 // Check if the key is smaller than a previous key
-                if lexicographicallyPreceding(sortKey, e) {
+                if lexicographicallyPrecedes(sortKey, e) {
                     // Precedes => Insert before and exit sorting
                     nameValueList.InsertBefore(nameValue, e)
                     continue CoreLoop
