@@ -28,10 +28,7 @@ import (
     "strings"
 )
 
-const (
-    minusZero      uint64 = 0x8000000000000000
-    invalidPattern uint64 = 0x7ff0000000000000
-)
+const invalidPattern uint64 = 0x7ff0000000000000
 
 func Convert(ieeeF64 float64) (res string, err error) {
     ieeeU64 := math.Float64bits(ieeeF64)
@@ -42,8 +39,8 @@ func Convert(ieeeF64 float64) (res string, err error) {
     }
 
     // Special case: eliminate "-0" as mandated by the ES6-JSON/JCS specifications
-    if ieeeU64 == minusZero {
-        ieeeF64 = 0
+    if ieeeF64 == 0 {  // Right, this line takes both -0 and 0
+        return "0", nil
     }
 
     // Deal with the sign separately
@@ -54,7 +51,7 @@ func Convert(ieeeF64 float64) (res string, err error) {
     }
 
     // ES6 has a unique "g" format
-    var format byte = 'g'
+    var format byte = 'e'
     if ieeeF64 < 1e+21 && ieeeF64 >= 1e-6 {
         format = 'f'
     }
@@ -62,7 +59,7 @@ func Convert(ieeeF64 float64) (res string, err error) {
     // The following should (in "theory") do the trick:
     es6Formatted := strconv.FormatFloat(ieeeF64, format, -1, 64)
 
-    // Unfortunately Go version 1.14.4 is a bit buggy with respect to
+    // Unfortunately Go version 1.11.4 is a bit buggy with respect to
     // rounding for -1 precision which is dealt with below.
     // https://github.com/golang/go/issues/29491
     exponent := strings.IndexByte(es6Formatted, 'e')
