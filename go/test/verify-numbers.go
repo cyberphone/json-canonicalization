@@ -35,6 +35,9 @@ func check(e error) {
     }
 }
 
+// Change the file name to suit your environment
+const testFile = "c:\\es6\\numbers\\es6testfile100m.txt"
+
 const invalidNumber = "null"
 
 var conversionErrors int = 0
@@ -79,8 +82,7 @@ func main() {
     verify("7ff0000000000000", invalidNumber)
     verify("fff0000000000000", invalidNumber)
 
-    // Change the file name to suit your environment
-    file, err := os.Open("c:\\es6\\numbers\\es6testfile100m.txt")
+    file, err := os.Open(testFile)
     check(err)
     defer file.Close()
     scanner := bufio.NewScanner(file)
@@ -95,7 +97,7 @@ func main() {
         if comma <= 0 {
             panic("Missing comma!")
         }
-        verify(line[0:comma], line[comma + 1:])
+        verify(line[:comma], line[comma + 1:])
     }
     check(scanner.Err())
     if conversionErrors == 0 {
