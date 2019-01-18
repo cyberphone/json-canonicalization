@@ -93,7 +93,7 @@ public class JsonCanonicalizer {
     }
 
     @SuppressWarnings("unchecked")
-	void serialize(Object o) throws IOException
+    void serialize(Object o) throws IOException
     {
         if (o instanceof TreeMap) {
             buffer.append('{');
@@ -197,7 +197,7 @@ class JsonDecoder {
     }
 
     Object parseObject() throws IOException {
-    	TreeMap<String,Object> dict = new TreeMap<String,Object>(); 
+        TreeMap<String,Object> dict = new TreeMap<String,Object>(); 
         boolean next = false;
         while (testNextNonWhiteSpaceChar() != RIGHT_CURLY_BRACKET) {
             if (next) {
@@ -208,7 +208,7 @@ class JsonDecoder {
             String name = parseQuotedString();
             scanFor(COLON_CHARACTER);
             if (dict.put(name, parseElement()) != null) {
-            	throw new IOException("Duplicate property: " + name);
+                throw new IOException("Duplicate property: " + name);
             }
         }
         scan();

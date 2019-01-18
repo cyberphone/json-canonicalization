@@ -9,16 +9,24 @@
   <target name="help">
     <echo message="Targets: help build"/>
   </target>
-	
+    
   <target name="build">
-  	<!-- Create temp directory -->
+    <!-- Create temp directory -->
     <delete dir="${temp.dir}"/>
     <mkdir dir="${temp.dir}"/>
 
     <!-- Create distribution directory -->
-	<mkdir dir="${dist.dir}"/>
+    <mkdir dir="${dist.dir}"/>
 
-  	<!-- Compile -->
+    <fixcrlf srcdir="."
+       tab="remove"
+       tablength="4"
+       eol="lf"
+       eof="remove"
+       includes="**/*.java, **/*.xml"/>
+    <mkdir dir="${temp_dir}"/>
+    
+    <!-- Compile -->
     <javac debug="on"
            srcdir="${src.dir}"
            destdir="${temp.dir}" 
@@ -26,7 +34,7 @@
        <compilerarg value="-Xlint:all,-path"/>
     </javac>
 
-   	<!-- Build JAR -->
+    <!-- Build JAR -->
     <jar jarfile="${dist.dir}/${application}.jar">
       <fileset dir="${temp.dir}"/>
     </jar>
