@@ -123,15 +123,13 @@ public final class NumberToJSON {
             throw new IOException("NaN/Infinity not allowed in JSON");
         }
 
-        // Otherwise extract the mantissa and exponent bits and run the full
-        // algorithm.
+        // Otherwise extract the mantissa and exponent bits and run the full algorithm.
         int ieeeExponent = (int) ((bits >>> DOUBLE_MANTISSA_BITS) & DOUBLE_EXPONENT_MASK);
         long ieeeMantissa = bits & DOUBLE_MANTISSA_MASK;
         int e2;
         long m2;
         if (ieeeExponent == 0) {
-            // Denormal number - no implicit leading 1, and the exponent is 1,
-            // not 0.
+            // Denormal number - no implicit leading 1, and the exponent is 1, not 0.
             e2 = 1 - DOUBLE_EXPONENT_BIAS - DOUBLE_MANTISSA_BITS;
             m2 = ieeeMantissa;
         } else {
@@ -407,42 +405,24 @@ public final class NumberToJSON {
     }
 
     private static int decimalLength(long v) {
-        if (v >= 1000000000000000000L)
-            return 19;
-        if (v >= 100000000000000000L)
-            return 18;
-        if (v >= 10000000000000000L)
-            return 17;
-        if (v >= 1000000000000000L)
-            return 16;
-        if (v >= 100000000000000L)
-            return 15;
-        if (v >= 10000000000000L)
-            return 14;
-        if (v >= 1000000000000L)
-            return 13;
-        if (v >= 100000000000L)
-            return 12;
-        if (v >= 10000000000L)
-            return 11;
-        if (v >= 1000000000L)
-            return 10;
-        if (v >= 100000000L)
-            return 9;
-        if (v >= 10000000L)
-            return 8;
-        if (v >= 1000000L)
-            return 7;
-        if (v >= 100000L)
-            return 6;
-        if (v >= 10000L)
-            return 5;
-        if (v >= 1000L)
-            return 4;
-        if (v >= 100L)
-            return 3;
-        if (v >= 10L)
-            return 2;
+        if (v >= 1000000000000000000L) return 19;
+        if (v >= 100000000000000000L) return 18;
+        if (v >= 10000000000000000L) return 17;
+        if (v >= 1000000000000000L) return 16;
+        if (v >= 100000000000000L) return 15;
+        if (v >= 10000000000000L) return 14;
+        if (v >= 1000000000000L) return 13;
+        if (v >= 100000000000L) return 12;
+        if (v >= 10000000000L) return 11;
+        if (v >= 1000000000L) return 10;
+        if (v >= 100000000L) return 9;
+        if (v >= 10000000L) return 8;
+        if (v >= 1000000L) return 7;
+        if (v >= 100000L) return 6;
+        if (v >= 10000L) return 5;
+        if (v >= 1000L) return 4;
+        if (v >= 100L) return 3;
+        if (v >= 10L) return 2;
         return 1;
     }
 
