@@ -24,7 +24,6 @@
        eol="lf"
        eof="remove"
        includes="**/*.java, **/*.xml"/>
-    <mkdir dir="${temp_dir}"/>
     
     <!-- Compile -->
     <javac debug="on"
