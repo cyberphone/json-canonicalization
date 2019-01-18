@@ -432,14 +432,10 @@ public final class NumberToJSON {
 
     private static int pow5Factor(long value) {
         // We want to find the largest power of 5 that divides value.
-        if ((value % 5) != 0)
-            return 0;
-        if ((value % 25) != 0)
-            return 1;
-        if ((value % 125) != 0)
-            return 2;
-        if ((value % 625) != 0)
-            return 3;
+        if ((value % 5) != 0) return 0;
+        if ((value % 25) != 0) return 1;
+        if ((value % 125) != 0) return 2;
+        if ((value % 625) != 0) return 3;
         int count = 4;
         value /= 625;
         while (value > 0) {
