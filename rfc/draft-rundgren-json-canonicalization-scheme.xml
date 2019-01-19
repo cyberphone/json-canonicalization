@@ -68,10 +68,10 @@
 
     <abstract>
       <t>
-        Cryptographic operations like hashing and signing depend on that the
-        target data does not change during serialization, transport, or parsing.
-        By applying the rules defined by JCS (JSON Canonicalization Scheme),
-        data provided in the JSON <xref target="RFC8259"/> format can be exchanged "as is",
+        Cryptographic operations like hashing and signing requires that the
+        target data does not change during serialization or parsing.
+        By applying the rules defined by the JSON Canonicalization Scheme (JCS),
+        data provided in JSON <xref target="RFC8259"/> format can be exchanged "as is",
         while still being subject to secure cryptographic operations.
         JCS achieves this by building on the serialization formats for JSON primitives
         as defined by ECMAScript <xref target="ES6"/>, constraining JSON data
@@ -88,17 +88,17 @@
   <middle>
     <section anchor="Introduction" title="Introduction">
       <t>
-        Cryptographic operations like hashing and signing depend on that the
-        target data does not change during serialization, transport, or parsing.
-        A straightforward way of accomplishing this is converting the data into
-        a format having a simple and fixed representation like Base64Url <xref target="RFC4648"/>,
-        used in JWS <xref target="RFC7515"/>.
-        Another solution is creating a canonicalized version of the target data
+        Cryptographic operations like hashing and signing requires that the
+        target data does not change during serialization or parsing.
+        One way of accomplishing this is converting the data into
+        a format that has a simple and fixed representation like Base64Url <xref target="RFC4648"/>,
+        which is used in JWS <xref target="RFC7515"/>.
+        Another solution is creating a canonical version of the data
         with XML Signature <xref target="XMLDSIG"/> as a prime example.
       </t>
       <t>
         Since the objective was keeping the data "as is", the canonicalization
-        method was selected.  For avoiding "reinventing the wheel",
+        method was selected.  To avoid "reinventing the wheel",
         JCS relies on serialization of JSON primitives compatible with
         ECMAScript (aka JavaScript) beginning with version 6 <xref target="ES6"/>,
         from now on simply referred to as "ES6".
@@ -215,7 +215,7 @@
           </t>
           <t>
             If you subsequently serialize the parsed data
-            using an serializer compliant with ES6's <spanx style="verb">JSON.stringify()</spanx>,
+            using a serializer compliant with ES6's <spanx style="verb">JSON.stringify()</spanx>,
             the result would (with a line wrap added for display purposes only),
             be rather divergent with respect to representation of data:
           </t>
@@ -251,7 +251,7 @@
           </section>
           <section anchor="json.ser.string" title="Serialization of Strings">
             <t>
-              For JSON data of the type <spanx style="verb">String</spanx> (which includes
+              For JSON <spanx style="verb">String</spanx> data (which includes
               <spanx style="verb">Object</spanx> property names as well), each character MUST be serialized as
               described below (also matching section <xref target="ES6" format="none">24.3.2.2</xref> of ES6):
             </t>
@@ -283,8 +283,7 @@
               Note: although the Unicode standard offers a possibility combining
               certain characters into one, referred to as "Unicode Normalization"
               (<eref target="https://www.unicode.org/reports/tr15/">https://www.unicode.org/reports/tr15/</eref>),
-              such functionality MUST be delegated to the application layer
-              which already is the case for most other uses of JSON.
+              such functionality MUST be delegated to the application layer.
             </t>
           </section>
 
@@ -339,12 +338,12 @@
             <list style="symbols">
               <t>
                 JSON <spanx style="verb">Object</spanx> properties MUST be sorted in a recursive manner
-                which means that a found JSON child <spanx style="verb">Object</spanx>
-                type MUST be subject to sorting as well.
+                which means that possible JSON child <spanx style="verb">Object</spanx>s
+                MUST have their properties sorted as well.
               </t>
               <t>
                 JSON <spanx style="verb">Array</spanx> data MUST also be scanned for
-                presence of sortable JSON <spanx style="verb">Object</spanx> elements,
+                presence of JSON <spanx style="verb">Object</spanx>s (and applying associated property sorting),
                 but array element order MUST NOT be changed.
               </t>
             </list>
@@ -392,7 +391,7 @@
             The conversion from UTF-8 or UTF-32 to UTF-16 is defined by the
             Unicode <xref target="UNICODE"/> standard.
             <vspace blankLines="1"/>
-            Note: for the purpose obtaining a deterministic property order, sorting on
+            Note: for the purpose of obtaining a deterministic property order, sorting on
             UTF-8 or UTF-32 encoded data would also work, but the result would differ
             (and thus be incompatible with this specification).
           </t>
