@@ -97,7 +97,7 @@
         with XML Signature <xref target="XMLDSIG"/> as a prime example.
       </t>
       <t>
-        Since the objective was keeping the data "as is", the canonicalization
+        Since the objective of JCS is to keep the data "as is", the canonicalization
         method was selected.  To avoid "reinventing the wheel",
         JCS relies on serialization of JSON primitives compatible with
         ECMAScript (aka JavaScript) beginning with version 6 <xref target="ES6"/>,
@@ -172,7 +172,7 @@
         <t>
           <list style="symbols">
             <t>
-              There MUST NOT be any duplicate property names within an <spanx style="verb">Object</spanx>. 
+              There MUST NOT be any duplicate property names within an element to be serialized as a JSON Object. 
             </t>
             <t>
               String data MUST be expressible
@@ -251,8 +251,8 @@
           </section>
           <section anchor="json.ser.string" title="Serialization of Strings">
             <t>
-              For JSON <spanx style="verb">String</spanx> data (which includes
-              <spanx style="verb">Object</spanx> property names as well), each character MUST be serialized as
+              For JSON String data (which includes
+              JSON&nbsp;Object property names as well), each character MUST be serialized as
               described below (also matching section <xref target="ES6" format="none">24.3.2.2</xref> of ES6):
             </t>
             <t>
@@ -289,16 +289,16 @@
 
           <section anchor="json.ser.number" title="Serialization of Numbers">
             <t>
-              JSON data of the type <spanx style="verb">Number</spanx> MUST be serialized according to
+              JSON data of the type Number MUST be serialized according to
               section <xref target="ES6" format="none">7.1.12.1</xref> of ES6 including the "Note 2" enhancement.
               <vspace blankLines="1"/>
-              Due to the relative complexity of this part, the algorithm itself is not included in this specification.
+              Due to the relative complexity of this part, the algorithm itself is not included in this document.
               However, the specification is fully implemented by for example Google's V8 <xref target="V8"/>.
               The open source Java implementation mentioned in <xref target="open.source"/>
               uses a recently developed number serialization algorithm called Ryu <xref target="RYU"/>.
               <vspace blankLines="1"/>
               ES6 builds on the IEEE-754 <xref target="IEEE754"/> double precision
-              standard for storing <spanx style="verb">Number</spanx> data.
+              standard for representing JSON Number data.
               <xref target="json.ieee754.test"/> holds a set of IEEE-754 sample values and their
               corresponding JSON serialization.
               <vspace blankLines="1"/>
@@ -313,7 +313,7 @@
           <t>
             Although the previous step indeed normalized the representation of primitive
             JSON data types, the result would not qualify as canonical since JSON
-            <spanx style="verb">Object</spanx> properties are not in lexicographic (alphabetical) order.
+            Object properties are not in lexicographic (alphabetical) order.
             <vspace blankLines="1"/>
             Applied to the sample in <xref target="json.serialization.data"/>,
             a properly canonicalized version should (with a
@@ -333,23 +333,23 @@
             </list>
               </t>
           <t>
-            The rules for lexicographic sorting of JSON <spanx style="verb">Object</spanx>
+            The rules for lexicographic sorting of JSON Object
             properties according to JCS are as follows:
             <list style="symbols">
               <t>
-                JSON <spanx style="verb">Object</spanx> properties MUST be sorted in a recursive manner
-                which means that possible JSON child <spanx style="verb">Object</spanx>s
+                JSON Object properties MUST be sorted in a recursive manner
+                which means that possible JSON child Objects
                 MUST have their properties sorted as well.
               </t>
               <t>
-                JSON <spanx style="verb">Array</spanx> data MUST also be scanned for
-                presence of JSON <spanx style="verb">Object</spanx>s (and applying associated property sorting),
+                JSON Array data MUST also be scanned for
+                presence of JSON Objects (and applying associated property sorting),
                 but array element order MUST NOT be changed.
               </t>
             </list>
           </t>
           <t>
-            When a JSON <spanx style="verb">Object</spanx> is about to have its properties
+            When a JSON Object is about to have its properties
             sorted, the following measures MUST be adhered to:
             <list style="symbols">
               <t>
@@ -439,7 +439,7 @@
 
     <section anchor="Acknowledgements" title="Acknowledgements">
       <t>
-        Building on ES6 <spanx style="verb">Number</spanx> normalization was
+        Building on ES6 Number serialization was
         originally proposed by James Manger. This ultimately led to the
         adoption of the entire ES6 serialization scheme for JSON primitives.
         <vspace blankLines="1"/>
@@ -610,9 +610,9 @@
  
     <section anchor="json.ieee754.test" title="Number Serialization Samples">
       <t>
-        The following table holds a set of ES6 <spanx style="verb">Number</spanx> serialization samples,
+        The following table holds a set of ES6 compatible Number serialization samples,
         including some edge cases.  The column &quot;IEEE-754&quot; refers to the internal
-        ES6 representation of the <spanx style="verb">Number</spanx> data type which is based on the
+        ES6 representation of the Number data type which is based on the
         IEEE-754 <xref target="IEEE754"/> standard using 64-bit (double precision) values,
         here expressed in hexadecimal.
       </t>
@@ -670,7 +670,7 @@
         </figure>
       </t>
       <t>
-        Note: for maximum compliance with ECMAScript's JSON object, values that are
+        Note: for maximum compliance with ECMAScript's <spanx style="verb">JSON</spanx> object, values that are
         to be interpreted as true integers,
         SHOULD be in the range -9007199254740991 to 9007199254740991.
         <vspace blankLines="1"/>
@@ -723,7 +723,7 @@
     <section anchor="json.bignumbers" title="Dealing with Big Numbers">
       <t>
         There are two major issues associated with the
-        JSON <spanx style="verb">Number</spanx> type, here illustrated by the following
+        JSON Number type, here illustrated by the following
         sample object:
       </t>
       <t>
@@ -751,10 +751,10 @@
             to decimal arithmetic.
             <vspace blankLines="1"/>
             The (to the author NB), only known way handling this kind of "overloading" of the
-            <spanx style="verb">Number</spanx> type (at least in an extensible manner), is through 
+            JSON Number type (at least in an extensible manner), is through 
             mapping mechanisms, instructing parsers what to do with different properties
             based on their name.  However, this greatly limits the value of using the
-            <spanx style="verb">Number</spanx> type outside of its original
+            Number type outside of its original
             somewhat constrained, JavaScript context.
           </t>
         </list>
@@ -763,7 +763,7 @@
         For usage with JCS (and in fact for any usage of JSON by multiple
         parties potentially using independently developed software), numbers that do
         not have a natural place in the current JSON ecosystem MUST be wrapped
-        using the JSON <spanx style="verb">String</spanx> type.  This is close to
+        using the JSON String type.  This is close to
         a de-facto standard for open systems.
         <vspace blankLines="1"/>
         Aided by a mapping system; be it programmatic like
