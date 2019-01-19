@@ -93,13 +93,17 @@
         One way of accomplishing this is converting the data into
         a format that has a simple and fixed representation like Base64Url <xref target="RFC4648"/>,
         which is used in JWS <xref target="RFC7515"/>.
-        Another solution is creating a canonical version of the data
-        with XML Signature <xref target="XMLDSIG"/> as a prime example.
       </t>
       <t>
-        Since the objective of JCS is to keep the data "as is", the canonicalization
-        method was selected.  To avoid "reinventing the wheel",
-        JCS relies on serialization of JSON primitives compatible with
+        Another solution is creating a canonical version of the data,
+        which is used in XML Signature <xref target="XMLDSIG"/>.
+        The primary advantage with canonicalizing schemes is that data
+        can be kept in its original form which is the core rationale behind JCS.
+        Put another way: by using canonicalization a JSON Object may remain a JSON Object
+        even after being signed which simplifies system design, documentation and logging.
+      </t>
+      <t>
+        To avoid "reinventing the wheel", JCS relies on serialization of JSON primitives compatible with
         ECMAScript (aka JavaScript) beginning with version 6 <xref target="ES6"/>,
         from now on simply referred to as "ES6".
       </t>
@@ -113,20 +117,19 @@
           <t>
             The absence of a namespace concept and default values, as well
             as constraining data to the I&nbhy;JSON subset eliminate the need for specific
-            parsing schemes for canonicalized data.
+            parsing schemes for dealing with canonicalization.
           </t>
           <t>
-            JCS compatible serialization of JSON primitives is already supported by most
-            Web browsers and Node.js <xref target="NODEJS"/>,
+            JCS compatible serialization of JSON primitives is supported by most
+            current Web browsers and as well as by Node.js <xref target="NODEJS"/>,
             while the full JCS specification is supported by multiple
-            Open Source implementations (see <xref target="open.source"/>),
-            giving the proposed canonicalization scheme a head start.
+            Open Source implementations (see <xref target="open.source"/>).
             Also see <xref target="impl.guidelines"/>.
           </t>
         </list>
       </t>
       <t>
-        The JCS specification describes how serialization of JSON primitives compliant
+        In summary, the JCS specification describes how serialization of JSON primitives compliant
         with ES6, combined with an elementary property sorting scheme, can be used for
         supporting &quot;Crypto&nbsp;Safe&quot; JSON.
       </t>
