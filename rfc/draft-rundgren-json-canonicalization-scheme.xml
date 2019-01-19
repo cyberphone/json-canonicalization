@@ -502,7 +502,7 @@
         <front>
           <title>Ryu floating point number serializing algorithm</title>
           <author>
-            <organization>Google LLC</organization>
+            <organization>Ulf Adams</organization>
           </author>
           <date/>
         </front>
