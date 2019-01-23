@@ -9,8 +9,8 @@ JCS achieves this by combining the serialization
 methods for JSON primitives defined in ECMAScript [[ES6](https://www.ecma-international.org/ecma-262/6.0/index.html)],
 with an elementary sorting scheme.
 
-Specification: https://cyberphone.github.io/doc/security/draft-rundgren-json-canonicalization-scheme.html<br>
-IETF Draft: https://tools.ietf.org/html/draft-rundgren-json-canonicalization-scheme-02
+Working document: https://cyberphone.github.io/ietf-json-canon<br>
+Published IETF Draft: https://tools.ietf.org/html/draft-rundgren-json-canonicalization-scheme-02
 
 The JSON Canonicalization Scheme concept in a nutshell:
 - Serialization of primitive JSON data types using methods compatible with ECMAScript's `JSON.stringify()`
