@@ -9,7 +9,7 @@ data provided in the JSON [[RFC8259](https://tools.ietf.org/html/rfc8259)]
 format can be exchanged "as is", while still being subject to secure cryptographic operations.
 JCS achieves this by building on the serialization formats for JSON
 primitives as defined by ECMAScript [[ES6](https://www.ecma-international.org/ecma-262/6.0/index.html)],
-constraining JSON data to the I-JSON [[RFC7493](https://tools.ietf.org/html//rfc7493)] subset,
+constraining JSON data to the<br>I-JSON [[RFC7493](https://tools.ietf.org/html//rfc7493)] subset,
 and through a platform independent property sorting scheme.
 
 Working document: https://cyberphone.github.io/ietf-json-canon<br>
