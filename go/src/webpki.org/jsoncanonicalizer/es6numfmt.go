@@ -19,7 +19,7 @@
 // The core application for this is canonicalization:
 // https://tools.ietf.org/html/draft-rundgren-json-canonicalization-scheme-02
 
-package es6numfmt
+package jsoncanonicalizer
 
 import (
     "errors"
@@ -30,7 +30,7 @@ import (
 
 const invalidPattern uint64 = 0x7ff0000000000000
 
-func Convert(ieeeF64 float64) (res string, err error) {
+func NumberToJSON(ieeeF64 float64) (res string, err error) {
     ieeeU64 := math.Float64bits(ieeeF64)
 
     // Special case: NaN and Infinity are invalid in JSON

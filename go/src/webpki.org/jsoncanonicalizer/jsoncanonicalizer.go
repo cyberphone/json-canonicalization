@@ -26,7 +26,6 @@ import (
     "strconv"
     "strings"
     "unicode/utf16"
-    "webpki.org/es6numfmt"
 )
 
 type nameValueType struct {
@@ -237,7 +236,7 @@ func Transform(jsonData []byte) (result []byte, e error) {
         // Apparently not so we assume that it is a I-JSON number
         ieeeF64, err := strconv.ParseFloat(value, 64)
         checkError(err)
-        value, err = es6numfmt.Convert(ieeeF64)
+        value, err = NumberToJSON(ieeeF64)
         checkError(err)
         return value
     }

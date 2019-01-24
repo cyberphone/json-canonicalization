@@ -16,7 +16,6 @@ any directory and requires updating the file path in `verify-numbers.go`.
 - Perform the commands:
 ```code
 $ cd test
-$ go build webpki.org/es6numfmt
 $ go build webpki.org/jsoncanonicalizer
 $ go run verify-canonicalization.go
 $ go run verify-numbers.go

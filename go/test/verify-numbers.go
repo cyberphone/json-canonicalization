@@ -26,7 +26,7 @@ import (
     "math"
     "fmt"
     "os"
-    "webpki.org/es6numfmt"
+    "webpki.org/jsoncanonicalizer"
 )
 
 func check(e error) {
@@ -49,7 +49,7 @@ func verify(ieeeHex string, expected string) {
     ieeeU64, err := strconv.ParseUint(ieeeHex, 16, 64)
     check(err)
     ieeeF64 := math.Float64frombits(ieeeU64)
-    es6Created, err := es6numfmt.Convert(ieeeF64)
+    es6Created, err := jsoncanonicalizer.NumberToJSON(ieeeF64)
     if expected == invalidNumber {
         if err == nil {
             panic("Missing error")
