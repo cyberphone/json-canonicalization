@@ -2,7 +2,8 @@
 
 The [input](input) directory contains files with non-canonicalized data which is
 supposed be transformed as specified by the corresponding file in the
-[output](output) directory.
+[output](output) directory.  In the [outhex](outhex) directory the expected
+output is expressed in hexadecimal byte notation.
 
 ## ES6 Numbers
 
