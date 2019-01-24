@@ -13,7 +13,7 @@ constraining JSON data to the<br>I-JSON [[RFC7493](https://tools.ietf.org/html//
 and through a platform independent property sorting scheme.
 
 Working document: https://cyberphone.github.io/ietf-json-canon<br>
-Published IETF Draft: https://tools.ietf.org/html/draft-rundgren-json-canonicalization-scheme-02
+Published IETF Draft: https://tools.ietf.org/html/draft-rundgren-json-canonicalization-scheme-03
 
 The JSON Canonicalization Scheme concept in a nutshell:
 - Serialization of primitive JSON data types using methods compatible with ECMAScript's `JSON.stringify()`
