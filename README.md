@@ -48,8 +48,8 @@ https://cyberphone.github.io/doc/security/browser-json-canonicalization.html
 ### NPM Compatible With JCS:
 https://www.npmjs.com/package/canonicalize
 
-### ECMAScript Proposal: JSON.canonicalize()
-[JSON.canonicalize()](https://github.com/cyberphone/json-canonicalization/blob/master/JSON.canonicalize.md)
+### ECMAScript Proposal: JSON.canonify()
+[JSON.canonify()](https://github.com/cyberphone/json-canonicalization/blob/master/JSON.canonify.md)
 
 ### Other Canonicalization Efforts
 https://tools.ietf.org/html/draft-staykov-hu-json-canonical-form-00
