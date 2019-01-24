@@ -6,7 +6,6 @@
   <property name="browser.file" location="../../browsers/browser-json-canonicalization.html"/>
   <property name="temp.dir" location=".tmp"/>
   <property file="webpki.properties"/>
-  <property name="logotype.file" location="${webpki.openkeystore}/library/generators/org/webpki/json/webpki-logo.svg"/>
 
   <path id="lib.classpath">
     <fileset dir="../canonicalizer/dist">
@@ -72,7 +71,6 @@
       </classpath>
       <arg value="${test.dir}"/>
       <arg value="${browser.file}"/>
-      <arg value="${logotype.file}"/>
       <jvmarg value="-Dfile.encoding=UTF8"/>
     </java>
   </target>

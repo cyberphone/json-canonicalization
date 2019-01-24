@@ -177,13 +177,9 @@ public class BrowserCodeGenerator {
             "  oneFile();\n" +
             "}\n" +
             "</script>\n" +
-            "<div style=\"cursor:pointer;position:absolute;top:5pt;right:10pt;z-index:5;" +
-            "padding:2pt 0 0 0;width:100pt;height:47pt;border-width:1px;" +
-            "border-style:solid;border-color:black;box-shadow:3pt 3pt 3pt #D0D0D0\"" +
-            " onclick=\"document.location.href='https://github.com/cyberphone/json-canonicalization'\" title=\"Project Home\">")
-        .append(new String(ArrayUtil.readFile(args[2]),"utf-8"))
-        .append(
-            "</div>" + 
+            "<img style=\"cursor:pointer;position:absolute;top:5pt;right:10pt;z-index:5\"" +
+            " onclick=\"document.location.href='https://github.com/cyberphone/json-canonicalization'\" title=\"Project Home\"" +
+            " src=\"https://cyberphone.github.io/doc/security/jcs.svg\">" +
             "<div style=\"font-size:14pt;padding:10pt 0pt\">JSON Canonicalization Test</div>\n" +
             "<div style=\"font-weight:bold;padding-bottom:10pt\" id=\"message\"></div>\n")
         .append(table)
