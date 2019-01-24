@@ -26,12 +26,17 @@ public class CanonicalizerTest {
 
     static String inputDirectory;
     static String outputDirectory;
+    static String outhexDirectory;
     
     static int failures = 0;
 
     static void performOneTest(String fileName) throws Exception {
         byte[] rawInput = ArrayUtil.readFile(inputDirectory + File.separator + fileName);
         byte[] expected = ArrayUtil.readFile(outputDirectory + File.separator + fileName);
+        byte[] outhex = DebugFormatter.getByteArrayFromHex(
+        		              new String(ArrayUtil.readFile(outhexDirectory + File.separator 
+        		                 + fileName.substring(0, fileName.indexOf('.')) + ".txt"), "utf-8")
+                                  .replace(" ","").replace("\n","").replace("\r",""));
         byte[] actual = new JsonCanonicalizer(rawInput).getEncodedUTF8();
         byte[] recycled = new JsonCanonicalizer(actual).getEncodedUTF8();
         StringBuilder utf8InHex = new StringBuilder("\nFile: ");
@@ -50,7 +55,9 @@ public class CanonicalizerTest {
             utf8InHex.append(DebugFormatter.getHexString(new byte[]{b}));
         }
         System.out.println(utf8InHex.append("\n").toString());
-        if (!ArrayUtil.compare(expected, actual) || !ArrayUtil.compare(recycled, actual)) {
+        if (!ArrayUtil.compare(expected, actual) || 
+                !ArrayUtil.compare(recycled, actual) ||
+                !ArrayUtil.compare(actual, outhex)) {
             failures++;
             System.out.println("THE TEST ABOVE FAILED!");
         }
@@ -59,6 +66,7 @@ public class CanonicalizerTest {
     public static void main(String[] args) throws Exception {
         inputDirectory = args[0] + File.separator + "input";
         outputDirectory = args[0] + File.separator + "output";
+        outhexDirectory = args[0] + File.separator + "outhex";
         File[] files = new File(inputDirectory).listFiles();
         for (File f : files) {
             performOneTest(f.getName());
