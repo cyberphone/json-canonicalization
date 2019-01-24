@@ -7,9 +7,10 @@ data does not change during serialization, transport, or parsing.
 By applying the rules defined by JCS (JSON Canonicalization Scheme), 
 data provided in the JSON [[RFC8259](https://tools.ietf.org/html/rfc8259)]
 format can be exchanged "as is", while still being subject to secure cryptographic operations.
-JCS achieves this by combining the serialization
-methods for JSON primitives defined in ECMAScript [[ES6](https://www.ecma-international.org/ecma-262/6.0/index.html)],
-with an elementary sorting scheme.
+JCS achieves this by building on the serialization formats for JSON
+primitives as defined by ECMAScript [[ES6](https://www.ecma-international.org/ecma-262/6.0/index.html)],
+constraining JSON data to the I-JSON [[RFC7493](https://tools.ietf.org/html//rfc7493)] subset,
+and through a platform independent property sorting scheme.
 
 Working document: https://cyberphone.github.io/ietf-json-canon<br>
 Published IETF Draft: https://tools.ietf.org/html/draft-rundgren-json-canonicalization-scheme-02
