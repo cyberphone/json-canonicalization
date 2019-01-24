@@ -1,3 +1,5 @@
+![JCS](https://cyberphone.github.io/doc/security/jcs.svg)
+
 # JSON Canonicalization
 
 Cryptographic operations like hashing and signing depend on that the target 
@@ -44,9 +46,6 @@ as well, here shown in hexadecimal notation:
 
 ### On-line Browser JCS Test
 https://cyberphone.github.io/doc/security/browser-json-canonicalization.html
-
-### NPM Compatible With JCS:
-https://www.npmjs.com/package/canonicalize
 
 ### ECMAScript Proposal: JSON.canonify()
 [JSON.canonify()](https://github.com/cyberphone/json-canonicalization/blob/master/JSON.canonify.md)
