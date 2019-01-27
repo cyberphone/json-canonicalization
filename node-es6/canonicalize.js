@@ -10,7 +10,7 @@ var canonicalize = function(object) {
         if (object === null || typeof object !== 'object' ||
             object.toJSON) {
             /////////////////////////////////////////////////
-            // Primitive data type - Use ES6/JSON          //
+            // Primitive type or toJSON - Use ES6/JSON     //
             /////////////////////////////////////////////////
             buffer += JSON.stringify(object);
 
