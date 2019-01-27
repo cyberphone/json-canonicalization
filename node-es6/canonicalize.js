@@ -7,7 +7,8 @@ var canonicalize = function(object) {
     return buffer;
 
     function serialize(object) {
-        if (object === null || typeof object !== 'object') {
+        if (object === null || typeof object !== 'object' ||
+            object.toJSON) {
             /////////////////////////////////////////////////
             // Primitive data type - Use ES6/JSON          //
             /////////////////////////////////////////////////
