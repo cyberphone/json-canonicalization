@@ -33,38 +33,6 @@ using Org.Webpki.JsonCanonicalizer;
 
 namespace json.net.signaturesupport
 {
-    public class Base64UrlConverter : JsonConverter
-    {
-        public override bool CanConvert(Type objectType)
-        {
-            return true;
-        }
-
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-        {
-            var output = (string)reader.Value;
-            output = output.Replace('-', '+');
-            output = output.Replace('_', '/');
-            switch (output.Length % 4)
-            {
-                case 0: break;
-                case 2: output += "=="; break;
-                case 3: output += "="; break;
-                default: throw new System.ArgumentOutOfRangeException("input", "Illegal base64url string!");
-            }
-            return Convert.FromBase64String(output);
-        }
-
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-        {
-            var output = Convert.ToBase64String((byte[])value);
-            output = output.Split('=')[0];
-            output = output.Replace('+', '-');
-            output = output.Replace('/', '_');
-            writer.WriteValue(output);
-        }
-    }
-
     public class SignatureObject
     {
         [JsonProperty("alg", Required = Required.Always)]

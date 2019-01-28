@@ -29,8 +29,13 @@ namespace json.net.sign
         [JsonProperty("id")]
         public string Id { get; set; }
 
+        [JsonConverter(typeof(Int64Converter))]
         [JsonProperty("counter")]
         public long Counter { get; set; }
+
+        [JsonConverter(typeof(UTCStrictDateConverter))]
+        [JsonProperty("instant")]
+        public DateTime Instant { get; set; }
 
         [JsonProperty("list")]
         public string[] List { get; set; }
@@ -44,13 +49,18 @@ namespace json.net.sign
 
     class Program
     {
+        const long BIG_LONG = 1000000000007800000L;
+
         static void Main(string[] args)
         {
+            DateTime Now = DateTime.Now;
+
             // Create an object instance
             MyObject myObject = new MyObject
             {
-                Counter = 3,
+                Counter = BIG_LONG,
                 Id = "johndoe",
+                Instant = Now,
                 EuroIsGreat = true,
                 List = new string[] { "yes", "no" }
             };
@@ -66,8 +76,17 @@ namespace json.net.sign
             // Recreate object using received JSON
             MyObject receivedObject = JsonConvert.DeserializeObject<MyObject>(json, new JsonSerializerSettings
             {
-                MissingMemberHandling = MissingMemberHandling.Error // Reject undeclared properties
+                MissingMemberHandling = MissingMemberHandling.Error, // Reject undeclared properties
+                DateParseHandling = DateParseHandling.None           // Remove Json.NET's stupid default
             });
+            if (receivedObject.Counter != BIG_LONG)
+            {
+                throw new ArgumentException("Long value error");
+            }
+            if (receivedObject.Instant.Ticks / 10000000 != Now.Ticks / 10000000)
+            {
+                throw new ArgumentException("Date value error");
+            }
 
             // Verify signature
             Console.WriteLine("Signature verified=" + (Signature.Verify(receivedObject) != null));
