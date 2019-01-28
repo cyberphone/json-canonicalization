@@ -28,7 +28,7 @@ namespace json.net.signaturesupport
 {
     public class UTCStrictDateConverter : DateTimeConverterBase
     {
-        static Regex UTC_DATE_NO_FRACTION_PATTERN = new Regex("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z");
+        static Regex UTC_DATE_NO_FRACTION_PATTERN = new Regex("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$");
 
         public override bool CanConvert(Type objectType)
         {

@@ -26,7 +26,7 @@ namespace json.net.signaturesupport
 {
     public class Int64Converter : JsonConverter
     {
-        static Regex INTEGER_PATTERN = new Regex("(0|-?[1-9]+[0-9]*)");
+        static Regex INTEGER_PATTERN = new Regex("^(0|-?[1-9]+[0-9]*)$");
 
         public override bool CanConvert(Type objectType)
         {
