@@ -29,19 +29,33 @@ namespace json.net.sign
         [JsonProperty("id")]
         public string Id { get; set; }
 
+        // Normalized data solution
         [JsonConverter(typeof(Int64Converter))]
         [JsonProperty("counter")]
         public long Counter { get; set; }
 
+        // Normalized data solution
         [JsonConverter(typeof(UTCStrictDateConverter))]
-        [JsonProperty("instant")]
-        public DateTime Instant { get; set; }
+        [JsonProperty("time")]
+        public DateTime Time { get; set; }
 
         [JsonProperty("list")]
         public string[] List { get; set; }
 
         [JsonProperty("\u20ac")]
         public bool EuroIsGreat { get; set; }
+
+        // The immutable string solution uses a local
+        // string variable for serialization while
+        // exposing another type to the application
+        [JsonProperty("amount")]
+        private string _amount { get; set; }
+
+        [JsonIgnore]
+        public decimal Amount {
+            get { return decimal.Parse(_amount); }
+            set { _amount = value.ToString(); }
+        }
 
         [JsonProperty("signature", Required = Required.Always)]
         public SignatureObject Signature { get; set; }
@@ -50,6 +64,8 @@ namespace json.net.sign
     class Program
     {
         const long BIG_LONG = 1000000000007800000L;
+
+        const decimal PAY_ME = 3.56m;
 
         static void Main(string[] args)
         {
@@ -60,8 +76,9 @@ namespace json.net.sign
             {
                 Counter = BIG_LONG,
                 Id = "johndoe",
-                Instant = Now,
+                Time = Now,
                 EuroIsGreat = true,
+                Amount = PAY_ME,
                 List = new string[] { "yes", "no" }
             };
 
@@ -83,9 +100,13 @@ namespace json.net.sign
             {
                 throw new ArgumentException("Long value error");
             }
-            if (receivedObject.Instant.Ticks / 10000000 != Now.Ticks / 10000000)
+            if (receivedObject.Time.Ticks / 10000000 != Now.Ticks / 10000000)
             {
                 throw new ArgumentException("Date value error");
+            }
+            if (receivedObject.Amount != PAY_ME)
+            {
+                throw new ArgumentException("Decimal value error");
             }
 
             // Verify signature

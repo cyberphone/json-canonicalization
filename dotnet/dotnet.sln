@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "jsoncanonicalizer", "jsonca
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "verify-canonicalization", "verify-canonicalization\verify-canonicalization.csproj", "{83C0B330-05FC-430B-83D8-9F9D7F6A1575}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "json.net.sign", "json.net.sign\json.net.sign.csproj", "{172E7B1E-0BF3-470A-BAE6-BD6E451BE0CA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "json.net.sign", "json.net.sign\json.net.sign.csproj", "{172E7B1E-0BF3-470A-BAE6-BD6E451BE0CA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
