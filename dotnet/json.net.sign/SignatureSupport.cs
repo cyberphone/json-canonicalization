@@ -29,25 +29,28 @@ using Newtonsoft.Json.Serialization;
 
 using Org.Webpki.JsonCanonicalizer;
 
-// Ultra-simple "Signed JSON" based on Canonicalization
+// Ultra-simple "Signed JSON" based on JCS and detached JWS
 
 namespace json.net.signaturesupport
 {
-    public class SignatureObject
+    public interface ISigned
+    {
+        string GetSignatureProperty();
+    }
+
+    public class JWSHeader
     {
         [JsonProperty("alg", Required = Required.Always)]
         public string Algorithm { get; internal set; }
 
         [JsonProperty("kid", Required = Required.Always)]
         public string KeyId { get; internal set; }
-
-        [JsonConverter(typeof(Base64UrlConverter))]
-        [JsonProperty("val", Required = Required.Always, NullValueHandling = NullValueHandling.Ignore)]
-        public byte[] SignatureValue { get; internal set; }
     }
 
     public static class Signature
     {
+        public const string PROPERTY = "signature";
+ 
         const string ALGORITHM = "HS256";
 
         const string KEY_ID = "mykey";
@@ -74,13 +77,23 @@ namespace json.net.signaturesupport
 
         private static PropertyInfo GetSignatureProperty(object obj)
         {
+            String signatureProperty = "\"" + ((ISigned)obj).GetSignatureProperty() + "\"";
             foreach (var property in obj.GetType().GetProperties(BindingFlags.DeclaredOnly |
                                                                  BindingFlags.Public |
                                                                  BindingFlags.Instance))
             {
-                if (property.PropertyType == typeof(SignatureObject))
+                foreach (var attribute in property.GetCustomAttributesData())
                 {
-                    return property;
+                    if (attribute.AttributeType == typeof(JsonPropertyAttribute))
+                    {
+                        foreach (var argument in attribute.ConstructorArguments)
+                        {
+                            if (signatureProperty.Equals(argument.ToString()))
+                            {
+                                return property;
+                            }
+                        }
+                    }
                 }
             }
             throw new MemberAccessException("Property \"SignatureObject\" missing in: " + obj.GetType().ToString());
@@ -91,77 +104,79 @@ namespace json.net.signaturesupport
             return new JsonCanonicalizer(JsonConvert.SerializeObject(obj)).GetEncodedUTF8();
         }
 
-        public static SignatureObject Sign(object obj)
+        public static void Sign(object obj)
         {
+            string payloadB64U = Base64UrlConverter.Encode(CanonicalizeObject(obj));
             // Create and initialize an empty signature object
-            SignatureObject signatureObject = new SignatureObject
+            JWSHeader jwsHeader = new JWSHeader
             {
                 Algorithm = ALGORITHM,
                 KeyId = KEY_ID
             };
-
+            string jwsHeaderB64U = Base64UrlConverter.Encode(
+                new UTF8Encoding(false, true).GetBytes(JsonConvert.SerializeObject(jwsHeader)));
+            string jwsString = jwsHeaderB64U + ".." + Base64UrlConverter.Encode(
+                HmacObject(new UTF8Encoding(false, true).GetBytes(jwsHeaderB64U + "." + payloadB64U)));
+             
             if (obj is List<object>)
             {
                 // We are signing an array, append signature
-                ((List<object>)obj).Add(signatureObject);
+                ((List<object>)obj).Add(jwsString);
             }
             else
             {
                 // We are signing an object, assign signature to it
-                GetSignatureProperty(obj).SetValue(obj, signatureObject);
+                GetSignatureProperty(obj).SetValue(obj, jwsString);
             }
-
-            // Canonicalize the completed object
-            byte[] canonicalizedUtf8 = CanonicalizeObject(obj);
-
-            // Finally add the signature value to the signature object
-            signatureObject.SignatureValue = HmacObject(canonicalizedUtf8);
-            return signatureObject;
         }
 
-        public static SignatureObject Verify(object obj)
+        public static bool Verify(object obj)
         {
-            SignatureObject signatureObject;
+            string jwsString;
             if (obj is List<object>)
             {
-                // We are verifying a signed array, fetch the last element
-                JObject jobject = (JObject)((List<object>)obj).Last();
+                // We are verifying a signed array, fetch the last element containing a JWS string
+                jwsString = ((JObject)((List<object>)obj).Last()).ToObject<String>();
 
-                // Since the deserializer does not know what a SignatureObject is,
-                // it returs a generic object which we remap to a SignatureObject.
-                signatureObject = jobject.ToObject<SignatureObject>();
-
-                // Finally, the last element is replaced by the true SignatureObject.
-                ((List<object>)obj).Remove(jobject);
-                ((List<object>)obj).Add(signatureObject);
+                // After that the last element is removed
+                ((List<object>)obj).Remove(((List<object>)obj).Last());
             }
             else
             {
-                // We are verifying a signed object, get the signature object
-                signatureObject = (SignatureObject)GetSignatureProperty(obj).GetValue(obj);
+                // We are verifying a signed object, get the JWS string
+                jwsString = (String)GetSignatureProperty(obj).GetValue(obj);
+ 
+                // After that set this element to 
+                GetSignatureProperty(obj).SetValue(obj, null);
             }
+            
+            // Canonicalize the object - Payload to be signed
+            string payloadB64U = Base64UrlConverter.Encode(CanonicalizeObject(obj));
+            // Header - To be signed
+            string jwsHeaderB64U = jwsString.Substring(0, jwsString.IndexOf('.'));
+
+            JWSHeader jwsHeader = JsonConvert.DeserializeObject<JWSHeader>(
+                new UTF8Encoding(false, true).GetString(Base64UrlConverter.Decode(jwsHeaderB64U)),
+                new JsonSerializerSettings
+            {
+                MissingMemberHandling = MissingMemberHandling.Error, // Reject undeclared properties
+            });
 
             // Verify correctness of container
-            if (!signatureObject.Algorithm.Equals(ALGORITHM) || !signatureObject.KeyId.Equals(KEY_ID))
+            if (!jwsHeader.Algorithm.Equals(ALGORITHM) || !jwsHeader.KeyId.Equals(KEY_ID))
             {
-                throw new CryptographicException("Unexpected \"SignatureObject\" arguments: " +
-                    JsonConvert.SerializeObject(signatureObject));
+                throw new CryptographicException("Unexpected JWS header arguments: " +
+                    JsonConvert.SerializeObject(jwsHeader));
             }
 
             // Fetch signature value
-            byte[] signatureValue = signatureObject.SignatureValue;
+            byte[] signatureValue = Base64UrlConverter.Decode(jwsString.Substring(jwsString.LastIndexOf('.') + 1));
 
-            // Hide signature value from the serializer
-            signatureObject.SignatureValue = null;
-
-            // Canonicalize the object - signature value
-            byte[] canonicalizedUtf8 = CanonicalizeObject(obj);
-
-            // Restore signature object
-            signatureObject.SignatureValue = signatureValue;
+            // Data to be signed
+            byte[] dataToBeSigned = new UTF8Encoding(false, true).GetBytes((jwsHeaderB64U + "." + payloadB64U));
 
             // Verify signature value
-            return signatureValue.SequenceEqual(HmacObject(canonicalizedUtf8)) ? signatureObject : null;
+            return signatureValue.SequenceEqual(HmacObject(dataToBeSigned));
         }
     }
 }

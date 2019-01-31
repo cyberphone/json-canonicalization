@@ -25,6 +25,25 @@ namespace json.net.signaturesupport
 {
     public class Base64UrlConverter : JsonConverter
     {
+        public static string Encode(byte[] binary)
+        {
+            var output = Convert.ToBase64String(binary);
+            return output.Split('=')[0].Replace('+', '-').Replace('/', '_');
+        }
+
+        public static byte[] Decode(string base64url)
+        {
+            base64url = base64url.Replace('-', '+').Replace('_', '/');
+            switch (base64url.Length % 4)
+            {
+                case 0: break;
+                case 2: base64url += "=="; break;
+                case 3: base64url += "="; break;
+                default: throw new ArgumentException("input", "Illegal base64url string!");
+            }
+            return Convert.FromBase64String(base64url);
+        }
+
         public override bool CanConvert(Type objectType)
         {
             return true;
@@ -32,26 +51,12 @@ namespace json.net.signaturesupport
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
-            var output = (string)reader.Value;
-            output = output.Replace('-', '+');
-            output = output.Replace('_', '/');
-            switch (output.Length % 4)
-            {
-                case 0: break;
-                case 2: output += "=="; break;
-                case 3: output += "="; break;
-                default: throw new ArgumentException("input", "Illegal base64url string!");
-            }
-            return Convert.FromBase64String(output);
+            return Decode((string)reader.Value);
         }
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            var output = Convert.ToBase64String((byte[])value);
-            output = output.Split('=')[0];
-            output = output.Replace('+', '-');
-            output = output.Replace('/', '_');
-            writer.WriteValue(output);
+            writer.WriteValue(Encode((byte[])value));
         }
     }
 }

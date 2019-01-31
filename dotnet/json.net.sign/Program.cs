@@ -24,8 +24,10 @@ using json.net.signaturesupport;
 
 namespace json.net.sign
 {
-    public class MyObject
+    public class MyObject : ISigned
     {
+        const String SIGNATURE_PROPERTY = "signature";
+
         [JsonProperty("id")]
         public string Id { get; set; }
 
@@ -57,8 +59,13 @@ namespace json.net.sign
             set { _amount = value.ToString(); }
         }
 
-        [JsonProperty("signature", Required = Required.Always)]
-        public SignatureObject Signature { get; set; }
+        [JsonProperty(SIGNATURE_PROPERTY, NullValueHandling = NullValueHandling.Ignore)]
+        public string Signature { get; set; }
+
+        public string GetSignatureProperty()
+        {
+            return SIGNATURE_PROPERTY;
+        }
     }
 
     class Program
@@ -96,6 +103,8 @@ namespace json.net.sign
                 MissingMemberHandling = MissingMemberHandling.Error, // Reject undeclared properties
                 DateParseHandling = DateParseHandling.None           // Remove Json.NET's stupid default
             });
+
+            // Check data for correctness
             if (receivedObject.Counter != BIG_LONG)
             {
                 throw new ArgumentException("Long value error");
@@ -110,7 +119,7 @@ namespace json.net.sign
             }
 
             // Verify signature
-            Console.WriteLine("Signature verified=" + (Signature.Verify(receivedObject) != null));
+            Console.WriteLine("Signature verified=" + (Signature.Verify(receivedObject)));
         }
     }
 }
