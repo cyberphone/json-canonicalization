@@ -136,7 +136,7 @@ namespace json.net.signaturesupport
             if (obj is List<object>)
             {
                 // We are verifying a signed array, fetch the last element containing a JWS string
-                jwsString = ((JObject)((List<object>)obj).Last()).ToObject<String>();
+                jwsString = ((String)((List<object>)obj).Last());
 
                 // After that the last element is removed
                 ((List<object>)obj).Remove(((List<object>)obj).Last());
