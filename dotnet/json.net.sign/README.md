@@ -4,30 +4,42 @@ The sample is based on Newtonsoft's Json.NET API (nowadays recommended by Micros
 
 The code is _deliberately_ simplistic
 with respect to the cryptographic part (using a hard-coded algorithm and key),
-while the rest is pretty universal.
+while the rest is pretty universal. The system uses a combination
+of detached JWS and JCS.
 
-For creating "signable" JSON objects, developers only need adding a `SignatureObject` property
-with a JSON property name of their liking:
+For creating "signable" JSON objects, developers needs adding a signature property
+with a JSON property name of their liking and extending the class with one
+constant and one method:
 ```c#
-[JsonProperty("signature", Required = Required.Always)]
-public SignatureObject Signature { get; set; }
+public class MyObject : ISigned
+{
+    const String SIGNATURE_PROPERTY = "signature";
+    
+    // Other properties
+
+    [JsonProperty(SIGNATURE_PROPERTY, NullValueHandling = NullValueHandling.Ignore)]
+    public string Signature { get; set; }
+    
+    public string GetSignatureProperty()
+    {
+        return SIGNATURE_PROPERTY;
+    }
+}
 ```
 
 Expected printout from the sample program:
 ```json
 {
   "id": "johndoe",
-  "counter": 3,
+  "counter": "1000000000007800000",
+  "time": "2019-01-31T19:09:31Z",
   "list": [
     "yes",
     "no"
   ],
   "€": true,
-  "signature": {
-    "alg": "HS256",
-    "kid": "mykey",
-    "val": "rlKLoCBExrwB7NaChPtQ3cAxr83eGdpLA7txrg49slw"
-  }
+  "amount": "3.56",
+  "signature": "eyJhbGciOiJIUzI1NiIsImtpZCI6Im15a2V5In0..WWO6rMoEFG53COKfnR88rUIqHcWCTm1pyDOmq1hUfW8"
 }
 ```
 
