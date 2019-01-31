@@ -78,7 +78,7 @@ namespace json.net.sign
             List<object> receivedObject = JsonConvert.DeserializeObject<List<object>>(json);
 
             // Verify signature
-            Console.WriteLine("Signature verified=" + (Signature.Verify(receivedObject) != null));
+            Console.WriteLine("Signature verified=" + (Signature.Verify(receivedObject)));
         }
     }
 }
@@ -93,10 +93,6 @@ Expected JSON printout from the sample above:
     "yes",
     "no"
   ],
-  {
-    "alg": "HS256",
-    "kid": "mykey",
-    "val": "FXlIAzZ6UUIAOoTYRI84FOwcNFw9tDEPQEd0ZlBWix4"
-  }
+  "eyJhbGciOiJIUzI1NiIsImtpZCI6Im15a2V5In0..bCtxgVj76sIcRgNjfaY3xoqc85fp5y0DppFYWkZoZfo"
 ]
 ```
