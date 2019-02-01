@@ -29,29 +29,29 @@ namespace json.net.sign
         const String SIGNATURE_PROPERTY = "signature";
 
         [JsonProperty("id")]
-        public string Id { get; set; }
+        public string Id;
 
         // Normalized data solution
         [JsonConverter(typeof(Int64Converter))]
         [JsonProperty("counter")]
-        public long Counter { get; set; }
+        public long Counter;
 
         // Normalized data solution
         [JsonConverter(typeof(UTCStrictDateConverter))]
         [JsonProperty("time")]
-        public DateTime Time { get; set; }
+        public DateTime Time;
 
         [JsonProperty("list")]
-        public string[] List { get; set; }
+        public string[] List;
 
         [JsonProperty("\u20ac")]
-        public bool EuroIsGreat { get; set; }
+        public bool EuroIsGreat;
 
         // The immutable string solution uses a local
         // string variable for serialization while
         // exposing another type to the application
         [JsonProperty("amount")]
-        private string _amount { get; set; }
+        private string _amount;
 
         [JsonIgnore]
         public decimal Amount {
