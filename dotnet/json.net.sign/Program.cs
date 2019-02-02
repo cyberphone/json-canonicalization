@@ -47,8 +47,8 @@ namespace json.net.sign
         [JsonProperty("\u20ac")]
         public bool EuroIsGreat;
 
-        // The immutable string solution uses a local
-        // string variable for serialization while
+        // The lazy (deferred) evaluation method uses a local
+        // string variable for JSON serialization while
         // exposing another type to the application
         [JsonProperty("amount")]
         private string _amount;
