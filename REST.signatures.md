@@ -45,7 +45,7 @@ The following is a modified HTTP Body providing a signed counterpart:
 ```
 The argument to `@rest.signature` would preferably be a JWS using detached mode as described in:<br>
 https://tools.ietf.org/html/rfc7515#appendix-F<br>
-The data to be signed would have passed through JCS:<br>
+The data to be signed would pass through JCS:<br>
 https://tools.ietf.org/html/draft-rundgren-json-canonicalization-scheme-04
 
 ### Summary
