@@ -53,4 +53,4 @@ The depicted signature scheme accomplishes the following:
 - Signs the core parameters of a REST request
 - Maintains clear text messaging using JSON
 - Supports proxying and storage in databases without signature breakage
-- Enables embedding in other JSON objects for counter signining etc.
+- Enables embedding in other JSON objects for counter signing etc.
