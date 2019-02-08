@@ -43,9 +43,11 @@ The following is a modified HTTP Body providing a signed counterpart:
   "@rest.signature": "eyJhbGciOiJIUzI1NiJ9..VHVItCBCb8Q5CI-49imarDtJeSxH2uLU0DhqQP5Zjw4"
 }
 ```
-The argument to `@rest.signature` would preferably be a JWS using detached mode as described in:<br>
+The argument to `@rest.signature` would preferably be a JWS in "detached" mode as described in:<br>
 https://tools.ietf.org/html/rfc7515#appendix-F<br>
-The data to be signed would pass through JCS:<br>
+The data to be signed would pass through JCS to make it insensitive
+to whitespace handling, property ordering and variances in string and
+number formatting:<br>
 https://tools.ietf.org/html/draft-rundgren-json-canonicalization-scheme-04
 
 ### Summary
