@@ -48,7 +48,7 @@ https://tools.ietf.org/html/rfc7515#appendix-F<br>
 The data to be signed would pass through JCS
 (https://tools.ietf.org/html/draft-rundgren-json-canonicalization-scheme-04)
 to make it insensitive
-to whitespace handling, property ordering as well as variances in string and
+to whitespace handling, property ordering as well as to variances in string and
 number formatting.
 
 
@@ -58,3 +58,5 @@ The depicted signature scheme accomplishes the following:
 - Maintains clear text messaging using JSON
 - Supports proxying and storage in databases without signature breakage
 - Enables embedding in other JSON objects for counter signing etc.
+
+v0.1
