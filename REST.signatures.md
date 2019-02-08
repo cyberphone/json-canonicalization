@@ -45,10 +45,12 @@ The following is a modified HTTP Body providing a signed counterpart:
 ```
 The argument to `@rest.signature` would preferably be a JWS in "detached" mode as described in:<br>
 https://tools.ietf.org/html/rfc7515#appendix-F<br>
-The data to be signed would pass through JCS to make it insensitive
-to whitespace handling, property ordering and variances in string and
-number formatting:<br>
-https://tools.ietf.org/html/draft-rundgren-json-canonicalization-scheme-04
+The data to be signed would pass through JCS<br>
+(https://tools.ietf.org/html/draft-rundgren-json-canonicalization-scheme-04)
+to make it insensitive
+to whitespace handling, property ordering as well as variances in string and
+number formatting.
+
 
 ### Summary
 The depicted signature scheme accomplishes the following:
