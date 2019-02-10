@@ -2,7 +2,7 @@
 
 Since there is no standard for signing REST requests, the industry is currently using
 various proprietary solutions mostly based on HTTP bindings and detached data.
-This note outlines a simple scheme for a REST signature scheme.
+This note outlines a simple REST signature scheme.
 
 ### Unsigned REST Requests
 
