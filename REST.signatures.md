@@ -46,7 +46,7 @@ The following is a modified HTTP Body providing a signed counterpart:
 The argument to `@rest.signature` would preferably be a JWS in "detached" mode as described in:<br>
 https://tools.ietf.org/html/rfc7515#appendix-F
 
-Before signing, the "payload" (all but the `@rest.signature` element), would pass through JCS
+Before signing, the JWS "payload" (all but the `@rest.signature` element), would pass through JCS
 (https://tools.ietf.org/html/draft-rundgren-json-canonicalization-scheme-04)
 to make the signature insensitive
 to whitespace handling and property ordering as well as to *JSON compliant* variances in string and
