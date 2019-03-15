@@ -11,15 +11,14 @@ Assume you have REST system using URIs for holding parameters as well as optiona
 A REST HTTP request could then look like:
 
 ```code
-POST /transact/pay HTTP/1.1
+POST /foo HTTP/1.1
 Host: example.com
 Content-Type: application/json
 Content-Length: 1234
-
 {
   "something": "data",
 
-       Additional properties
+      Additional application specific properties
 
 }
 ```
@@ -34,20 +33,23 @@ The following is a modified HTTP Body providing a signed counterpart:
 
 ```code
 {
-  "@rest.uri": "https://example.com/transact/pay",
-  "@rest.verb": "POST",
   "something": "data",
 
-       Additional properties
+      Additional application specific properties
 
-  "@rest.signature": "eyJhbGciOiJIUzI1NiJ9..VHVItCBCb8Q5CI-49imarDtJeSxH2uLU0DhqQP5Zjw4"
+  ".secinf": {
+    "uri": "https://example.com/foo",
+    "mtd": "POST",
+    "iat": 1551709923,
+    "jws": "eyJhbGciOiJIUzI1NiJ9..VHVItCBCb849imarDtjw4"
+  }
 }
 ```
-The argument to `@rest.signature` would preferably be a JWS in "detached" mode as described in:<br>
+The argument to `jws` would preferably be a JWS in "detached" mode as described in:<br>
 https://tools.ietf.org/html/rfc7515#appendix-F
 
-Before signing, the JWS "payload" (all but the `@rest.signature` element), would pass through JCS
-(https://tools.ietf.org/html/draft-rundgren-json-canonicalization-scheme-04)
+Before signing, the JWS "payload" (all but the `jws` element), would pass through JCS
+(https://tools.ietf.org/html/draft-rundgren-json-canonicalization-scheme-05)
 to make the signature insensitive
 to whitespace handling and property ordering as well as to *JSON compliant* variances in string and
 number formatting.
