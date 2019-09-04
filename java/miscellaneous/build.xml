@@ -14,7 +14,7 @@
   </path>
 
   <target name="help">
-    <echo message="Targets: verify-canonicalization verify-numbers es6interactive browser addedgecases fixtext"/>
+    <echo message="Targets: verify-canonicalization verify-numbers es6interactive browser addedgecases fixtext unicode2utf16"/>
   </target>
 	
   <target name="fixtext">
@@ -103,9 +103,20 @@
     </java>
   </target>
 
-	<target name="es6interactive" depends="_compile">
+  <target name="es6interactive" depends="_compile">
     <java fork="no"
           classname="ES6InterActive"
+          failonerror="true">
+      <classpath>
+        <pathelement path="${temp.dir}"/>
+        <path refid="lib.classpath"/>
+      </classpath>
+    </java>
+  </target>
+
+  <target name="unicode2utf16" depends="_compile">
+    <java fork="no"
+          classname="Unicode2UTF16"
           failonerror="true">
       <classpath>
         <pathelement path="${temp.dir}"/>
