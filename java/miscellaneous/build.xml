@@ -14,7 +14,7 @@
   </path>
 
   <target name="help">
-    <echo message="Targets: verify-canonicalization verify-numbers es6interactive browser addedgecases fixtext unicode2utf16"/>
+    <echo message="Targets: verify-canonicalization verify-numbers es6interactive browser addedgecases fixtext unicode2utf16 sortingschemes"/>
   </target>
 	
   <target name="fixtext">
@@ -117,6 +117,17 @@
   <target name="unicode2utf16" depends="_compile">
     <java fork="no"
           classname="Unicode2UTF16"
+          failonerror="true">
+      <classpath>
+        <pathelement path="${temp.dir}"/>
+        <path refid="lib.classpath"/>
+      </classpath>
+    </java>
+  </target>
+
+  <target name="sortingschemes" depends="_compile">
+    <java fork="no"
+          classname="SortingSchemes"
           failonerror="true">
       <classpath>
         <pathelement path="${temp.dir}"/>
