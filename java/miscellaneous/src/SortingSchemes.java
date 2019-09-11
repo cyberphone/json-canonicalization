@@ -33,7 +33,7 @@ public class SortingSchemes {
 		elements.put("\\ufb33",        "Hebrew Letter Dalet With Dagesh");
 		elements.put("1",              "One");
 		elements.put("\\u0080",        "Control");
-		elements.put("\\ud83d\\ude02", "Smiley");
+		elements.put("\\ud83d\\ude00", "Emoji: Grinning Face");
 		elements.put("\\u00f6",        "Latin Small Letter O With Diaeresis");
 	}
 
