@@ -7,8 +7,8 @@ output is expressed in hexadecimal byte notation.
 
 ## ES6 Numbers
 
-For testing ES6 number serialization there is a file on 
-https://onedrive.live.com/embed?cid=9341770E0D0D5468&resid=9341770E0D0D5468%21222&authkey=ADOClRsuPv3_pTk
+For testing ES6 number serialization there is a ZIP file on 
+https://1drv.ms/u/s!AmhUDQ0Od0GTiXeAjaBJFLJlxyg0?e=HFG4Ao
 containing about a 100 million of random and edge-case values.  The test file consists of lines
 ```code
 hex-ieee,expected\n
