@@ -1,7 +1,7 @@
 ## JSON Canonicalizer for .NET
 
 The [jsoncanonicalizer](jsoncanonicalizer)
-folder contains the source code for a [JCS compliant](https://tools.ietf.org/html/draft-rundgren-json-canonicalization-scheme-02) canonicalizer written in C# for .NET&nbsp;Core&nbsp;3 and forward.
+folder contains the source code for a [JCS compliant](https://tools.ietf.org/html/draft-rundgren-json-canonicalization-scheme-17) canonicalizer written in C# for .NET&nbsp;Core&nbsp;3 and forward.
 
 ### Using the JSON canonicalizer
 
