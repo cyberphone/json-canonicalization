@@ -2,8 +2,7 @@
 
 The [jsoncanonicalizer](src/webpki.org/jsoncanonicalizer)
 folder contains the source code for a 
-[JCS compliant](https://tools.ietf.org/html/draft-rundgren-json-canonicalization-scheme-02) 
-canonicalizer written in Go.
+JCS (RFC 8785) compliant JSON canonicalizer written in Go.
 
 ### Building and testing
 

@@ -2,8 +2,7 @@
 
 The [src/org/webpki/json](src/org/webpki/json)
 folder contains the source code for a 
-[JCS compliant](https://tools.ietf.org/html/draft-rundgren-json-canonicalization-scheme-02) 
-canonicalizer written in Python.
+JCS (RFC 8785) compliant canonicalizer written in Python.
 
 ### Building and testing
 

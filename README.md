@@ -8,12 +8,11 @@ By applying the rules defined by JCS (JSON Canonicalization Scheme),
 data provided in the JSON [[RFC8259](https://tools.ietf.org/html/rfc8259)]
 format can be exchanged "as is", while still being subject to secure cryptographic operations.
 JCS achieves this by building on the serialization formats for JSON
-primitives as defined by ECMAScript [[ES6](https://www.ecma-international.org/ecma-262/6.0/index.html)],
+primitives as defined by ECMAScript [[ES](https://ecma-international.org/ecma-262/)],
 constraining JSON data to the<br>I-JSON [[RFC7493](https://tools.ietf.org/html//rfc7493)] subset,
 and through a platform independent property sorting scheme.
 
-Working document: https://cyberphone.github.io/ietf-json-canon<br>
-Published IETF Draft: https://tools.ietf.org/html/draft-rundgren-json-canonicalization-scheme-05
+Public RFC: https://tools.ietf.org/html/rfc8785
 
 The JSON Canonicalization Scheme concept in a nutshell:
 - Serialization of primitive JSON data types using methods compatible with ECMAScript's `JSON.stringify()`
