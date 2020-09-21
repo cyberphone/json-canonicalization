@@ -36,7 +36,7 @@ public class ES6InterActive {
                 d = Double.longBitsToDouble(Long.parseUnsignedLong(hex,16));            
             } else {
                 inputFp = line;
-                d = new Double(inputFp);
+                d = Double.valueOf(inputFp);
             }
             long ieee = Double.doubleToRawLongBits(d);
             String ieeeHex = Long.toHexString(ieee);
