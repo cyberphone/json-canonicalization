@@ -45,21 +45,10 @@ func Transform(jsonData []byte) ([]byte, error) {
 	// JSON data MUST be UTF-8 encoded
 	// Current pointer in jsonData
 	var index int
-	var err error
-	var transformed string
 
 	//TODO: replace this with parse element which keeps current functionality for parse array and object
 	//but adds parsing of simple types and strings
-	c, err := scan(jsonData, &index)
-	if err != nil {
-		return nil, err
-	} else if c == '[' {
-		transformed, err = parseArray(jsonData, &index)
-	} else if c == '{' {
-		transformed, err = parseObject(jsonData, &index)
-	} else {
-		err = errors.New("Provided json is not array or object")
-	}
+	transformed, err := parseElement(jsonData, &index)
 	if err != nil {
 		return nil, err
 	}

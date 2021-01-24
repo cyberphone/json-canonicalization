@@ -63,6 +63,10 @@ func TestTransform(t *testing.T) {
 			filename: "french.json",
 		},
 		{
+			desc:     "SimpleString",
+			filename: "simpleString.json",
+		},
+		{
 			desc:     "Structures",
 			filename: "structures.json",
 		},
