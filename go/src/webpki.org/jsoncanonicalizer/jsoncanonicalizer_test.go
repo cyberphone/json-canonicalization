@@ -96,7 +96,11 @@ func TestTransform(t *testing.T) {
 			transformed, err := Transform(input)
 			r.NoError(err, errorOccurred("transforming test input", err))
 
+			twiceTransformed, err := Transform(input)
+			r.NoError(err, errorOccurred("transforming transformed input", err))
+
 			r.True(bytes.Equal(transformed, output), doesNotMatchExpected("JSON", string(output), "transformed JSON", string(transformed)))
+			r.True(bytes.Equal(twiceTransformed, transformed), doesNotMatchExpected("transformed JSON", string(transformed), "twice transformed JSON", string(twiceTransformed)))
 		})
 	}
 }
