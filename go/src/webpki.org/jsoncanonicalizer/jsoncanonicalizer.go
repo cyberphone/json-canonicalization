@@ -259,6 +259,7 @@ func parseSimpleType(jsonData []byte, index *int) (string, error) {
 		}
 
 		if c == ',' || c == ']' || c == '}' {
+			*index--
 			break
 		}
 
@@ -336,6 +337,7 @@ func parseArray(jsonData []byte, index *int) (string, error) {
 		}
 
 		if c == ']' {
+			*index++
 			break
 		}
 
@@ -401,6 +403,8 @@ CoreLoop:
 		}
 
 		if c == '}' {
+			//advance index because of peeked '}'
+			*index++
 			break
 		}
 
@@ -449,8 +453,6 @@ CoreLoop:
 		// The sortKey is either the first or is succeeding all previous sortKeys
 		nameValueList.PushBack(nameValue)
 	}
-	//advance index because of peeked '}'
-	*index++
 
 	// Now everything is sorted so we can properly serialize the object
 	var objectData strings.Builder
