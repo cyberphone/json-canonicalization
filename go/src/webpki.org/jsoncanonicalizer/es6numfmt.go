@@ -56,36 +56,15 @@ func NumberToJSON(ieeeF64 float64) (res string, err error) {
         format = 'f'
     }
 
-    // The following should (in "theory") do the trick:
+    // The following should do the trick:
     es6Formatted := strconv.FormatFloat(ieeeF64, format, -1, 64)
 
-    // Unfortunately Go version 1.11.4 is a bit buggy with respect to
-    // rounding for -1 precision which is dealt with below.
-    // https://github.com/golang/go/issues/29491
+    // Minor cleanup
     exponent := strings.IndexByte(es6Formatted, 'e')
     if exponent > 0 {
-        gform := strconv.FormatFloat(ieeeF64, 'g', 17, 64)
-        if len(gform) == len(es6Formatted) {
-           // "g" occasionally produces another result which also is the correct one
-           es6Formatted = gform
-        }
         // Go outputs "1e+09" which must be rewritten as "1e+9"
         if es6Formatted[exponent + 2] == '0' {
             es6Formatted = es6Formatted[:exponent + 2] + es6Formatted[exponent + 3:]
-        }
-    } else if strings.IndexByte(es6Formatted, '.') < 0 && len(es6Formatted) >= 12 {
-        i := len(es6Formatted)
-        for es6Formatted[i - 1] == '0' {
-            i--;
-        }
-        if i != len(es6Formatted) {
-            fix := strconv.FormatFloat(ieeeF64, 'f', 0, 64)
-            if fix[i] >= '5' {
-                // "f" with precision 0 occasionally produces another result which also is
-                // the correct one although it must be rounded to match the -1 precision
-                // (which fortunately seems to be correct with respect to trailing zeroes)
-                es6Formatted = fix[:i - 1] + string(fix[i - 1] + 1) + es6Formatted[i:]
-            }
         }
     }
     return sign + es6Formatted, nil
