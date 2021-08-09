@@ -1,39 +1,29 @@
-## Test Data
+//
+//  Copyright 2006-2021 WebPKI.org (http://webpki.org).
+//
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
+//
+//      https://www.apache.org/licenses/LICENSE-2.0
+//
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
+//
 
-The [input](input) directory contains files with non-canonicalized data which is
-supposed be transformed as specified by the corresponding file in the
-[output](output) directory.  In the [outhex](outhex) directory the expected
-output is expressed in hexadecimal byte notation.
+// This node.js program generates "es6testfile100m.txt".
+//
+// Run the program with:
+//  node numgen.js
 
-## ES6 Numbers
-
-For testing ES6 number serialization there is a GZIP file hosted at
-https://github.com/dsnet/json-canonicalization/releases/download/es6testfile/es6testfile100m.txt.gz
-containing a test vector of 100 million of random and edge-case values.
-The test file consists of lines
-```code
-hex-ieee,expected\n
-```
-where `hex-ieee` holds 1-16 ASCII hexadecimal characters
-representing an IEEE-754 double precision value
-while `expected` holds the expected serialized value.
-Each line is terminated by a single new-line character.
-
-Sample lines:
-```code
-4340000000000001,9007199254740994
-4340000000000002,9007199254740996
-444b1ae4d6e2ef50,1e+21
-3eb0c6f7a0b5ed8d,0.000001
-3eb0c6f7a0b5ed8c,9.999999999999997e-7
-8000000000000000,0
-0,0
-```
-
-The sequence of IEEE-754 double precision values is deterministically generated
-according to the following algorithm:
-```js
 const crypto = require("crypto")
+const fs = require('fs')
+
+const outputFile = "es6testfile100m.txt"
+const numLines   = 1e8
 
 staticU64s = new BigUint64Array([
 	0x0000000000000000n, 0x8000000000000000n, 0x0000000000000001n, 0x8000000000000001n,
@@ -91,8 +81,7 @@ var state = {
     data: new Float64Array(),
     block: new ArrayBuffer(32),
 }
-while (true) {
-    // Generate the next IEEE-754 value in the sequence.
+function next() {
     var f = 0.0;
     if (state.idx < staticF64s.length) {
         f = staticF64s[state.idx]
@@ -109,39 +98,20 @@ while (true) {
         }
     }
     state.idx++
-
-    // Print the raw IEEE-754 value as hexadecimal.
-    var u64 = new BigUint64Array(1)
-    var f64 = new Float64Array(u64.buffer)
-    f64[0] = f
-    console.log(u64[0].toString(16))
+    return f
 }
-```
-Deterministic generation of the test inputs allows an implementation to verify
-correctness of ES6 number formatting without requiring any network bandwidth by
-generating the test file locally and computing its hash.
 
-The following table records the expected hashes:
-| SHA-256 checksum                                                 | Number of lines | Size in bytes |
-| ---------------------------------------------------------------- | --------------- | ------------- |
-| be18b62b6f69cdab33a7e0dae0d9cfa869fda80ddc712221570f9f40a5878687 | 1000            | 37967         |
-| b9f7a8e75ef22a835685a52ccba7f7d6bdc99e34b010992cbc5864cd12be6892 | 10000           | 399022        |
-| 22776e6d4b49fa294a0d0f349268e5c28808fe7e0cb2bcbe28f63894e494d4c7 | 100000          | 4031728       |
-| 49415fee2c56c77864931bd3624faad425c3c577d6d74e89a83bc725506dad16 | 1000000         | 40357417      |
-| b9f8a44a91d46813b21b9602e72f112613c91408db0b8341fb94603d9db135e0 | 10000000        | 403630048     |
-| 0f7dda6b0837dde083c5d6b896f7d62340c8a2415b0c7121d83145e08a755272 | 100000000       | 4036326174    |
-
-The entries in the table are determined apart from GZIP compression.
-The `SHA-256 checksum` is a hash of the generated output file for the
-first `Number of lines` in the sequence.
-
-Both `numgen.go` and `numgen.js` can generate `es6testfile100m.txt`.
-
-### Legacy test file
-
-Prior to 2021-08-09, there used to be a different file provided,
-which unfortunately did not generate the IEEE-754 values deterministically.
-This is made it impossible for implementations to verify correctness
-without downloading the entire test file.
-That older test file is still hosted at
-https://1drv.ms/u/s!AmhUDQ0Od0GTiXeAjaBJFLJlxyg0?e=HFG4Ao.
+// TODO: Emit the file as GZIP compressed.
+// TODO: Fix a buffering issue where Node.js tries to buffer the entire output.
+var f = fs.createWriteStream(outputFile)
+var u64 = new BigUint64Array(1)
+var f64 = new Float64Array(u64.buffer)
+var hash = crypto.createHash("sha256")
+for (i = 0; i < numLines; i++) {
+    f64[0] = next()
+    line = u64[0].toString(16) + "," + f64[0].toString()+"\n"
+	f.write(line)
+	hash.update(line)
+}
+f.close()
+console.log(hash.digest("hex"))
