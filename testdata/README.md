@@ -8,7 +8,7 @@ output is expressed in hexadecimal byte notation.
 ## ES6 Numbers
 
 For testing ES6 number serialization there is a GZIP file hosted at
-https://github.com/dsnet/json-canonicalization/releases/download/es6testfile/es6testfile100m.txt.gz
+https://github.com/cyberphone/json-canonicalization/releases/download/es6testfile/es6testfile100m.txt.gz
 containing a test vector of 100 million of random and edge-case values.
 The test file consists of lines
 ```code
