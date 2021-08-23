@@ -136,12 +136,3 @@ The `SHA-256 checksum` is a hash of the generated output file for the
 first `Number of lines` in the sequence.
 
 Both `numgen.go` and `numgen.js` can generate `es6testfile100m.txt`.
-
-### Legacy test file
-
-Prior to 2021-08-09, there used to be a different file provided,
-which unfortunately did not generate the IEEE-754 values deterministically.
-This is made it impossible for implementations to verify correctness
-without downloading the entire test file.
-That older test file is still hosted at
-https://1drv.ms/u/s!AmhUDQ0Od0GTiXeAjaBJFLJlxyg0?e=HFG4Ao.
