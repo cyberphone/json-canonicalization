@@ -22,6 +22,13 @@
 ##################################################################
 def convert2Es6Format(value):
 # Convert double/float to str using the native Python formatter
+
+#
+# Since integers are typed, a "sanity" test makes sense
+#
+    if isinstance(value, int) and ((value > 2**53) or (value < -2**53)):
+        raise ValueError("Integer out of range")
+
     fvalue = float(value)
 #
 # Zero is a special case.  The following line takes "-0" case as well
