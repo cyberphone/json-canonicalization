@@ -41,6 +41,16 @@ as well, here shown in hexadecimal notation:
 2c 34 2e 35 2c 30 2e 30 30 32 2c 31 65 2d 32 37 5d 2c 22 73 74 72 69 6e 67 22 3a 22 e2 82 ac 24
 5c 75 30 30 30 66 5c 6e 41 27 42 5c 22 5c 5c 5c 5c 5c 22 2f 22 7d
 ```
+### Implementations
+|Language|URL|
+|--------|---|
+|Rust|https://crates.io/crates/serde_json_canonicalizer|
+|JavaScript|https://www.npmjs.com/package/canonicalize|
+|Java|https://github.com/erdtman/java-json-canonicalization|
+|Go|https://github.com/cyberphone/json-canonicalization/tree/master/go|
+|.NET/C#|https://github.com/cyberphone/json-canonicalization/tree/master/dotnet|
+|Python|https://github.com/cyberphone/json-canonicalization/tree/master/python3|
+
 ### Combining JCS and JWS (RFC7515)
 [JWS-JCS](https://github.com/cyberphone/jws-jcs#combining-detached-jws-with-jcs-json-canonicalization-scheme)
 
