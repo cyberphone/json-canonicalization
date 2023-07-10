@@ -51,6 +51,8 @@ as well, here shown in hexadecimal notation:
 |.NET/C#|https://github.com/cyberphone/json-canonicalization/tree/master/dotnet|
 |Python|https://github.com/cyberphone/json-canonicalization/tree/master/python3|
 |Elixir|https://github.com/pzingg/jcs|
+|Ruby|https://github.com/dryruby/json-canonicalization|
+|PHP|https://github.com/aywan/php-json-canonicalization|
 
 ### Combining JCS and JWS (RFC7515)
 [JWS-JCS](https://github.com/cyberphone/jws-jcs#combining-detached-jws-with-jcs-json-canonicalization-scheme)
