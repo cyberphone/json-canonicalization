@@ -14,6 +14,9 @@
 #  See the License for the specific language governing permissions and       #
 #  limitations under the License.                                            #
 #                                                                            #
+#  This file is based on Python standard library. See LICENSE.PSF            #
+#  for details                                                               #
+#                                                                            #
 ##############################################################################
 
 #################################################
