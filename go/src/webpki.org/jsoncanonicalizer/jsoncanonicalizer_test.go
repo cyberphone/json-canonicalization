@@ -18,8 +18,74 @@ package jsoncanonicalizer
 
 import (
 	"bytes"
+	"encoding/json"
+	"fmt"
+	"os"
+	"path/filepath"
 	"testing"
 )
+
+func TestCanonicalizationCorpus(t *testing.T) {
+	root := filepath.Join("..", "..", "..", "..", "testdata")
+	files, err := os.ReadDir(filepath.Join(root, "input"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, file := range files {
+		t.Run(file.Name(), func(t *testing.T) {
+			input, err := os.ReadFile(filepath.Join(root, "input", file.Name()))
+			if err != nil {
+				t.Fatal(err)
+			}
+			want, err := os.ReadFile(filepath.Join(root, "output", file.Name()))
+			if err != nil {
+				t.Fatal(err)
+			}
+			got, err := Transform(input)
+			if err != nil || !bytes.Equal(got, want) {
+				t.Fatalf("canonical output = %q, error = %v; want %q", got, err, want)
+			}
+			again, err := Transform(got)
+			if err != nil || !bytes.Equal(again, want) {
+				t.Fatalf("canonical round trip changed: %v", err)
+			}
+		})
+	}
+}
+
+func BenchmarkTransformRecords(b *testing.B) {
+	for _, count := range []int{1, 64, 1024} {
+		b.Run(fmt.Sprintf("records=%d", count), func(b *testing.B) {
+			records := make([]map[string]interface{}, count)
+			for i := range records {
+				records[i] = map[string]interface{}{
+					"reference": fmt.Sprintf("refs/tags/v1.0.%d", i),
+					"object_id": "0123456789abcdef0123456789abcdef01234567",
+					"source":    "remote:origin", "annotated": false,
+				}
+			}
+			input, err := json.Marshal(map[string]interface{}{"records": records})
+			if err != nil {
+				b.Fatal(err)
+			}
+			// These ASCII keys and unescaped string values are already in
+			// canonical form after encoding/json sorts the map keys.
+			got, err := Transform(input)
+			if err != nil || !bytes.Equal(got, input) {
+				b.Fatal("fixture is not canonical", err)
+			}
+			b.ReportAllocs()
+			b.SetBytes(int64(len(input)))
+			b.ResetTimer()
+			for i := 0; i < b.N; i++ {
+				got, err := Transform(input)
+				if err != nil || !bytes.Equal(got, input) {
+					b.Fatal("canonical output changed", err)
+				}
+			}
+		})
+	}
+}
 
 func TestReversedSurrogatePairIsError(t *testing.T) {
 	got, err := Transform([]byte(`["\ude00\ud83d"]`))

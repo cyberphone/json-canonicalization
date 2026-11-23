@@ -128,6 +128,7 @@ func Transform(jsonData []byte) (result []byte, e error) {
 
     decorateString := func(rawUTF8 string) string {
         var quotedString strings.Builder
+        quotedString.Grow(len(rawUTF8) + 2)
         quotedString.WriteByte('"')
       CoreLoop:
         for _, c := range []byte(rawUTF8) {
@@ -322,6 +323,7 @@ func Transform(jsonData []byte) (result []byte, e error) {
 
     parseObject = func() string {
         nameValueList := list.New()
+        objectSize := 2
         var next bool = false
       CoreLoop:
         for globalError == nil && testNextNonWhiteSpaceChar() != '}' {
@@ -340,6 +342,7 @@ func Transform(jsonData []byte) (result []byte, e error) {
             sortKey := utf16.Encode([]rune(rawUTF8))
             scanFor(':')
             nameValue := nameValueType{rawUTF8, sortKey, parseElement()}
+            objectSize += len(rawUTF8) + len(nameValue.value) + 4
             for e := nameValueList.Front(); e != nil; e = e.Next() {
                 // Check if the key is smaller than a previous key
                 if lexicographicallyPrecedes(sortKey, e) {
@@ -357,6 +360,8 @@ func Transform(jsonData []byte) (result []byte, e error) {
         scan()
         // Now everything is sorted so we can properly serialize the object
         var objectData strings.Builder
+        // Escaped names can require more space; Grow reserves the common case.
+        objectData.Grow(objectSize)
         objectData.WriteByte('{')
         next = false
         for e := nameValueList.Front(); e != nil; e = e.Next() {
